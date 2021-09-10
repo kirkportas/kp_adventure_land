@@ -7,9 +7,17 @@ var attack_mode=true;
 set_message("HELLO!");
 game_log("Loading Priest char file");
 
-load_code("init"); 
+load_code("utils_init");
 
-setInterval(function(){
+setInterval(main, 1000/4); // Loops every 1/4 seconds.
+
+
+ 
+
+
+
+
+function main(){
 	load_code("shared_executions"); // Cast Regens..
 
 	use_potion(); // use_hp_or_mp();
@@ -19,10 +27,8 @@ setInterval(function(){
 
 	// default_farm();	
 	// stationary_farm();
-
 	party_farm();
-
-},1000/4); // Loops every 1/4 seconds.
+}; 
 
 // Learn Javascript: https://www.codecademy.com/learn/introduction-to-javascript
 // Write your own CODE: https://github.com/kaansoral/adventureland

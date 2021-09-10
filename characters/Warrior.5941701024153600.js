@@ -4,26 +4,34 @@
 // Just set attack_mode to true and ENGAGE!
 
 var attack_mode=true;
-set_message("HELLO!");
+set_message("Start!");
 game_log("Loading Warrior char file");
 
-load_code("init"); 
+load_code("utils_init"); 
 
-setInterval(function(){
+setInterval(main, 1000/4); // Loops every 1/4 seconds.
+
+
+ 
+
+
+
+
+function main(){
+	load_code("shared_executions"); // Cast Regens..
+	// load_code("gui_minimap");
+	// load_code("gui_render_party");
+	// load_code("gui_codecost");
 
 	use_potion(); // use_hp_or_mp();
-	load_code("shared_executions"); // Cast Regens..
 	loot();
 
 	if(!attack_mode || character.rip || is_moving(character)) return;
 
 	// default_farm();	
-	// stationary_farm();
+	stationary_farm();
+	// default_farm("snake");
 
-	party_farm();
-
-
-},1000/6); // Loops every 1/4 seconds.
-
+}
 // Learn Javascript: https://www.codecademy.com/learn/introduction-to-javascript
 // Write your own CODE: https://github.com/kaansoral/adventureland

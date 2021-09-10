@@ -2,11 +2,15 @@
 
 game_log("Loading farming (15)");
 
-function default_farm() {
+function default_farm(mon_type) {
 	var target=get_targeted_monster();
 	if(!target)
 	{
-		target=get_nearest_monster({min_xp:900,max_att:70});
+		if (mon_type) {
+			target=get_nearest_monster({min_xp:900,max_att:70, type:mon_type});
+		} else {
+			target=get_nearest_monster({min_xp:900,max_att:70});
+		}
 		//target=get_nearest_monster({min_xp:1000,max_att:30,path_check:true});
 		if(target) change_target(target);
 		else
