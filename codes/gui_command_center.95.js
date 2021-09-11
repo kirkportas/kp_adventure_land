@@ -1,55 +1,98 @@
 
-var lastcc = 0;
+
 init_cmd_center();
+setInterval(update_cmd_center, 1000/2);
+
 function init_cmd_center() {
 	let $ = parent.$;
+	// Anchor to a pre-existing "bottom" div
+	// This div contains the ATT, INV, HP, and MP bars
 	let statbars = $('#bottommid');
 
-	statbars.find('#cmd_center').remove();
+	// Remove existing div
+	statbars.find('#wrapper').remove();
+	// statbars.find('#stylewrapper').remove();
 
-	let cmd_center = $('<div id="cmd_center"></div>').css({
-		fontSize: '15px',
-		color: 'white',
+	gridlayout = `
+		<div id="wrapper" class="enableclicks">
+			<div class="box1">11111</div>
+			<div class="box2">Two</div>
+			<div class="box3">Three</div>
+			<div class="box4">Four</div>
+		</div>
+		`;
+	statbars.children().first().after(gridlayout);
+
+	var $wrapper = $('#wrapper');
+	var $box1 = $wrapper.find('.box1');
+	var $box2 = $wrapper.find('.box2');
+	var $box3 = $wrapper.find('.box3');
+	var $box4 = $wrapper.find('.box4');
+
+	// Note that 
+	// "grid-template-columns": 'repeat(3, 1fr)',  // GOOD
+	// "grid-template-columns": 'repeat(3, "1fr")', // BAD
+	$wrapper.css({
+		display: "grid",
+		background: "black",
+		color: "black",
 		textAlign: 'center',
-		display: 'table',
-		width: "100%",
-		margin: "0 auto"
+
+		"font-size": "40px",
+		"grid-template-columns": 'repeat(3, 1fr)',
+		"grid-template-rows": '10% 45% 45%',
+		// "grid-template-rows": 'repeat(3, 50px)',
+		"vertical-align": 'middle',
+		"z-index": 1,
 	});
 
-	let cmd_center_content = $('<div id="cmd_center_content"></div>')
-		.html("<div><div id='cmd_center_fill'></div></div>")
-		.css({
-			display: 'table-cell',
-			verticalAlign: 'middle',
-			background: 'red',
-			border: 'solid gray',
-			borderWidth: '4px 4px 4px, 4px',
-			height: '100px',
-			color: 'yellow',
-			textAlign: 'center',
-			width: "80%",
-		})
-		.appendTo(cmd_center);
-	statbars.children().first().after(cmd_center);
-
-	update_cmd_center();
+	$box1.css({
+		'grid-column': '1',
+		'grid-row': '1 / 4',
+		'background': 'green',
+		'font-size': "40px",
+	});
+	$box2.css({
+		'grid-column': '2',
+		'grid-row': '1 / 2',
+		'background': 'red',
+		'font-size': "40px",
+	});
+	$box3.css({
+		'grid-column': '3',
+		'grid-row': '1',
+		'background': 'yellow',
+		'font-size': "40px",
+	});
+	$box4.css({
+		'grid-column': '2 / 4',
+		'grid-row': '3',
+		'background': 'blue',
+		'font-size': "40px",
+	});
+	// update_cmd_center();
 }
 
 
-
+var count = 0;
 function update_cmd_center()
 {
 	let $ = parent.$;
-	var fillAmount = ((character.cc/180)*100).toFixed(0);
 	
-	$("#cmd_center_fill").css({
-		background: 'red',
-		height: '15px',
-		color: '#FFD700',
-		textAlign: 'center',
-		width: fillAmount + "%",
-	});
+	$(".box4").html("count: "+count);
+	count++;
+	// game_log('table update: ' +count);
 }
+
+
+// var count = 0;
+// function update_cmd_center()
+// {
+// 	let $ = parent.$;
+	
+// 	$("#r2c2").html("count: "+count);
+// 	count++;
+// }
 
 //Clean out an pre-existing listeners
 if (parent.prev_handlers_cmd_center) {
@@ -57,25 +100,6 @@ if (parent.prev_handlers_cmd_center) {
       parent.socket.removeListener(event, handler);
     }
 }
-
-parent.prev_handlers_cmd_center = [];
-
-//handler pattern shamelessly stolen from JourneyOver
-function register_cmd_center_handler(event, handler) 
-{
-    parent.prev_handlers_cmd_center.push([event, handler]);
-    parent.socket.on(event, handler);
-};
-
-function cmd_center_playerhandler(event){
-	if(event.cc != last_cmd_cc)
-	{
-		update_update_cmd_center();
-		last_cmd_cc = event.cc;
-	}
-}
-
-register_cmd_center_handler("player", cmd_center_playerhandler);
 
 
 game_log("command_center loaded!")
