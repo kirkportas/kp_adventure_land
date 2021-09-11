@@ -12,26 +12,26 @@ load_code("utils_init");
 setInterval(main, 1000/4); // Loops every 1/4 seconds.
 
 
- 
+
 
 
 
 
 function main(){
-	load_code("shared_executions"); // Cast Regens..
-	// load_code("gui_minimap");
-	// load_code("gui_render_party");
-	// load_code("gui_codecost");
-
+	var time = Date.now();
+	load_code("shared_executions"); // Cast Regens.. respawn
 	use_potion(); // use_hp_or_mp();
 	loot();
 
-	if(!attack_mode || character.rip || is_moving(character)) return;
+	if(!attack_mode || is_moving(character)) return;
+	
 
 	// default_farm();	
 	stationary_farm();
 	// default_farm("snake");
 
+	var runtime = Date.now()-time;
+	// game_log("runtime: "+runtime+"ms");
 }
 // Learn Javascript: https://www.codecademy.com/learn/introduction-to-javascript
 // Write your own CODE: https://github.com/kaansoral/adventureland

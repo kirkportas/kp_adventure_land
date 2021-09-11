@@ -31,18 +31,19 @@ function regenerate_hp_mp() {
 }
 
 function start_chars() {
+	if (!last_start_char_ts) {
+		var last_start_char_ts = Date.now()-15001;
+	}
 	if (character.name == LEADER) {
-		for (char of SLAVES) {
-			if (!(char in get_party())) {
-				time_since_last_run = Date.now() - last_start_char_ts;
-
-				if (Date.now() - time_since_last_run > 5000) {					
+		game_log(Date.now() - last_start_char_ts);
+		if (Date.now() - last_start_char_ts > 15000) {	
+			for (char of SLAVES) {
+				if (!(char in get_party())) {
 					start_character(char, char);
 					game_log("Starting character: " + char);
-
-					last_start_char = Date.now();
 				}
 			}
+			last_start_char_ts = Date.now();
 		}
 	}
 }
@@ -58,4 +59,21 @@ function party_up() {
 			send_party_invite(LEADER,1); // party request
 		}
 	}
+}
+
+// https://discord.com/channels/238332476743745536/243707345887166465/750783323965751417
+// For finding targets or HP of another character
+// function get_parent(name, is_master) {
+function get_parent(name) {
+    if (character.name == LEADER) {
+        return parent.parent;
+    } else {
+        const char_iframe = parent.parent.$("#ichar"+name.toLowerCase())[0];
+        if (char_iframe) {
+        	game_log("found char_iframe");
+            return char_iframe.contentWindow;
+        } else {
+    		game_log("did not find char_iframe");
+    	}
+    }
 }

@@ -22,8 +22,8 @@ function main(){
 
 	use_potion(); // use_hp_or_mp();
 	loot();
-
-	if(!attack_mode || character.rip || is_moving(character)) return;
+	
+	if(!attack_mode || is_moving(character)) return;
 
 	// default_farm();	
 	// stationary_farm();

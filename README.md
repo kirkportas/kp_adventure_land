@@ -1,0 +1,4 @@
+
+
+Search ignore:
+-*/clash/*, -*/history/*

@@ -1,39 +1,111 @@
 zNotes
 
+Screeps People: Rising
+
+https://screeps.com/a/#!/rank/world/2017-09?page=21&highlight=206
 
 
-Object.keys(G)
-	"achievements",
-	"positions",
-	"titles",
-	"docs",
-	"tilesets",
-	"dismantle",
-	"shells_to_gold",
-	"projectiles",
-	"npcs",
-	"craft",
-	"animations",
-	"images",
-	"events",
-	"classes",
-	"levels",
-	"imagesets",
-	"tokens",
-	"dimensions",
-	"geometry",
-	"items",
-	"emotions",
-	"sprites",
-	"maps",
-	"inflation",
-	"version",
-	"games",
-	"cosmetics",
-	"sets",
-	"skills",
-	"drops",
-	"conditions",
-	"monsters",
-	"quests",
-	"base_gold"
+
+	parent.upgrade(locate_item("helmet"), locate_item("scroll0"), null, true, true).then(e=>show_json(e));
+
+
+parent.upgrade takes the same parameters as upgrade. But it supports two more. One that I don't remember exactly what did (left it as true) and the last parameter is for calculate
+
+   socket.emit('upgrade', {
+          item_num,
+          scroll_num,
+          offering_num: null,
+          clevel,
+          calculate: false,
+        });
+
+
+   socket.emit('compound', {
+        items,
+        scroll_num,
+        offering_num: null,
+        clevel,
+        calculate: true
+      });
+  let results = push_deferred('compound');
+
+  socket.emit('upgrade', {
+        item_num,
+        scroll_num,
+        offering_num: null,
+        clevel,
+        calculate: true,
+      });
+  let results = push_deferred('upgrade');
+
+
+parent.upgrade(slot_item, slot_scroll, offering, "code", calculate);
+
+returns a promise. you can either use  .then/.catch on it or if you use async/await you can just const result =  await parent.upgrade(
+
+  ==
+  ACtion skills
+
+  use_skill('blink', [x, y]);
+
+  ===
+  let testing=false;
+let angle=0;
+let radius=100;
+
+//point to circle arround
+let centerX=-0;
+let centerY=0;
+
+let lastMove = 0;
+setInterval(function(){
+        clear_drawings();
+        draw_circle(centerX, centerY, radius);
+        let nextX = centerX + Math.cos(angle)*radius;
+        let nextY = centerY + Math.sin(angle)*radius;
+    
+        if(distance({x: nextX, y: nextY}, character) < 30)
+        {
+            angle += 0.1;
+        }
+        
+        draw_line(centerX, centerY, nextX, nextY);
+    
+        if(!character.moving && new Date() - lastMove > 100)
+        {
+            xmove(nextX,nextY);
+            lastMove = new Date();
+        }
+}, 10);
+
+
+==
+
+
+Kite visualizer
+var draw_debug = true;
+
+function on_draw(){
+  if(draw_debug){
+      clear_drawings();
+
+      draw_circle(character.real_x, character.real_y, character.range);
+
+      var target = get_target(character);
+      if(target){
+          draw_line(character.real_x, character.real_y, target.x, target.y);
+      }
+      if(is_moving(character)){
+          draw_line(character.from_x, character.from_y, character.going_x, character.going_y, 1, 0x33FF42);
+      }
+    }
+
+    for(id in parent.entities){
+      var entity = parent.entities[id];
+      var entity_targ = get_target_of(entity);
+      if(entity_targ && entity_targ.name === character.name && entity.moving){
+        draw_line(entity.from_x, entity.from_y, entity.going_x, entity.going_y, 1, 0xda0b04);
+        draw_circle(entity.x, entity.y, entity.range, 1, 0xda0b04);
+      }
+    }
+}

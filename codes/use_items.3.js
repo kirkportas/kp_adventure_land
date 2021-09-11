@@ -10,18 +10,18 @@ function use_potion() {
 
 	if(character.mp<200) {
 		use_skill('use_mp'); 
-		game_log("Used Magic Potion"); 
+		// game_log("Used Magic Potion"); 
 	} else if(character.hp/character.max_hp<0.7) {
 		use_skill('use_hp'); 
-		game_log("Used Health Potion"); 
+		// game_log("Used Health Potion"); 
 	// Regen counts as an item use.
 	} else if(!is_on_cooldown("regen_hp") && character.hp/character.max_hp<0.9) {
-		game_log('regenned hp');
 		use_skill('regen_hp'); 
+		// game_log('regenned hp');
 	// Regen MP if no potion isused and HP is not regenned
 	} else if(!is_on_cooldown("regen_mp")) {
-		game_log('regenned mp');
 		use_skill('regen_mp'); 
+		// game_log('regenned mp');
 	} 
 
 	//if(character.mp/character.max_mp<0.2) use_skill('use_mp'); 
