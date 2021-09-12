@@ -46,20 +46,20 @@ function main(){
 	// Todo
 	if(character.rip || is_moving(character)) return;
 
-	if (smart.moving) {
-		game_log("walking");
-		return;
-	}
+	// if (smart.moving) {
+	// 	game_log("walking");
+	// 	return;
+	// }
 
-	var current_action = get("merch_action");
+	// var current_action = get("merch_action");
 
-	if (current_action) {
-		game_log("action set");
-		game_log(current_action);
-		take_action(current_action);
-	}  else {
-		set("merch_action", loop[0]);
-	}
+	// if (current_action) {
+	// 	game_log("action set");
+	// 	game_log(current_action);
+	// 	take_action(current_action);
+	// }  else {
+	// 	set("merch_action", loop[0]);
+	// }
 };
 
 

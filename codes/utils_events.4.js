@@ -45,7 +45,7 @@
 // called by the inviter's name - request = someone requesting to join your existing party
 function on_party_request(name) 
 {
-	if (SLAVES.includes(name) || VALS_TOONS.includes(name)) { 
+	if (SLAVES.includes(name) || VALS_TOONS.includes(name) || NameMerchant == name) { 
 		accept_party_request(name);
 	}
 }

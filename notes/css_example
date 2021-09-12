@@ -1,0 +1,53 @@
+function addLogFilters() {
+  if (parent.document.getElementById("logs-menu")) {
+    return;
+  }
+
+  const menu = parent.document.createElement("div");
+  menu.id = "logs-menu";
+  menu.style = "display:box; height: 2em; line-height: 44px";
+
+  const filterMap = {
+    kills: "gray",
+    gold: "gold",
+  };
+
+  for (const filterItem in filterMap) {
+    const css = `.gameentry[style="color: ${filterMap[filterItem]}"] { display: none }`;
+    const styleElement = parent.document.createElement("style");
+    styleElement.id = "logs-hide-" + filterItem;
+    styleElement.className = "css-ai";
+    if (styleElement.styleSheet) {
+      styleElement.styleSheet = css;
+    } else {
+      styleElement.appendChild(parent.document.createTextNode(css));
+    }
+    parent.document.getElementsByTagName("head")[0].appendChild(styleElement);
+
+    const menuItem = parent.document.createElement("button");
+    menuItem.setAttribute(
+      "onclick",
+      'const element = document.getElementById("' +
+        styleElement.id +
+        '"); element.disabled = !element.disabled;'
+    );
+    menuItem.appendChild(parent.document.createTextNode(filterItem));
+    menu.appendChild(menuItem);
+  }
+
+  const rightBottomMenu = parent.document.getElementById("bottomrightcorner");
+  const gameLogUi = parent.document.getElementById("gamelog");
+  rightBottomMenu.insertBefore(menu, gameLogUi);
+}
+
+function removeLogFilter() {
+    const logsMenu = parent.document.getElementById("logs-menu");
+    if (logsMenu) {
+      logsMenu.parentNode.removeChild(logsMenu);
+    }
+  
+    const cssItems = parent.document.getElementsByClassName("css-ai");
+    for (const item of cssItems) {
+      item.parentNode.removeChild(item);
+    }
+}
