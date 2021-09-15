@@ -3,10 +3,64 @@ zNotes
 Screeps People: Rising
 
 https://screeps.com/a/#!/rank/world/2017-09?page=21&highlight=206
-
+https://screeps.com/a/#!/profile/Rising
 
 
 	parent.upgrade(locate_item("helmet"), locate_item("scroll0"), null, true, true).then(e=>show_json(e));
+
+
+set("bank-"+character.name, character.bank)
+show_json(get("bank-"+character.name))
+
+====
+show_json(distance(character, get_player("CurvyMoney"), false))
+
+
+
+
+== REQUEST ITEM MANUALLS 
+
+function request_item_from_all(itemname) {
+  for (char of ["Terazarrior","NoHeals4U","Terranger"]) {
+    var key = "give_items_"+char;
+    var items = get(key);
+    if (!items.includes(itemname)) {
+      items.push(itemname);
+    }
+    set(key, items);
+  }
+}
+
+request_item_from_all("hpamulet");
+show_json(get("give_items_Terazarrior"));
+====
+
+
+
+GET ALL FROM BANK 
+
+show_json(character.bank)
+
+function locate_items(name) {
+  idxs = [];
+  for(var i=0;i<42;i++) {
+    if(character.items[i] 
+      && character.items[i].name==name) {
+      idxs.push(i);
+    }
+  }
+  return idxs;
+}
+var items = locate_items("stringer");
+for (i of items) { bank_retrieve(i); }
+
+
+
+
+
+
+
+
 
 
 parent.upgrade takes the same parameters as upgrade. But it supports two more. One that I don't remember exactly what did (left it as true) and the last parameter is for calculate

@@ -18,7 +18,7 @@ class CommandCenter {
 
 
 init_cmd_center();
-setInterval(update_cmd_center, 1000/2);
+// loopme(update_cmd_center, 1000/2);
 
 let $ = parent.$;
 
@@ -38,14 +38,30 @@ function init_cmd_center() {
 		<div id="wrapper" class="enableclicks">
 			<div class="cmd_header">Command Center</div>
 			<div class="box2">
-				<div id="cmd_followme" 
-					class="enableclicks" 
-					onclick="toggle_follow(this)">
+				<div id="cmd_followme" class="enableclicks">
 					 FOLLOW
 				</div>
 			</div>
-			<div class="box3">Three</div>
-			<div class="box4">Four</div>
+			<div class="box3">
+				<div id="cmd_three" class="enableclicks">
+					 StopChars
+				</div>
+			</div>
+			<div class="box4">
+				<div id="cmd_four" class="enableclicks">
+					 GiveItems
+				</div>
+			</div>
+			<div class="box5">
+				<div id="cmd_five" class="enableclicks">
+					 Upgrade
+				</div>
+			</div>
+			<div class="box6">
+				<div id="cmd_six" class="enableclicks">
+					 Compound
+				</div>
+			</div>
 		</div>
 		`;
 	
@@ -59,6 +75,8 @@ function init_cmd_center() {
 	var $box2 = $wrapper.find('.box2');
 	var $box3 = $wrapper.find('.box3');
 	var $box4 = $wrapper.find('.box4');
+	var $box5 = $wrapper.find('.box5');
+	var $box6 = $wrapper.find('.box6');
 
 	// Note that 
 	// "grid-template-columns": 'repeat(3, 1fr)',  // GOOD
@@ -101,32 +119,55 @@ function init_cmd_center() {
 		'background': 'yellow',
 	});
 	$box4.css({
-		'grid-column': '3',
+		'grid-column': '2',
 		'grid-row': '3',
 		'background': 'blue',
+	});
+	$box5.css({
+		'grid-column': '3',
+		'grid-row': '2',
+		'background': 'white',
+	});
+	$box6.css({
+		'grid-column': '3',
+		'grid-row': '3',
+		'background': 'green',
 	});
 
 	var $btn_followme = $('#cmd_followme');
 	$btn_followme.click(toggle_follow);
 	render_follow_btn();
 
+	var $btn_cmd_three = $('#cmd_three');
+	$btn_cmd_three.click(stop_chars);
+	render_grey_btn($btn_cmd_three);
 
-    // const styleElement = parent.document.createElement("style");
-    // styleElement.id = "testcss";
-    // // styleElement.className = "css-ai";
-    // if (styleElement.styleSheet) {
-    //   styleElement.styleSheet = style_toggle;
-    // } else {
-    //   styleElement.appendChild(parent.document.createTextNode(style_toggle));
-    // }
-    // parent.document.getElementsByTagName("head")[0].appendChild(styleElement);
+	var $btn_cmd_four = $('#cmd_four');
+	$btn_cmd_four.click(give_items_wip);
+	render_grey_btn($btn_cmd_four);
+
+	var $btn_cmd_five = $('#cmd_five');
+	$btn_cmd_five.click(gui_upgrade);
+	render_grey_btn($btn_cmd_five);
+
+	var $btn_cmd_six = $('#cmd_six');
+	$btn_cmd_six.click(gui_compound);
+	render_grey_btn($btn_cmd_six);
+
 
 	// update_cmd_center();
 
-	$test = $('#test');
-	$test.css({
-		'background': 'orange',
-	});
+	// $test = $('#test');
+	// $test.css({
+	// 	'background': 'orange',
+	// });
+}
+
+
+function give_items_wip() {
+	for (item of COMPOUNDABLE) {
+		request_item_from_all(item);
+	}
 }
 
 var follow = false;
@@ -145,26 +186,35 @@ function toggle_follow(elem) {
 	}
 
 	render_follow_btn();
-	$test = $('#test');
-	$test.css({
-			'background': 'orange',
-	});
+	// $test = $('#test');
+	// $test.css({
+	// 		'background': 'orange',
+	// });
+}
+function gui_compound(elem) {
+	game_log("gui_compound");
+	compound_items();
+}
+function gui_upgrade(elem) {
+	upgrade_items();
+}
+upgrade_items
+function stop_chars(elem) {
+	let $ = parent.$;
+	var $btn = $('#cmd_followme');
+
+	game_log('Stopping characters');
+	stop_character(NameRanger);
+	stop_character(NamePriest);
+
 }
 function render_follow_btn() {
 	let $ = parent.$;
 	var $btn = $('#cmd_followme');
-	game_log(follow);
 
 	// Light when not active. Dark when active
 	if (!follow) {
-		$btn.css({
-			'border-radius': '12px',
-			'background': '#e5e5e5',
-			'-webkit-box-shadow': 'inset 0px 0px 5px #c1c1c1',
-			'-moz-box-shadow': 'inset 0px 0px 5px #c1c1c1',
-			'box-shadow': 'inset 0px 0px 5px #c1c1c1',
-			'outline': 'none',
-		}); 
+		render_grey_btn($btn);
 	} else {
 		$btn.css({
 			'border-radius': '12px',
@@ -174,16 +224,34 @@ function render_follow_btn() {
 }
 
 var count = 0;
-function update_cmd_center()
-{
-	let $ = parent.$;
+// function update_cmd_center()
+// {
+// 	let $ = parent.$;
 	
-	$(".box4").html("count: "+count);
-	count++;
-	// game_log('table update: ' +count);
-	// render_follow_btn();
-}
+// 	$(".box4").html("count: "+count);
+// 	count++;
+// }
 
+function gui_active_btn(elem) {
+		$elem.css({
+			'border-radius': '12px',
+			'background': 'grey',
+			'-webkit-box-shadow': 'inset 0px 0px 5px #c1c1c1',
+			'-moz-box-shadow': 'inset 0px 0px 5px #c1c1c1',
+			'box-shadow': 'inset 0px 0px 5px #c1c1c1',
+			'outline': 'none',
+		}); 
+}
+function render_grey_btn($elem) {
+		$elem.css({
+			'border-radius': '12px',
+			'background': '#e5e5e5',
+			'-webkit-box-shadow': 'inset 0px 0px 5px #c1c1c1',
+			'-moz-box-shadow': 'inset 0px 0px 5px #c1c1c1',
+			'box-shadow': 'inset 0px 0px 5px #c1c1c1',
+			'outline': 'none',
+		}); 
+}
 
 //Clean out an pre-existing listeners
 if (parent.prev_handlers_cmd_center) {
