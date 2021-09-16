@@ -70,5 +70,6 @@ function stationary_farm() {
 
 function party_farm() {
 	// default_farm();	
+	kpmove("bees");
 	stationary_farm();
 }

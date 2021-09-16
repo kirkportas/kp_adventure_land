@@ -47,7 +47,20 @@ show_json(get("bank-"+character.name))
 show_json(distance(character, get_player("CurvyMoney"), false))
 
 
-
+===FPS convo
+https://discord.com/channels/238332476743745536/247016485812174848/721746281021833326
+var start=new Date()
+localStorage.setItem("test","1")
+for(var i=0;i<100;i++)
+{
+  //game_log(i);
+    //for(var key in localStorage){}
+    Object.keys(localStorage).forEach(function(key){
+    var foo = get(key);
+    });
+}
+output=mssince(start);
+show_json(output)
 
 == REQUEST ITEM MANUALLS 
 

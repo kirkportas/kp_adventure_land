@@ -45,7 +45,8 @@ function main(){
 	set_message("Farming");
 	// default_farm();	
 	// stationary_farm();
-	default_farm("crabs");
+	party_farm();
+	// default_farm("crabs");
 
 	// End main loop
 	var runtime = Date.now()-start_ts;

@@ -43,8 +43,8 @@ function main(){
 	
 	// default_farm();	
 	// stationary_farm();
-	// party_farm();
-	default_farm("crabs");
+	party_farm();
+	// default_farm("crabs");
 };
 
 
