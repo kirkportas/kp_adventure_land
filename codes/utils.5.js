@@ -16,6 +16,20 @@ function move_to(entity) {
 	smart_move(entity);
 }
 
+function debounce(func, wait, immediate) {
+  var timeout;
+  return function() {
+    var context = this, args = arguments;
+    var later = function() {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+    var callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) func.apply(context, args);
+  };
+};
 
 function regenerate_hp_mp() {
 	// Regen counts as an item use.
@@ -52,10 +66,12 @@ function start_chars() {
 
 // http://adventure.land/docs/code/functions/send_party_invite
 
+var party_up_last_ts = Date.now();
 function party_up() {
 	// Only run once per 2 seconds
-	var should_run = (Date.now() - get(TIMESTAMP_KEY)) > 2000;
+	var should_run = (Date.now() - party_up_last_ts) > 2000;
 	if (!should_run) { return; }
+	party_up_last_ts = Date.now();
 
 	// Logger.log("Checking party_up");
 	var is_in_party = get_party().length != undefined || character.name in get_party();
@@ -311,15 +327,17 @@ function get_upgraded_base_item(itemname, target_lvl, stat_type) {
 			buy(itemname);
 			Logger.log("0 base items available. Buying - "+itemname);
 		} else {
-			var item = character.items[upgradeable_item_idx].level;
-			if (item.level == 6) {
+			var item = character.items[upgradeable_item_idx];
+			Logger.log(`Item (${itemname}) level (${item.level})`);
+
+			var is_statupgradeable = "stat" in G.items[itemname];
+			var is_statupgraded = "stat_type" in item;
+
+			if (item.level == 6 && is_statupgradeable && !is_statupgraded) {
 				// Apply stat scroll
 				set_message("StatUpgrade");
-				var is_statupgradeable = "stat" in G.items[itemname];
-				var is_statupgraded = "stat_type" in item;
-				if (is_statupgradeable && !is_statupgraded) {
-					upgrade_item_stat(upgradeable_item_idx, stat_type);
-				}
+				Logger.log("Stat upgrade at level: "+item.level);
+				upgrade_item_stat(upgradeable_item_idx, stat_type);
 			} else {
 				set_message("ItemUpgrade");
 				upgrade_item(upgradeable_item_idx);
