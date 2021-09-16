@@ -1,14 +1,45 @@
 zNotes
 
+
+
+cd ~/AppData/Roaming/Adventure\ Land/autosync4984500319158272/adventureland
+
+
+parapohrase an error:
+Steam Ticket Failed: Error on getting encrypted app ticket.
+
+
 Screeps People: Rising
 
 https://screeps.com/a/#!/rank/world/2017-09?page=21&highlight=206
 https://screeps.com/a/#!/profile/Rising
 
+==
 
+FPS issues
+Tried:
+- Disable Nvidia overlay (geforce experience settings)
+- Disable Discord game overlay
+- Turn off Curseforge/Overworlf ()
+- Turn off Windows10 Xbox Game Bar (windows "graphics settings")
+
+
+===
+
+
+
+start_character("Terranger","default");
+start_character("NoHeals4U","default");
+
+start_character("Terranger","Terranger");
+start_character("NoHeals4U","NoHeals4U");
+stop_character("Terranger");
+stop_character("NoHeals4U");
+----
 	parent.upgrade(locate_item("helmet"), locate_item("scroll0"), null, true, true).then(e=>show_json(e));
 
 
+===
 set("bank-"+character.name, character.bank)
 show_json(get("bank-"+character.name))
 

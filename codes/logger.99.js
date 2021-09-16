@@ -1,5 +1,6 @@
 // "use strict";
 
+// Note this is Kirk's Screeps logger, lightly modified for use in Adventureland.
 /* README
  * To use this Logger, place these 3 lines at the *very top* of main.js, before any prototype extensions
  *
@@ -66,8 +67,8 @@ var Logger = class Logger {
     constructor () {
         Logger.ACTIVE = true;
         Logger.MODULES = {
-            ROOM:          false,
-            ROOMPOSITION:   false,
+            // ROOM:          false,
+            // ROOMPOSITION:   false,
         };
 
         // Logger.indentation = ["", "  ", "    ", "      ", "        ", "          ", "            ", "              ", "                ", "                ", "                  ", "                    ", "                      ", "                        ", "                          ", "                            ", "                              ", "                                ", "                                  ", "                                    ", "                                      ", "                                        "];
@@ -88,12 +89,8 @@ var Logger = class Logger {
             this._init = true;
             var methods = [];
             if (Logger.MODULES.ROOM) {
-                this.wrap('Room', Room, 'find');
-                this.wrap('Room', Room, 'findPath');
-            }
-            if (Logger.MODULES.ROOMPOSITION) {
-                this.wrap('RoomPosition', RoomPosition, 'findPathTo');
-                this.wrap('RoomPosition', RoomPosition, 'findClosestByPath');
+                // this.wrap('Room', Room, 'find');
+                // this.wrap('Room', Room, 'findPath');
             }
         }
     }
@@ -133,6 +130,7 @@ var Logger = class Logger {
      * @param {String} msg
      */
     static functionEnter (name) {
+        if (!Logger.ACTIVE) { return; }
         Logger.log( '--> ' + name, true, false );
         Logger.level ++;
     }
@@ -142,11 +140,18 @@ var Logger = class Logger {
      * @param {String} msg
      */
     static functionExit (name, tReq) {
+        if (!Logger.ACTIVE) { return; }
         Logger.level --;
         Logger.log( '<-- ' + name  + ' [' + tReq.toFixed(2) + '] ', false, true);
     }
 
+    // Override methods to ensure a logstack never builds.
+    // As a result the # of "game_log()" calls will be 0
+    // static functionEnter (name) { }
+    // static functionExit (name, tReq) { }
+
     static logPrintStack () {
+        if (!Logger.ACTIVE) { return; }
         for ( let i = 0; i < Logger.logStack.length; i ++ ) {
             game_log(Logger.logStack[i]);
             console.log(Logger.logStack[i]);
@@ -159,6 +164,7 @@ var Logger = class Logger {
      * @param {String} msg
      */
     static log (msg, enter = false, exit = false) {
+        if (!Logger.ACTIVE) { return; }
         if ( enter ) {
             Logger.logStack.push( Logger.logMessage(msg) );
             Logger.logStackEnterLevel[Logger.level] = Logger.logStack.length;
@@ -184,6 +190,7 @@ var Logger = class Logger {
      * @param {String} msg
      */
     static logError (msg) {
+        if (!Logger.ACTIVE) { return; }
         Logger.log( 'ERROR: ' + msg );
     }
 
@@ -192,10 +199,12 @@ var Logger = class Logger {
      * @param {String} obj
      */
     static logDebug (obj) {
+        if (!Logger.ACTIVE) { return; }
         Logger.log( 'DEBUG: ' + JSON.stringifyOnce(obj) );
     }
 
     static logMessage (msg) {
+        if (!Logger.ACTIVE) { return; }
         if (Logger.indentation[Logger.level] === undefined) {
             console.log('Logger error line 161');
             console.log(`Logger.level: ${Logger.level}`);

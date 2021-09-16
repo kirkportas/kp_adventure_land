@@ -2,14 +2,25 @@
 
 game_log("Loading farming (15)");
 
+var name_map = {
+	'crabs': 'crab',
+};
+
 function default_farm(mon_type) {
+	if (mon_type) {
+		kpmove(mon_type);
+	}
+	// Set plurals to single. e.g. "crabs" -> "crab"
+	if (mon_type in name_map) {
+		mon_type = name_map[mon_type];
+	}
 	var target=get_targeted_monster();
 	if(!target)
 	{
 		if (mon_type) {
-			target=get_nearest_monster({min_xp:900,max_att:70, type:mon_type});
+			target=get_nearest_monster({min_xp:100,max_att:100, type:mon_type});
 		} else {
-			target=get_nearest_monster({min_xp:900,max_att:70});
+			target=get_nearest_monster({min_xp:100,max_att:100});
 		}
 		//target=get_nearest_monster({min_xp:1000,max_att:30,path_check:true});
 		if(target) change_target(target);
