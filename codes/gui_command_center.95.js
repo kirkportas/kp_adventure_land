@@ -164,8 +164,16 @@ function init_cmd_center() {
 }
 
 
+// This adds an itemname to a localstorage Key
+// Each key is specific to fighter character names.
+// The fighter will attempt to give those items if the Merchant is in range.
+// When a fighter has no more, the key will be removed from their "give queue"
 function give_items_wip() {
+	game_log("give_items_wip()");
 	for (item of COMPOUNDABLE) {
+		request_item_from_all(item);
+	}
+	for (item of ["wshoes","wcap"]) {
 		request_item_from_all(item);
 	}
 }
@@ -192,7 +200,6 @@ function toggle_follow(elem) {
 	// });
 }
 function gui_compound(elem) {
-	game_log("gui_compound");
 	compound_items();
 }
 function gui_upgrade(elem) {

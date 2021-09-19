@@ -1,41 +1,56 @@
-// Hey there!
-// This is CODE, lets you control your character with code.
-// If you don't know how to code, don't worry, It's easy.
-// Just set attack_mode to true and ENGAGE!
-
-var attack_mode=true;
-set_message("Start!");
+// Line 1
 game_log("Loading Warrior char file");
 
-// game_log([1,2,3].slice(0,1));
-load_code("utils_init"); 
+var attack_mode=true;
 
-setInterval(main, 1000/4); // Loops every 1/4 seconds.
+var FPS_TESTING = false;
+if (!FPS_TESTING) {
+	game_log("NOT FPS testing");
+	load_code("utils_init");
+	setInterval(main, 1000/4); // Loops every 1/4 seconds.
+} else {
+	game_log("FPS testing");
+	try { load_code("use_items"); } 	    catch(err) { Logger.log("Error loading use_items: "+err); }
+	setInterval(default_main, 1000/4); // Loops every 1/4 seconds.
+}
 
+// FPS Testing only
+function default_main(){
+	use_potion();
+	if(!attack_mode || character.rip || is_moving(character)) return;
+	var target=get_targeted_monster();
+	if(!target) {
+		target=get_nearest_monster({min_xp:100,max_att:120});
+		if(target) { change_target(target); }
+		else { set_message("No Monsters"); return; }
+	}
+	if(!is_in_range(target)) { 
+		move(character.x+(target.x-character.x)/2,character.y+(target.y-character.y)/2); 
+	} else if(can_attack(target)) {
+		set_message("Attacking");
+		attack(target);
+	}
+}
 
 function main(){
+	start_ts = Date.now();
 	Logger.functionEnter("Main ("+character.name+")");
-	var start_ts = Date.now();
 
-	Logger.functionEnter("Loading shared_executions");
-	load_code("shared_executions"); // Cast Regens.. respawn
-	Logger.functionExit("Loading shared_executions", 0);
-
+	run_shared_executions();
 	use_potion(); // use_hp_or_mp();
 	loot();
 
 	if(!attack_mode || is_moving(character)) return;
 	
-	// compound_items();
-
 	set_message("Farming");
 	// default_farm();	
-	stationary_farm();
-	// default_farm("snake");
+	// stationary_farm();
+	party_farm();
+	// default_farm("crabs");
 
+	// End main loop
 	var runtime = Date.now()-start_ts;
-	// game_log("runtime: "+runtime+"ms");
-	Logger.log("Get runtime");
+	// Logger.log("Get runtime"); // Uncomment to ensure logger prints a block
 	Logger.functionExit("Main ("+character.name+")",runtime);
 	Logger.logPrintStack();
 }

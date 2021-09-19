@@ -1,7 +1,8 @@
 
 
 const LOCATIONS = {
-	"bees": {'x': 194, 'y': 1474},
+	"bees": {'x': 194, 'y': 1474, 'range':150},
+	"crabs": {'x': -1184, 'y': -70, 'range':300},
 };
 
 function kpmove(loc_name){
@@ -9,7 +10,7 @@ function kpmove(loc_name){
 	var x = LOCATIONS[loc_name].x;
 	var y = LOCATIONS[loc_name].y;
 	if (!is_moving(character)) {
-		if (distance_from_location(loc_name) > 5) {
+		if (distance_from_location(loc_name) > LOCATIONS[loc_name].range) {
 			Logger.log("Moving to: "+loc_name);
 			// game_log("Moving to: "+loc_name);
 			smart_move(x,y);

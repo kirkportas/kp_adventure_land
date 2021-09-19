@@ -1,14 +1,45 @@
 zNotes
 
+
+
+cd ~/AppData/Roaming/Adventure\ Land/autosync4984500319158272/adventureland
+
+
+parapohrase an error:
+Steam Ticket Failed: Error on getting encrypted app ticket.
+
+
 Screeps People: Rising
 
 https://screeps.com/a/#!/rank/world/2017-09?page=21&highlight=206
 https://screeps.com/a/#!/profile/Rising
 
+==
 
+FPS issues
+Tried:
+- Disable Nvidia overlay (geforce experience settings)
+- Disable Discord game overlay
+- Turn off Curseforge/Overworlf ()
+- Turn off Windows10 Xbox Game Bar (windows "graphics settings")
+
+
+===
+
+
+
+start_character("Terranger","default");
+start_character("NoHeals4U","default");
+
+start_character("Terranger","Terranger");
+start_character("NoHeals4U","NoHeals4U");
+stop_character("Terranger");
+stop_character("NoHeals4U");
+----
 	parent.upgrade(locate_item("helmet"), locate_item("scroll0"), null, true, true).then(e=>show_json(e));
 
 
+===
 set("bank-"+character.name, character.bank)
 show_json(get("bank-"+character.name))
 
@@ -16,7 +47,20 @@ show_json(get("bank-"+character.name))
 show_json(distance(character, get_player("CurvyMoney"), false))
 
 
-
+===FPS convo
+https://discord.com/channels/238332476743745536/247016485812174848/721746281021833326
+var start=new Date()
+localStorage.setItem("test","1")
+for(var i=0;i<100;i++)
+{
+  //game_log(i);
+    //for(var key in localStorage){}
+    Object.keys(localStorage).forEach(function(key){
+    var foo = get(key);
+    });
+}
+output=mssince(start);
+show_json(output)
 
 == REQUEST ITEM MANUALLS 
 
