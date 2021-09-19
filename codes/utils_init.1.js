@@ -3,7 +3,7 @@ set_message("Start!");
 
 load_code("Logger");
 Logger._.init();
-Logger.ACTIVE=false;
+Logger.ACTIVE=true;
 game_log("LOGGER INACTIVE");
 
 
@@ -44,13 +44,18 @@ if (character.name == NameValWarrior) {
 
 
 // Configure upgrade/compound actions
-const max_level_compound = 2;
-const max_level_upgrade = 3;
+const max_level_compound = 3;
+const max_level_upgrade = 3; // Only used for a GUI function (intended for lowlevel)
 const COMPOUNDABLE = ["hpamulet","ringsj","hpbelt"];
-const UPGRADEABLE = ["wshoes"];
 const UPGRADEABLE_LEVELS = {
-	"wshoes": 3
+	"wshoes": 6,
+	"wcap": 6,
+	"slimestaff": 5,
+	"stinger": 7     // Maybe trash
 }
+const UPGRADEABLE = Object.keys(UPGRADEABLE_LEVELS);
+const FARMABLE = ["crabclaw","beewings","seashell","gem0"];
+TRASH = []; ["stinger"];
 
 // These localstorage vars are used for passing items to the Merchant
 set("give_items_"+NameWarrior, []);

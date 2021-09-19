@@ -6,7 +6,16 @@ var name_map = {
 	'crabs': 'crab',
 };
 
+// Abort farm mission if attack_mode is disabled.
+// This is used for a town-retreat when the script fails
+// future use will be upon a battle loss 
+function should_abort() {
+	return !attack_mode;
+}
+
 function default_farm(mon_type) {
+	if (should_abort()) { return; }
+
 	if (mon_type) {
 		kpmove(mon_type);
 	}
@@ -47,6 +56,8 @@ function default_farm(mon_type) {
 }
 
 function stationary_farm() {
+	if (should_abort()) { return; }
+	
 	// game_log("Stationary_farming");
 	var target=get_targeted_monster();
 	if(!target || !is_in_range(target))
@@ -69,6 +80,8 @@ function stationary_farm() {
 }
 
 function party_farm() {
+	if (should_abort()) { return; }
+
 	// default_farm();	
 	kpmove("bees");
 	stationary_farm();

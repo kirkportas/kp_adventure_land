@@ -3,7 +3,7 @@ zNotes
 
 
 cd ~/AppData/Roaming/Adventure\ Land/autosync4984500319158272/adventureland
-
+yarn add --dev jest
 
 parapohrase an error:
 Steam Ticket Failed: Error on getting encrypted app ticket.
@@ -25,9 +25,11 @@ Tried:
 
 
 ===
-
-
-
+show_json(get_nearest_monster({'type':'phoenix'}))
+// smart_move(get_nearest_monster({'type':'phoenix'}))
+===
+game_log('run_once')
+==
 start_character("Terranger","default");
 start_character("NoHeals4U","default");
 

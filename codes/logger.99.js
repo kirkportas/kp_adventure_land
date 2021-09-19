@@ -141,8 +141,12 @@ var Logger = class Logger {
      */
     static functionExit (name, tReq) {
         if (!Logger.ACTIVE) { return; }
-        Logger.level --;
-        Logger.log( '<-- ' + name  + ' [' + tReq.toFixed(2) + '] ', false, true);
+        try {   
+            Logger.level --;
+            Logger.log( '<-- ' + name  + ' [' + tReq.toFixed(2) + '] ', false, true);
+        } catch(err) {
+            game_log("ERROR on `functionExit()`, likely a missing runtime as 2nd arg");
+        }
     }
 
     // Override methods to ensure a logstack never builds.

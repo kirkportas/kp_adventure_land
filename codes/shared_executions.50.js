@@ -8,6 +8,15 @@ function run_shared_executions() {
 		// Todo reset action 
 	}
 
+	// Abort whatever's happening and retreat
+	if (character.hp < character.max_hp*0.2) {
+		Logger.log("Aborting and fleeing to town!");
+		game_log("Aborting and fleeing to town!");
+		attack_mode = false;
+		use_skill("use_town");
+		return;
+	}
+
 	party_up();
 	// regenerate_hp_mp();
 
@@ -28,7 +37,6 @@ function run_shared_executions() {
 		// kpmove("crabs");
 	}
 
-	TRASH = ["stinger"];
 	// if (character.name == NameMerchant) {
 	// 	trading();
 	// }
@@ -76,13 +84,13 @@ function trading() {
 		
 		var items_to_send = get("give_items_"+character.name);
 
-		for (item of items_to_send) {
-			Logger.log("Trying to send item: "+item);
+		for (itemname of items_to_send) {
+			Logger.log("Trying to send item: "+itemname);
 
-			var result = give_all_of_single_item(item);
-			var item_idx = locate_item(item);
+			var result = give_all_of_single_item(itemname);
+			var item_idx = locate_item(itemname);
 			if (item_idx==-1) {
-				items_to_send.splice(items_to_send.indexOf(item), 1);
+				items_to_send.splice(items_to_send.indexOf(itemname), 1);
 				set("give_items_"+character.name, items_to_send);
 			}
 

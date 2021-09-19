@@ -170,12 +170,13 @@ function init_cmd_center() {
 // When a fighter has no more, the key will be removed from their "give queue"
 function give_items_wip() {
 	game_log("give_items_wip()");
-	for (item of COMPOUNDABLE) {
+	var all_to_get = COMPOUNDABLE.concat(TRASH, FARMABLE, UPGRADEABLE);
+	for (item of all_to_get) {
 		request_item_from_all(item);
 	}
-	for (item of ["wshoes","wcap"]) {
-		request_item_from_all(item);
-	}
+	// for (item of ["wshoes","wcap"]) {
+	// 	request_item_from_all(item);
+	// }
 }
 
 var follow = false;

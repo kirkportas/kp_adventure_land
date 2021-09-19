@@ -20,7 +20,13 @@ function use_potion() {
 		// game_log('regenned hp');
 	// Regen MP if no potion isused and HP is not regenned
 	} else if(!is_on_cooldown("regen_mp")) {
-		use_skill('regen_mp'); 
+		if (character.mp < character.max_mp){
+			use_skill('regen_mp');	
+		} else if (character.hp < character.max_hp) {
+			use_skill('regen_hp');	
+		} else {
+			// Do nothing to avoid item cooldown time
+		}
 		// game_log('regenned mp');
 	} 
 

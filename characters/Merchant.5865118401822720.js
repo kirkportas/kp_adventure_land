@@ -18,12 +18,63 @@ function main(){
 	// Todo
 	if(character.rip || is_moving(character)) return;
 
-	for (item of ["helmet","shoes","gloves","pants","coat"]) {
-		// send_item("Terranger", locate_item(item), 1);
-		var did_upgrade = get_upgraded_base_item(item, 7, "dexscroll"); // intscroll strscroll
-		if (did_upgrade) {
-			break;
+
+	sell_all_trash();
+	compound_items();
+
+	var did_upgrade = false;
+	// Logger.functionEnter("handle UPGRADEABLE_LEVELS");
+	// for (var [item, maxlvl] of Object.entries(UPGRADEABLE_LEVELS)) {
+	// 	// send_item("Terranger", locate_item(item), 1);
+	// 	did_upgrade = upgrade_all_item(item, maxlvl, "dexscroll"); // intscroll strscroll
+	// 	if (did_upgrade) {
+	// 		Logger.log("did_update = true");
+	// 		break;
+	// 	}
+	// }
+	// Logger.functionExit("handle UPGRADEABLE_LEVELS", 0);
+
+	var base_armor_list = ["helmet","shoes","gloves","pants","coat"];
+
+	if (!did_upgrade) {
+		Logger.functionEnter("Warrior base items");
+		for (item of ["blade","wshield"].concat(base_armor_list)) {
+			// send_item("Terranger", locate_item(item), 1);
+			// var did_upgrade = upgrade_all_item(item, 9, "dexscroll"); // intscroll strscroll dexscroll
+			did_upgrade = get_upgraded_base_item(item, 7, "strscroll"); 
+			if (did_upgrade) {
+				Logger.log("did_update = true");
+				break;
+			}
 		}
+		Logger.functionExit("Warrior base items", 0);
+	}
+
+	// This will not work right because it doesn't track the Stat upgrade on items.
+	if (!did_upgrade) {
+		Logger.functionEnter("Ranger base items");
+		for (item of ["bow"].concat(base_armor_list)) {
+			// send_item("Terranger", locate_item(item), 1);
+			// var did_upgrade = upgrade_all_item(item, 9, "dexscroll"); // intscroll strscroll dexscroll
+			did_upgrade = get_upgraded_base_item(item, 9, "dexscroll"); 
+			if (did_upgrade) {
+				Logger.log("did_update = true");
+				break;
+			}
+		}
+		Logger.functionExit("Ranger base items", 0);
+	}
+	if (!did_upgrade) {
+		Logger.functionEnter("INT base items");
+		for (item of ["staff"].concat(base_armor_list)) {
+			// send_item("Terranger", locate_item(item), 1);
+			// var did_upgrade = upgrade_all_item(item, 9, "dexscroll"); // intscroll strscroll dexscroll
+			var did_upgrade = get_upgraded_base_item(item, 9, "intscroll"); 
+			if (did_upgrade) {
+				break;
+			}
+		}
+		Logger.functionExit("INT base items", 0);
 	}
 
 	// End main loop
