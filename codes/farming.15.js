@@ -16,9 +16,10 @@ function should_abort() {
 function default_farm(mon_type) {
 	if (should_abort()) { return; }
 
-	if (mon_type) {
-		kpmove(mon_type);
-	}
+	// Disabled for Bats
+	// if (mon_type) {
+	// 	kpmove(mon_type);
+	// }
 	// Set plurals to single. e.g. "crabs" -> "crab"
 	if (mon_type in name_map) {
 		mon_type = name_map[mon_type];
@@ -79,10 +80,79 @@ function stationary_farm() {
 	}
 }
 
+function support_leader() {
+	if (should_abort()) { return; }
+
+	if (!is_moving(character)) {
+		move_to_leader();
+	}
+
+	// show_json(get_entity("Terranger").target)
+	// show_json(get_entity(get_entity("Terranger").target))
+	// var ranger_target = get_entity("Terranger").target;
+	// game_log(ranger_target);
+	// change_target(ranger_target)
+	// show_json(get_entity(get_entity("Terranger").target))
+
+	// The key:
+	// change_target(parent.entities[ranger_target])
+
+	var target=get_targeted_monster();
+	if (!target && "target" in get_entity(LEADER)) {
+		var leader_target_id = get_entity(LEADER).target;
+		var mob_obj = parent.entities[leader_target_id];
+
+		if(mob_obj) {
+			// Logger.log("Changing target to leader target");
+			change_target(mob_obj);
+		} else {
+			Logger.log("Can't target leader target");
+			set_message("Can't target");
+			return;
+		}
+	}
+	target=get_targeted_monster();
+		
+	// if(!is_in_range(target))
+	// {
+	// 	// Walk half the distance
+	// 	move(character.x+(target.x-character.x)/2,
+	// 		character.y+(target.y-character.y)/2 );
+	// }
+	
+	if(can_attack(target)) {
+		set_message("Attacking");
+		attack(target);
+	} else {
+		// Leader has no target
+	}
+}
+/*
+maps:
+"main", "cave"
+*/
+
+
+// function party_farm() {
+// 	if (should_abort()) { return; }
+
+// 	// default_farm();
+// 	kpmove("bees");
+// 	stationary_farm();
+// }
+
 function party_farm() {
 	if (should_abort()) { return; }
 
-	// default_farm();	
-	kpmove("bees");
-	stationary_farm();
+	// default_farm();
+	// kpmove("bees");
+	// stationary_farm();
+	// return;
+	if (character.name == LEADER) {
+		default_farm("snake");	
+	}
+	if (SLAVES.includes(character.name)) {
+		support_leader();
+		// transport("main",4)
+	}
 }

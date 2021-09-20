@@ -5,6 +5,8 @@ const LOCATIONS = {
 	"crabs": {'x': -1184, 'y': -70, 'range':300},
 };
 
+// transport("main",4) // Exit cave 
+// transport("cave",0) // Enter cave 
 function kpmove(loc_name){
 	// game_log("loc_name: "+loc_name);
 	var x = LOCATIONS[loc_name].x;
@@ -23,6 +25,13 @@ function move_to_town(){
 	}
 }
 
+//Returns the distance of the character to a point in the world.
+function distance_to_point(x, y) {
+    return Math.sqrt(Math.pow(character.real_x - x, 2) + Math.pow(character.real_y - y, 2));
+}
+function distance_to_entity(entity) {
+    return Math.sqrt(Math.pow(character.real_x - entity.x, 2) + Math.pow(character.real_y - entity.y, 2));
+}
 function distance_from_coord(x,y) {
 	var curr_x = character.x;
 	var curr_y = character.y;
@@ -36,6 +45,16 @@ function distance_from_location(loc_name) {
 
 	var distance = Math.abs(loc_x-character.x) + Math.abs(loc_y-character.y);
 	return distance;
+}
+
+// Move if farther away than 70
+function move_to_leader() {
+	if (is_moving(character)) { return; }
+
+	if (70 < distance(character, parent.entities[LEADER], true)) {
+		move(character.x+(parent.entities[LEADER].x-character.x)/2,
+			  character.y+(parent.entities[LEADER].y-character.y)/2 );
+	}
 }
 
 /*

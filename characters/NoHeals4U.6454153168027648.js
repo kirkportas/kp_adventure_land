@@ -7,7 +7,7 @@ var FPS_TESTING = false;
 if (!FPS_TESTING) {
 	game_log("NOT FPS testing");
 	load_code("utils_init");
-	setInterval(main, 1000/4); // Loops every 1/4 seconds.
+	setInterval(main, 1000/5); // Loops every 1/4 seconds.
 } else {
 	game_log("FPS testing");
 	try { load_code("use_items"); } 	    catch(err) { Logger.log("Error loading use_items: "+err); }
@@ -34,23 +34,23 @@ function default_main(){
 
 function main(){
 	start_ts = Date.now();
-	Logger.functionEnter("Main ("+character.name+")");
-	run_shared_executions();
 
-	use_potion(); // use_hp_or_mp();
+	const logFnName = "Main ("+character.name+")";
+	Logger.functionEnter(logFnName);
+	run_shared_executions();
+	use_potion(); 
 	loot();
 	
-	if(!attack_mode || is_moving(character)) return;
+	if (attack_mode && !is_moving(character)) {
+		// default_farm();	
+		// stationary_farm();
+		party_farm();
+		// default_farm("crabs");
 
-	// default_farm();	
-	// stationary_farm();
-	party_farm();
-	// default_farm("crabs");
-
-
+	}
 	// End main loop
 	var runtime = Date.now()-start_ts;
-	Logger.functionExit("Main ("+character.name+")",runtime);
+	Logger.functionExit(logFnName,runtime);
 	Logger.logPrintStack();
 }; 
 
