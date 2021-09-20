@@ -432,13 +432,16 @@ function get_upgraded_nonbase_item(itemname, target_lvl, stat_type) {
 
 function upgrade_all_item(itemname, target_lvl, stat_type) {
 	if (character.q.upgrade) { return; }
-
+	
 	var upgradeable_item_idx = locate_item_below_level(itemname, target_lvl);
 	if (upgradeable_item_idx == -1) {
-		Logger.log("No item available: "+itemname);
+		// Logger.log("No item available: "+itemname);
 		return false;
 	} else {
 		var item = character.items[upgradeable_item_idx];
+		if (item.level >= target_lvl) {
+			return;
+		}
 		Logger.log(`Item (${itemname}) level (${item.level})`);
 
 		var is_statupgradeable = "stat" in G.items[itemname];

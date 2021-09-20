@@ -47,15 +47,22 @@ if (character.name == NameValWarrior) {
 const max_level_compound = 3;
 const max_level_upgrade = 3; // Only used for a GUI function (intended for lowlevel)
 const COMPOUNDABLE = ["hpamulet","ringsj","hpbelt"];
+
 const UPGRADEABLE_LEVELS = {
 	"wshoes": 6,
 	"wcap": 6,
-	"slimestaff": 5,
+	"slimestaff": 7,
 	"stinger": 7     // Maybe trash
 }
+// Default all shop items to lvl 6 (to help clear out inventory)
+const shop_items = ["helmet","shoes","gloves","pants","coat", "bow","blade","staff"];
+for (itemname of shop_items) {
+	UPGRADEABLE_LEVELS[itemname] = 6;
+} 
+
 const UPGRADEABLE = Object.keys(UPGRADEABLE_LEVELS);
 const FARMABLE = ["crabclaw","beewings","seashell","gem0"];
-TRASH = []; ["stinger"];
+TRASH = []; //["stinger"];
 
 // These localstorage vars are used for passing items to the Merchant
 set("give_items_"+NameWarrior, []);
