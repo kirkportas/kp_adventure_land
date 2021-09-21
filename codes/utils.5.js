@@ -431,8 +431,8 @@ function get_upgraded_nonbase_item(itemname, target_lvl, stat_type) {
 
 
 function upgrade_all_item(itemname, target_lvl, stat_type) {
-	if (character.q.upgrade) { return; }
-	
+	if (character.q.upgrade) { return true; }
+
 	var upgradeable_item_idx = locate_item_below_level(itemname, target_lvl);
 	if (upgradeable_item_idx == -1) {
 		// Logger.log("No item available: "+itemname);

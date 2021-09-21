@@ -51,9 +51,26 @@ function distance_from_location(loc_name) {
 function move_to_leader() {
 	if (is_moving(character)) { return; }
 
-	if (70 < distance(character, parent.entities[LEADER], true)) {
-		move(character.x+(parent.entities[LEADER].x-character.x)/2,
-			  character.y+(parent.entities[LEADER].y-character.y)/2 );
+	var lead_entity = parent.entities[LEADER];
+	try {
+		if (lead_entity == undefined) {
+			var p = get_party();
+			var destination = {'x': p[LEADER].x, 'y': p[LEADER].y, 'map': p[LEADER].map}
+			smart_move(destination);
+			return;
+		}
+	} catch(err) { 
+		game_log("cant check LEADER in Entities"); 
+	}
+
+	try {
+		if (100 < distance(character, parent.entities[LEADER], true)) {
+			move(character.x+(lead_entity.x-character.x)/2,
+				  character.y+(lead_entity.y-character.y)/2 );
+		}
+	} catch(err) {
+		game_log("Error closing range in move_to_leader()"); 
+		smart_move(lead_entity);
 	}
 }
 

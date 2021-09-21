@@ -103,10 +103,13 @@ function support_leader() {
 		var mob_obj = parent.entities[leader_target_id];
 
 		if(mob_obj) {
+			// game_log(mob_obj.target);
 			// Logger.log("Changing target to leader target");
-			change_target(mob_obj);
+			if ("target" in mob_obj && mob_obj.target == LEADER) {
+				change_target(mob_obj);
+			}
 		} else {
-			Logger.log("Can't target leader target");
+			// Logger.log("Can't target leader target");
 			set_message("Can't target");
 			return;
 		}
@@ -149,7 +152,7 @@ function party_farm() {
 	// stationary_farm();
 	// return;
 	if (character.name == LEADER) {
-		default_farm("snake");	
+		default_farm("bat");	
 	}
 	if (SLAVES.includes(character.name)) {
 		support_leader();
