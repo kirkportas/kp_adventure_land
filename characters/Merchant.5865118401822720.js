@@ -21,9 +21,10 @@ function level_8_shop_upgrades() {
 	Logger.functionExit("Level 8 upgrades", 0)
 }
 
+
+const logFnName = "Main ("+character.name+")";
 function main(){
 	start_ts = Date.now();
-	const logFnName = "Main ("+character.name+")";
 	Logger.functionEnter(logFnName);
 
 	run_shared_executions();
@@ -52,8 +53,8 @@ function main(){
 	Logger.functionExit("handle UPGRADEABLE_LEVELS", 0);
 
 	// Early-game: Get some/all shop items to lvl 9
-	if (!did_upgrade) {
-		level_8_shop_upgrades();
+	if (character.gold > 1000000 && !did_upgrade) {
+		// level_8_shop_upgrades();
 	}
 
 	var base_armor_list = ["helmet","shoes","gloves","pants","coat"];

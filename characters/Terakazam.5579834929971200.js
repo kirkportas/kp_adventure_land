@@ -1,5 +1,5 @@
 // Line 1
-game_log("Loading Ranger char file");
+game_log("Loading Mage char file");
 load_code("utils_init");
 var attack_mode=true;
 
@@ -12,7 +12,7 @@ function main(){
 	start_ts = Date.now();
 
 	run_shared_executions();
-	use_potion();
+	use_potion(); 
 	loot();
 
 	if (attack_mode && !is_moving(character)) {
@@ -26,4 +26,6 @@ function main(){
 	var runtime = Date.now()-start_ts;
 	Logger.functionExit(logFnName,runtime);
 	Logger.logPrintStack();
-};
+}
+// Learn Javascript: https://www.codecademy.com/learn/introduction-to-javascript
+// Write your own CODE: https://github.com/kaansoral/adventureland
