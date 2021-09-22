@@ -47,6 +47,14 @@ function distance_from_location(loc_name) {
 	return distance;
 }
 
+/*
+var foo = "Terranger";
+var p = get_party();
+var destination = {'x': p[foo].x, 'y': p[foo].y, 'map': p[foo].map}
+
+show_json(destination)
+smart_move(destination)
+*/
 // Move if farther away than 70
 function move_to_leader() {
 	if (is_moving(character)) { return; }

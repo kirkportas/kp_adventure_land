@@ -1,25 +1,9 @@
 // Line 1
 game_log("Loading Merchant char file");
-load_code("utils_init");
+load_code("utils_init", function(){ game_log("Error loading utils_init"); });
 
 
 setInterval(main, 1000/2); 
-
-
-function level_8_shop_upgrades() {
-	var upgrade_targets_nine = ["bow"]; //"staff", "bow", "blade"];
-	Logger.functionEnter("Level 8 upgrades");
-	for (item of upgrade_targets_nine) {
-		// send_item("Terranger", locate_item(item), 1);
-		// var did_upgrade = upgrade_all_item(item, 9, "dexscroll"); // intscroll strscroll dexscroll
-		did_upgrade = get_upgraded_base_item(item, 8, "strscroll"); 
-		if (did_upgrade) {
-			Logger.log("did_upgrade = true");
-			break;
-		}
-	}
-	Logger.functionExit("Level 8 upgrades", 0)
-}
 
 
 const logFnName = "Main ("+character.name+")";

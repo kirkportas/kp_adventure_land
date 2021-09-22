@@ -1,3 +1,4 @@
+game_log("Starting load_code(shared_executions)");
 Logger.functionEnter("Loading shared_executions");
 
 
@@ -21,7 +22,13 @@ function run_shared_executions() {
 	// regenerate_hp_mp();
 
 	Logger.functionEnter("trading()"); 
-	trading();
+	try {
+		trading();
+	} catch(err) {
+		game_log("Error in trading()");
+		game_log(err);
+	}
+	
 	Logger.functionExit("trading()", Date.now()-start_ts);
 
 	if (character.name == LEADER) {
@@ -81,24 +88,29 @@ function trading() {
 			// Logger.log("Merchant not in range ("+NameMerchant+")");
 			return; 
 		}
-		
-		var items_to_send = get("give_items_"+character.name);
+		var key = "give_items_"+character.name;
+		var items_to_send = get(key);
 
-		for (itemname of items_to_send) {
-			Logger.log("Trying to send item: "+itemname);
+		try {
+			for (itemname of items_to_send) {
+				Logger.log("Trying to send item: "+itemname);
 
-			var result = give_all_of_single_item(itemname);
-			var item_idx = locate_item(itemname);
-			if (item_idx==-1) {
-				items_to_send.splice(items_to_send.indexOf(itemname), 1);
-				set("give_items_"+character.name, items_to_send);
+				var result = give_all_of_single_item(itemname);
+				var item_idx = locate_item(itemname);
+				if (item_idx==-1) {
+					items_to_send.splice(items_to_send.indexOf(itemname), 1);
+					set("give_items_"+character.name, items_to_send);
+				}
+
+				if (character.gold > 100000) {
+					game_log("character.gold: "+character.gold);
+					send_gold(NameMerchant,character.gold - 90000);
+				}
 			}
-
-			if (character.gold > 100000) {
-				game_log("character.gold: "+character.gold);
-				send_gold(NameMerchant,character.gold - 90000);
-			}
+		} catch(err) {
+			set(key, [])
 		}
 	}
 }
 Logger.functionExit("Loading shared_executions", Date.now()-start_ts);
+game_log("Finished load_code(shared_executions)");

@@ -213,7 +213,7 @@ function sell_all_trash(){
 function give_all_of_single_item(item) {
 	// number_of_items = get_item_quantity(item);
 	var item_idx = locate_item(item);
-	if(item_idx > 0) {
+	if(item_idx >= 0) {
 		var item = character.items[item_idx];
 		var quantity = item.q ? item.q : 1;
 		send_item(NameMerchant, item_idx, quantity);

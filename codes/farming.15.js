@@ -28,9 +28,9 @@ function default_farm(mon_type) {
 	if(!target)
 	{
 		if (mon_type) {
-			target=get_nearest_monster({min_xp:100,max_att:100, type:mon_type});
+			target=get_nearest_monster({min_xp:100,max_att:200, type:mon_type});
 		} else {
-			target=get_nearest_monster({min_xp:100,max_att:100});
+			target=get_nearest_monster({min_xp:100,max_att:200});
 		}
 		//target=get_nearest_monster({min_xp:1000,max_att:30,path_check:true});
 		if(target) change_target(target);
@@ -82,9 +82,13 @@ function stationary_farm() {
 
 function support_leader() {
 	if (should_abort()) { return; }
+	if (get_party()[LEADER] == undefined) { return; }
 
 	if (!is_moving(character)) {
 		move_to_leader();
+	}
+	if (is_moving(character)) {
+		return;
 	}
 
 	// show_json(get_entity("Terranger").target)
@@ -105,7 +109,8 @@ function support_leader() {
 		if(mob_obj) {
 			// game_log(mob_obj.target);
 			// Logger.log("Changing target to leader target");
-			if ("target" in mob_obj && mob_obj.target == LEADER) {
+			//  && mob_obj.target == LEADER
+			if ("target" in mob_obj) {
 				change_target(mob_obj);
 			}
 		} else {
@@ -151,10 +156,11 @@ function party_farm() {
 	// kpmove("bees");
 	// stationary_farm();
 	// return;
+
 	if (character.name == LEADER) {
 		default_farm("bat");	
 	}
-	if (SLAVES.includes(character.name)) {
+	if (SLAVES.includes(character.name)) {	
 		support_leader();
 		// transport("main",4)
 	}

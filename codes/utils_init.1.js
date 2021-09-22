@@ -9,7 +9,7 @@ game_log("LOGGER INACTIVE");
 
 Logger.functionEnter("Loading utils_init");
 
-// Switch these to lower execution time while debugging
+
 const LOADGUI = false;
 const LOADSLAVES = true;
 
@@ -23,18 +23,22 @@ const NameRanger = "Terranger";
 const NamePriest = "NoHeals4U";
 const NameWarrior = "Terazarrior";
 const NameMerchant = "CurvyMoney";
+const NameMage = "Terakazam";
 // For console pasting: ["Terazarrior","NoHeals4U","Terranger"]
 
-var LEADER = NameWarrior;
-var SLAVES = [NameRanger, NamePriest];
-const ALLTOONS = [NameWarrior,NameRanger, NamePriest];
-const VALS_TOONS = ["AlextheGreat"]
+const LEADER = NameWarrior;
+
+// var SLAVES = [NameRanger, NamePriest];    // **********************
+const SLAVES = [NameRanger, NameMage];
+
+// Used for verifying that the requested is "friendly" for party requests
+const ALLTOONS = [NameWarrior,NameRanger, NamePriest, NameMage];
+const VALS_TOONS = ["AlextheGreat"];
 
 // Val's characters 
 const NameValWarrior = "AlextheGreat";
 const NameValMage = "LadyMary";
 
-// Used for verifying that the requested is "friendly" for party requests
 
 // Val's leader. (Overwrite values for Kirk if Val is using the code)
 if (character.name == NameValWarrior) {
@@ -42,18 +46,20 @@ if (character.name == NameValWarrior) {
 	SLAVES = [NameValMage];
 }
 
-
 // Configure upgrade/compound actions
 const max_level_compound = 3;
 const max_level_upgrade = 3; // Only used for a GUI function (intended for lowlevel)
-const COMPOUNDABLE = ["hpamulet","ringsj","hpbelt"];
+const COMPOUNDABLE = ["hpamulet","ringsj","hpbelt","wbook0"];
 
 const UPGRADEABLE_LEVELS = {
 	"wshoes": 6,
 	"wcap": 6,
+	"wgloves": 5,
+	"wattire": 3,
 	"slimestaff": 7,
-	"stinger": 7     // Maybe trash
-}
+	"stinger": 5,     // Maybe trash
+	"pants1": 5       //RuggedPants
+};
 // Default all shop items to lvl 6 (to help clear out inventory)
 const shop_items = ["helmet","shoes","gloves","pants","coat", "bow","blade","staff"];
 for (itemname of shop_items) {
@@ -61,7 +67,7 @@ for (itemname of shop_items) {
 } 
 
 const UPGRADEABLE = Object.keys(UPGRADEABLE_LEVELS);
-const FARMABLE = ["crabclaw","beewings","seashell","gem0"];
+const FARMABLE = ["crabclaw","beewings","seashell","gem0", "stinger","bwing","wbook0","snakeoil"];
 TRASH = []; //["stinger"];
 
 // These localstorage vars are used for passing items to the Merchant
@@ -74,6 +80,7 @@ set("give_items_"+NameRanger, []);
 Logger.functionEnter("Loading shared code files");
 	try { load_code("shared_executions"); } catch(err) { Logger.log("Error loading shared_executions: "+err); }
 	try { load_code("use_items"); } 	    catch(err) { Logger.log("Error loading use_items: "+err); }
+	try { load_code("upgrade_items"); } 	catch(err) { Logger.log("Error loading upgrade_items: "+err); }
 	try { load_code("farming"); } 		    catch(err) { Logger.log("Error loading farming: "+err); }
 	try { load_code("utils"); } 		    catch(err) { Logger.log("Error loading utils: "+err); }
 	try { load_code("utils_events"); } 	    catch(err) { Logger.log("Error loading utils_events: "+err); }
@@ -81,7 +88,6 @@ Logger.functionEnter("Loading shared code files");
 	// var init_comms = false;
 	// try { load_code("comms"); }    			catch(err) { Logger.log("Error loading comms: "+err); } 
 Logger.functionExit("Loading shared code files", 0);
-
 
 if (character.name == LEADER) {
 // if (character.name == "DONTRUN") {
@@ -108,7 +114,6 @@ if (character.name == LEADER) {
 	}
 }
 
-
 // Val
 if (character.name == NameValWarrior) {
 	load_code("gui_minimap"); 
@@ -125,8 +130,6 @@ if (character.name == NameMerchant) {
 Logger.functionExit("Loading utils_init", 0);
 Logger.logPrintStack();
 
-
 // GUI Customizations one-offs
-
 // Widen the game log area
 parent.$('#gamelog').css({'width':'450px'});

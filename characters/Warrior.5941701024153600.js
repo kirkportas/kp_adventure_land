@@ -1,6 +1,8 @@
 // Line 1
 game_log("Loading Warrior char file");
 load_code("utils_init");
+game_log("main: utils_init completed");
+game_log("NameMerchant: "+NameMerchant);
 var attack_mode=true;
 
 setInterval(main, 1000/5); // Loops every 1/4 seconds.
