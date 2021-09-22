@@ -14,7 +14,11 @@ function should_abort() {
 }
 
 function default_farm(mon_type) {
-	if (should_abort()) { return; }
+	if (should_abort()) { 
+		game_log("ABORTING DEFAULT FARM()");
+		set_message("ABORTING");
+		return; 
+	}
 
 	// Disabled for Bats
 	// if (mon_type) {
@@ -28,9 +32,9 @@ function default_farm(mon_type) {
 	if(!target)
 	{
 		if (mon_type) {
-			target=get_nearest_monster({min_xp:100,max_att:200, type:mon_type});
+			target=get_nearest_monster({min_xp:100,max_att:250, type:mon_type});
 		} else {
-			target=get_nearest_monster({min_xp:100,max_att:200});
+			target=get_nearest_monster({min_xp:100,max_att:250});
 		}
 		//target=get_nearest_monster({min_xp:1000,max_att:30,path_check:true});
 		if(target) change_target(target);

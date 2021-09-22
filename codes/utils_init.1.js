@@ -57,7 +57,7 @@ const UPGRADEABLE_LEVELS = {
 	"wgloves": 5,
 	"wattire": 3,
 	"slimestaff": 7,
-	"stinger": 5,     // Maybe trash
+	// "stinger": 5,     // Maybe trash
 	"pants1": 5       //RuggedPants
 };
 // Default all shop items to lvl 6 (to help clear out inventory)
@@ -68,7 +68,8 @@ for (itemname of shop_items) {
 
 const UPGRADEABLE = Object.keys(UPGRADEABLE_LEVELS);
 const FARMABLE = ["crabclaw","beewings","seashell","gem0", "stinger","bwing","wbook0","snakeoil"];
-TRASH = []; //["stinger"];
+// TRASH = []; 
+var TRASH = ["stinger"];
 
 // These localstorage vars are used for passing items to the Merchant
 set("give_items_"+NameWarrior, []);
@@ -78,6 +79,7 @@ set("give_items_"+NameRanger, []);
 
 // Load utility functions (potions..)
 Logger.functionEnter("Loading shared code files");
+	try { load_code("mainloop"); } 			catch(err) { Logger.log("Error loading mainloop: "+err); }
 	try { load_code("shared_executions"); } catch(err) { Logger.log("Error loading shared_executions: "+err); }
 	try { load_code("use_items"); } 	    catch(err) { Logger.log("Error loading use_items: "+err); }
 	try { load_code("upgrade_items"); } 	catch(err) { Logger.log("Error loading upgrade_items: "+err); }

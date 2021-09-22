@@ -212,15 +212,23 @@ function sell_all_trash(){
 
 function give_all_of_single_item(item) {
 	// number_of_items = get_item_quantity(item);
-	var item_idx = locate_item(item);
-	if(item_idx >= 0) {
-		var item = character.items[item_idx];
-		var quantity = item.q ? item.q : 1;
-		send_item(NameMerchant, item_idx, quantity);
+	let item_idxs = locate_items(item);
+	for (idx of item_idxs) {
+		let item = character.items[idx];
+		let quantity = item.q ? item.q : 1;
+		send_item(NameMerchant, idx, quantity);
 		return true;
-	} else {
-		return false;
-	}
+	} 
+	
+	// var item_idx = locate_item(item);
+	// if(item_idx >= 0) {
+	// 	var item = character.items[item_idx];
+	// 	var quantity = item.q ? item.q : 1;
+	// 	send_item(NameMerchant, item_idx, quantity);
+	// 	return true;
+	// } else {
+	// 	return false;
+	// }
 }
 
 function compound_items(){

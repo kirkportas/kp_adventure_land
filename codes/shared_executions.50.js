@@ -4,8 +4,12 @@ Logger.functionEnter("Loading shared_executions");
 
 function run_shared_executions() {
 	if (character.rip) {
-		Logger.log("respawning");
-		parent.socket.emit("respawn");
+		// Don't respawn on a PVP server.
+		// If dead, party was probably attacked and killed.
+		if (!is_pvp()) {
+			Logger.log("respawning");
+			parent.socket.emit("respawn");
+		}
 		// Todo reset action 
 	}
 
@@ -95,7 +99,7 @@ function trading() {
 			for (itemname of items_to_send) {
 				Logger.log("Trying to send item: "+itemname);
 
-				var result = give_all_of_single_item(itemname);
+				give_all_of_single_item(itemname);
 				var item_idx = locate_item(itemname);
 				if (item_idx==-1) {
 					items_to_send.splice(items_to_send.indexOf(itemname), 1);
