@@ -1,4 +1,7 @@
 const logFnName = "Main ("+character.name+")";
+
+var loopCount = 0;
+
 function mainloop(){
 	Logger.functionEnter(logFnName);
 	start_ts = Date.now();
@@ -13,6 +16,9 @@ function mainloop(){
 		// stationary_farm();
 		party_farm();
 	}
+
+	// Track executions. Maybe use this as a proxy for "ticks"
+	loopCount++;
 
 	// End main loop
 	var runtime = Date.now()-start_ts;

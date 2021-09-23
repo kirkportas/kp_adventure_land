@@ -104,9 +104,20 @@ function support_leader() {
 
 	// The key:
 	// change_target(parent.entities[ranger_target])
-
+	if (character.name == NamePriest) {
+		// Heal if the missing HP is greater than the healpower
+		let weakest = lowest_health_partymember();
+		let missing_hp = weakest.max_hp - weakest.hp;
+		let should_heal = missing_hp > character.attack;
+		// let should_heal = weakest.health_ratio < 0.85;
+		
+		if (should_heal) {
+			heal(weakest);
+			return;
+		}
+	}
 	var target=get_targeted_monster();
-	if (!target && "target" in get_entity(LEADER)) {
+	if (!target && get_entity(LEADER) && "target" in get_entity(LEADER)) {
 		var leader_target_id = get_entity(LEADER).target;
 		var mob_obj = parent.entities[leader_target_id];
 
@@ -162,10 +173,13 @@ function party_farm() {
 	// return;
 
 	if (character.name == LEADER) {
-		default_farm("bat");	
+		// default_farm();
+		default_farm("snake");
+		// default_farm("scorpion");	
 	}
 	if (SLAVES.includes(character.name)) {	
-		support_leader();
+		default_farm("snake");
+		// support_leader();
 		// transport("main",4)
 	}
 }

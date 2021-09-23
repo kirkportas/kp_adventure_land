@@ -5,6 +5,11 @@ const LOCATIONS = {
 	"crabs": {'x': -1184, 'y': -70, 'range':300},
 };
 
+// function is_in_location(loc_name) {
+// 	show_json(distance(character, {x: -108, y:-143}) < 400);
+// 	show_json(character.map)
+// }
+
 // transport("main",4) // Exit cave 
 // transport("cave",0) // Enter cave 
 function kpmove(loc_name){
@@ -56,8 +61,13 @@ show_json(destination)
 smart_move(destination)
 */
 // Move if farther away than 70
+var last_called_move_to_leader = Date.now();
 function move_to_leader() {
 	if (is_moving(character)) { return; }
+	if (Date.now() - last_called_move_to_leader < 500) {
+		return;
+	}
+	last_called_move_to_leader = Date.now();
 
 	var lead_entity = parent.entities[LEADER];
 	try {

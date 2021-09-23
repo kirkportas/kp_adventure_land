@@ -14,6 +14,24 @@ Screeps People: Rising
 https://screeps.com/a/#!/rank/world/2017-09?page=21&highlight=206
 https://screeps.com/a/#!/profile/Rising
 
+===
+function sort_inventory() {
+    var moveStuff = {
+        'mpot0': 1,
+        'goldbooster': 0,
+        'luckbooster': 0,
+        'xpbooster': 0,
+    };
+    for (var i = 0; i < 42; i++) {
+        var item = character.items[i];
+        if (item && Object.keys(moveStuff).includes(item.name)) {
+            parent.socket.emit("imove", {
+                a: i, 
+                b: moveStuff[item.name]
+        }
+    }
+}
+
 ==
 
 FPS issues

@@ -52,7 +52,7 @@ function start_chars() {
 		game_log(Date.now() - last_start_char_ts);
 		if (Date.now() - last_start_char_ts > 15000) {	
 			var party = get_party();
-			for (char of SLAVES) {
+			for (char of ACTIVE_PARTY) {
 				if (!(char in party)) {
 					start_character(char, char);
 					game_log("Starting character: " + char);

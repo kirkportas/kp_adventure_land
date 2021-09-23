@@ -20,6 +20,12 @@ function run_shared_executions() {
 		attack_mode = false;
 		use_skill("use_town");
 		return;
+	} else {
+		if (attack_mode == false) {		
+			Logger.log("Health recovering, no longer fleeing.");
+			game_log("Health recovering, no longer fleeing.");
+			attack_mode = true;
+		}
 	}
 
 	party_up();

@@ -29,7 +29,8 @@ const NameMage = "Terakazam";
 const LEADER = NameWarrior;
 
 // var SLAVES = [NameRanger, NamePriest];    // **********************
-const SLAVES = [NameRanger, NameMage];
+const SLAVES = [NameRanger, NameMage, NamePriest];
+const ACTIVE_PARTY = [NameRanger, NamePriest];
 
 // Used for verifying that the requested is "friendly" for party requests
 const ALLTOONS = [NameWarrior,NameRanger, NamePriest, NameMage];
@@ -56,18 +57,22 @@ const UPGRADEABLE_LEVELS = {
 	"wcap": 6,
 	"wgloves": 5,
 	"wattire": 3,
+	"wshield": 7,
 	"slimestaff": 7,
 	// "stinger": 5,     // Maybe trash
 	"pants1": 5       //RuggedPants
+	// Weapons
 };
 // Default all shop items to lvl 6 (to help clear out inventory)
-const shop_items = ["helmet","shoes","gloves","pants","coat", "bow","blade","staff"];
+const shop_items = ["helmet","shoes","gloves","pants","coat", "bow","blade","staff","wshield"];
 for (itemname of shop_items) {
-	UPGRADEABLE_LEVELS[itemname] = 6;
+	UPGRADEABLE_LEVELS[itemname] = 7;
 } 
 
 const UPGRADEABLE = Object.keys(UPGRADEABLE_LEVELS);
-const FARMABLE = ["crabclaw","beewings","seashell","gem0", "stinger","bwing","wbook0","snakeoil"];
+var FARMABLE = ["crabclaw","beewings","seashell","gem0", "stinger","bwing","wbook0","snakeoil"];
+FARMABLE = FARMABLE.concat(["vitearring","strearring","dexearring","intearring"]);
+FARMABLE = FARMABLE.concat(["vitamulet","stramulet","dexamulet","intamulet"]);
 // TRASH = []; 
 var TRASH = ["stinger"];
 

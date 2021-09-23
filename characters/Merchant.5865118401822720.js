@@ -2,11 +2,11 @@
 game_log("Loading Merchant char file");
 load_code("utils_init", function(){ game_log("Error loading utils_init"); });
 
-
+var attack_mode = true; // Just for use in fleeing.
 setInterval(main, 1000/2); 
 
 
-const logFnName = "Main ("+character.name+")";
+let logFnName = "Main ("+character.name+")";
 function main(){
 	start_ts = Date.now();
 	Logger.functionEnter(logFnName);
@@ -16,8 +16,10 @@ function main(){
 	use_potion();
 
 	// Todo
-	if(character.rip || is_moving(character)) return;
-
+	if(character.rip || is_moving(character)) {
+		Logger.functionExit(logFnName, 0);
+		return;
+	}
 
 	sell_all_trash();
 	compound_items();
@@ -40,7 +42,7 @@ function main(){
 	if (character.gold > 1000000 && !did_upgrade) {
 		// level_8_shop_upgrades();
 	}
-
+	
 	var base_armor_list = ["helmet","shoes","gloves","pants","coat"];
 	// if (!did_upgrade) {
 	// 	Logger.functionEnter("Warrior base items");
