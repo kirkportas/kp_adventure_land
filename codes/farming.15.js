@@ -136,16 +136,19 @@ function stationary_farm() {
 function heal_party_member() {
 
 	if (character.name == NamePriest) {
-		if (is_on_cooldown("attack")) {
-			return false;
-		}
 		// Heal if the missing HP is greater than the healpower
 		let weakest = lowest_health_partymember();
 		let missing_hp = weakest.max_hp - weakest.hp;
 		let heal_power = character.attack*0.8; // Heal with wasted 20%
 
 		let should_heal = missing_hp > heal_power || weakest.health_ratio < 0.8;
-		
+		if (weakest.health_ratio < 0.4) {
+			game_log("partyheal! Please don't die!");
+			use_skill("partyheal");
+		}
+		if (is_on_cooldown("attack")) {
+			return false;
+		}
 		if (should_heal) {
 			if (is_in_range(weakest)) {
 				game_log("Healing: "+weakest.name);
@@ -216,6 +219,8 @@ maps:
 "main", "cave"
 */
 
+
+var RARE_MOB_TYPES = ["cutebee","greenjr","goldenbat","phoenix","squigtoad"];
 function party_farm() {
 	if (should_abort()) { return; }
 
@@ -224,9 +229,19 @@ function party_farm() {
 	// stationary_farm();
 	// return;
 
-	var greenjr_target = get_nearest_monster({"type":"greenjr"});
+	// var greenjr_target = get_nearest_monster({"type":"greenjr"});
 
-	if (greenjr_target) {
+	// Stop and kill any rare mobs that spawn nearby
+	let rare_target = undefined;
+	for (rare_type of RARE_MOB_TYPES) {
+		rare_target = get_nearest_monster({"type":rare_type});
+		if (rare_target) {
+			break;
+		}
+	} 
+
+
+	if (rare_target) {
 		if (character.name == LEADER) {
 			default_farm("greenjr");
 		}

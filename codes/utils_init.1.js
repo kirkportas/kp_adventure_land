@@ -50,11 +50,11 @@ if (character.name == NameValWarrior) {
 // Configure upgrade/compound actions
 const max_level_upgrade = 3; // Only used for a GUI function (intended for lowlevel)
 const UPGRADEABLE_LEVELS = {
-	"wshoes": 6,
 	"wcap": 6,
-	"wgloves": 5,
+	"wgloves": 6,
+	"wbreeches": 6,
+	"wshoes": 5,
 	"wattire": 3,
-	"wbreeches": 3,
 	"wshield": 7,
 	"slimestaff": 7,
 	// "stinger": 5,     // Maybe trash
@@ -62,8 +62,9 @@ const UPGRADEABLE_LEVELS = {
 	"pants1": 5,       //RuggedPants
 	"coat1": 5,
 	"shoes1": 5,
-	"helmet1": 5
+	"helmet1": 5,
 	// Weapons
+	"pmace": 5,
 };
 
 const max_level_compound = 3;
@@ -83,11 +84,16 @@ for (itemname of shop_items) {
 } 
 
 const UPGRADEABLE = Object.keys(UPGRADEABLE_LEVELS);
-var FARMABLE = ["crabclaw","beewings","seashell","gem0","bwing","snakeoil","snakefang"];
+
+var LOW_CRAFT_ITEMS = ["gslime","crabclaw","beewings","seashell","bwing","snakeoil","snakefang","spores","whiteegg"];
+var FARMABLE = ["gem0"];
+FARMABLE = FARMABLE.concat(LOW_CRAFT_ITEMS);
 FARMABLE = FARMABLE.concat(["vitearring","strearring","dexearring","intearring"]);
 FARMABLE = FARMABLE.concat(["vitamulet","stramulet","dexamulet","intamulet"]);
 FARMABLE = FARMABLE.concat(["candy0","candy1"]);
 FARMABLE = FARMABLE.concat(["stinger","wbook0"]);
+FARMABLE = FARMABLE.concat(["vitscroll","scroll0","scroll1"]);
+
 // TRASH = []; 
 var TRASH = ["stinger"];
 
@@ -107,6 +113,7 @@ Logger.functionEnter("Loading shared code files");
 	try { load_code("utils"); } 		    catch(err) { Logger.log("Error loading utils: "+err); }
 	try { load_code("utils_events"); } 	    catch(err) { Logger.log("Error loading utils_events: "+err); }
 	try { load_code("utils_movement"); }    catch(err) { Logger.log("Error loading utils_movement: "+err); } 
+	try { load_code("stats"); }    			catch(err) { Logger.log("Error loading stats: "+err); } 
 	// var init_comms = false;
 	// try { load_code("comms"); }    			catch(err) { Logger.log("Error loading comms: "+err); } 
 Logger.functionExit("Loading shared code files", 0);
@@ -155,3 +162,18 @@ Logger.logPrintStack();
 // GUI Customizations one-offs
 // Widen the game log area
 parent.$('#gamelog').css({'width':'450px'});
+
+
+/**** Stats ********************************************************/
+
+// BESTIARY
+var STATS_BESTIARY_KEY = "stats_bestiary";
+if (character.name == NameWarrior) {
+	initialize_bestiary();
+}
+var STATS_BESTIARY = get(STATS_BESTIARY_KEY);
+// wipe access to bestiary for any other characters.
+if (character.name != NameWarrior) {
+	STATS_BESTIARY_KEY = "test";
+	STATS_BESTIARY = undefined;
+}

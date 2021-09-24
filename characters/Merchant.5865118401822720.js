@@ -4,6 +4,8 @@ load_code("utils_init", function(){ game_log("Error loading utils_init"); });
 
 var attack_mode = true; // Just for use in fleeing.
 setInterval(main, 1000/2); 
+setInterval(pontyPurchase, 15000);
+setInterval(joinGiveAways, 29000);
 
 function main(){
 	start_ts = Date.now();
@@ -40,6 +42,15 @@ function main(){
 		// Early-game: Get some/all shop items to lvl 9
 		if (character.gold > 1000000 && !did_upgrade) {
 			// level_x_shop_upgrades(8);
+		}
+	}
+	// Store items in "items1", the 2nd from right in southern row. (Gabriella)
+	if (character.in == "bank") {
+		for (itemname of LOW_CRAFT_ITEMS) {
+			let itemidx = locate_item(itemname);
+			if (itemidx >= 0) {
+				bank_store(itemidx, "items1");
+			}
 		}
 	}
 	

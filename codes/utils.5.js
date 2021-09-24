@@ -254,3 +254,116 @@ function get_item_grade(item) {
 // const grade = item_grade(item);
 // const scroll_name = SCROLLS_BY_ITEM_GRADE[grade];
 // const slot_scroll = locate_item(scroll_name);
+
+
+// https://github.com/farettig/adventure-land/blob/b810b96f58eef462b2dd493073499acee0a79d48/merchantSkills.js
+// Adapted From Lotus
+/*
+Example of data[0], e.g. a pontyItem
+{
+	"name": "wshoes",
+	"level": 0,
+	"rid": "iqxfs"
+}
+
+
+
+// Snippet to add a new item:
+	let ITEM_TO_ADD = "cape";
+	let QUANTITY = 4;
+	let ponty_key = "ponty_items_to_buy";
+	let ponty_desired = get(ponty_key);
+	ponty_desired[ITEM_TO_ADD] = QUANTITY;
+	set(ponty_key, ponty_desired));
+	show_json(get(ponty_key));
+	
+*/
+
+function pontyPurchase()
+{
+	// Load from localStorage
+	let ponty_key = "ponty_items_to_buy";
+	if (!get(ponty_key) || get(ponty_key) == {}) {
+		// Name and quantity
+		let desired = {
+			"strearring": 6,
+			"intearring": 6,
+			"dexearring": 6,
+			"cape": 4,
+		}
+		set(ponty_key, desired);
+	}
+
+	let debug = true; // Set to false to debug
+	parent.socket.emit("secondhands");
+    let itemsToBuy = get(ponty_key);
+    parent.socket.once("secondhands", function (data)
+    {    
+    	let should_save = false;
+        for (let pontyItem of data) {
+        	if (!debug) {
+        		game_log(pontyItem);
+				show_json(pontyItem);
+        		debug = true;
+        	}
+
+            let buy = false;
+            
+            // Ponty cost multiplied is 2
+            // Skip if too expensive or can't afford
+            let cost = parent.calculate_item_value(item) * 2 * (item.q ?? 1);
+            if (cost > character.gold) continue;
+            if (cost > 2 * 1000000) continue;
+
+            // if (itemsToBuy.includes(pontyItem.name)) {
+            if (pontyItem.name in itemsToBuy) {
+            	if (itemsToBuy[pontyItem.name] > 0) {
+            		itemsToBuy[pontyItem.name]--;
+                	buy = true;
+                	should_save = true;
+            	}
+            }
+
+            if (buy) {
+                log("Buying " + G.items[pontyItem.name].name + " from Ponty!");
+                parent.socket.emit("sbuy", { "rid": pontyItem.rid });
+            }
+        }
+        // Save after any purchases.
+        if (should_save) {
+			set(ponty_key, itemsToBuy);
+        } else {
+        	game_log("No desired items at Ponty");
+        }
+    });
+
+    // parent.socket.emit("secondhands");
+}
+
+function joinGiveAways(){
+  let joined = false;
+  for(let id in parent.entities)
+    {
+        let entity = parent.entities[id];
+        if(entity.id != character.id)
+        {
+            for(let slot_name in entity.slots)
+            {
+                let slot = entity.slots[slot_name];
+                if(slot && slot.giveaway)
+                {
+                    if(!slot.list.includes(character.id))
+                    {
+                        parent.join_giveaway(slot_name,entity.id,slot.rid);
+                        joined = true;
+                    }
+                }
+            }
+        }
+    }
+    if (joined) {
+    	game_log("Joined a giveaway!");
+    } else {
+    	game_log("No giveaways active.");
+    }
+}

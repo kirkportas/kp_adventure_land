@@ -24,6 +24,7 @@ function compound_items(){
 				// });
 
 				// builtin method 
+				use_skill("massproduction");
 				compound(item_idxs[0],item_idxs[1],item_idxs[2],scroll_idx);
 				// game_log("result: "+result);
 			}

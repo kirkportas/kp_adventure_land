@@ -20,6 +20,145 @@ TODO: Investigate GAME APIs
 - http://adventure.land/docs/code/functions/get_active_characters
 
 
+== For banking library
+
+/* Bank Slot Guide
+A1:Jane      | items6
+A2:Christie  | items4
+A3:Christina | items5
+A4:Janet     | items7
+B1:Ledia     | items2
+B2:Gabrielle | items0
+B3:Gabriella | items1
+B4:Lidia     | items3
+*/
+
+
+
+6  |  4  |  5  |  7
+---------------
+2  |  0  |  1  |  3
+
+
+so like since the physical bank tabs look like this
+
+0 1 2 3
+4 5 6 7
+
+and you first start with 5 & 6 already open, 
+but say you purchase #4, then that would become items3 i believe
+
+so instead of it being 
+
+items0, items1, items2, items3
+items4, items5, items6, items7
+
+it would actually be depending on the order you buy something like this
+
+items7, items6, items5, items2
+items3, items0, items1, items4
+
+
+==
+Future Crypt issues:
+
+There's some issue in the crypt where characters leaving the crypt will still be visible there. I can still see them in parent.entities. Happened on disconnect and also just now after killing a1.
+
+Dre4mc4tcher — 02/23/2021
+Regardless the new dungeon is awesome didn't have so much fun in a while after wiping like 20 or more times the Crypt is cleared :slight_smile: The new monsters are really cool the one I found most dangerous was Orlok his zappers are very powerful. It took me some time to understand how to get around Elenas ability. Some monsters can be kited freeze is nice to have. I did the movement manually im pretty sure othervise i would have died even more.
+
+
+==
+
+ protected async infoLoop(): Promise<void> {
+        // Add info about ourselves
+        const party: PartyInfo = getPartyInfo()
+        party[character.name] = {
+            "lastSeen": new Date(),
+            "shouldSwitchServer": this.shouldSwitchServer(),
+            "monsterHuntTargets": this.getMonsterHuntTargets(),
+            "items": getInventory(),
+            "attack": character.attack,
+            "frequency": character.frequency,
+            "goldm": character.goldm,
+            "last_ms": character.last_ms,
+            "luckm": character.luckm,
+            "map": character.map,
+            "x": character.real_x,
+            "y": character.real_y,
+            "s": character.s
+        }
+        setPartyInfo(party)
+
+
+add_bottom_button("movement", "Movement", () => { this.holdPosition = !this.holdPosition });
+
+
+==
+Movement
+
+don't use parent.character, use character. parent.character.x is the characters position within the game window, while character.x is the characters position within the map.
+
+
+I would use an object to represent the coordinate to walk to. So maybe something like this
+coords_to_visit.push({map: char.map, x: char.x, y: char.y});
+Then you just pass the object to smart_move
+smart_move(coord);
+
+
+The characters in charlist are smart_movable.
+You can smart_move(charlist[0]).
+
+==
+localStorage notes
+All CODE-set keys will be prepended with "c_store"
+
+Examples: 
+Object.keys(localStorage) 
+14: "cstore_stats_bestiary"
+18: "cstore_give_items_Terazarrior"
+==
+
+
+for (key in {1:"one",2:"two"}) console.log(key)
+=>  1, 2
+
+==
+let key = "test";
+if (!get(key)) { set(key, {})};
+show_json(get(key))
+==
+buy from monster hunter
+
+exchange_buy("monstertoken","tracker")
+
+==
+parent.next_skill shows when Cooldowns fade for all skills.
+
+== giveaway
+
+function joinGiveAways(){
+  for(let id in parent.entities)
+    {
+        let entity = parent.entities[id];
+        if(entity.id != character.id)
+        {
+            for(let slot_name in entity.slots)
+            {
+                let slot = entity.slots[slot_name];
+                if(slot && slot.giveaway)
+                {
+                    if(!slot.list.includes(character.id))
+                    {
+                        parent.join_giveaway(slot_name,entity.id,slot.rid);
+                    }
+                }
+            }
+        }
+    }
+}
+joinGiveAways()
+
 
 ===
 function sort_inventory() {
