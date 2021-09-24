@@ -269,14 +269,15 @@ Example of data[0], e.g. a pontyItem
 
 
 // Snippet to add a new item:
-	let ITEM_TO_ADD = "cape";
-	let QUANTITY = 4;
+	let ITEM_TO_ADD = "gslime";
+	let ITEM_TO_ADD = "crabclaw";
+	let QUANTITY = 10000;
 	let ponty_key = "ponty_items_to_buy";
 	let ponty_desired = get(ponty_key);
 	ponty_desired[ITEM_TO_ADD] = QUANTITY;
-	set(ponty_key, ponty_desired));
+	set(ponty_key, ponty_desired);
 	show_json(get(ponty_key));
-	
+
 */
 
 function pontyPurchase()
@@ -311,14 +312,15 @@ function pontyPurchase()
             
             // Ponty cost multiplied is 2
             // Skip if too expensive or can't afford
-            let cost = parent.calculate_item_value(item) * 2 * (item.q ?? 1);
-            if (cost > character.gold) continue;
-            if (cost > 2 * 1000000) continue;
+            // TODO broken, always returns 1 
+            // let cost = parent.calculate_item_value(item) * 2 * (item.q ?? 1);
+            // if (cost > character.gold) continue;
+            // if (cost > 2 * 1000000) continue;
 
             // if (itemsToBuy.includes(pontyItem.name)) {
             if (pontyItem.name in itemsToBuy) {
             	if (itemsToBuy[pontyItem.name] > 0) {
-            		itemsToBuy[pontyItem.name]--;
+            		itemsToBuy[pontyItem.name] = itemsToBuy[pontyItem.name] - (item.q ?? 1);
                 	buy = true;
                 	should_save = true;
             	}
@@ -367,3 +369,6 @@ function joinGiveAways(){
     	game_log("No giveaways active.");
     }
 }
+
+
+game_log("Finished load_code( utils )");

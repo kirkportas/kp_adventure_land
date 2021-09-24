@@ -30,3 +30,4 @@ function on_cm(name,data)
 	}
 	show_json(data);
 }
+game_log("Finished load_code( comms )");

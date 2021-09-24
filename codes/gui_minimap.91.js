@@ -364,3 +364,6 @@ function getAngles(a, b, c) {
 	angleB = Math.abs((angleAB - angleBC) * (180/Math.PI));
 	return [angleA, angleB];
 }
+
+
+game_log("Finished load_code( gui_minimap )");

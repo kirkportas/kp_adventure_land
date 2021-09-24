@@ -1,7 +1,4 @@
 
-
-game_log("Loading use_items (3)");
-
 function use_potion() {
 	if(is_on_cooldown("use_hp")) return;
 
@@ -26,3 +23,6 @@ function use_potion() {
 		}
 	} 
 }
+
+
+game_log("Finished load_code( use_items )");

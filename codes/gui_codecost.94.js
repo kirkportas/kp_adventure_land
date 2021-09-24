@@ -74,3 +74,4 @@ function ccmeter_playerhandler(event){
 }
 
 register_ccmeterhandler("player", ccmeter_playerhandler);
+game_log("Finished load_code( gui_codecost )");

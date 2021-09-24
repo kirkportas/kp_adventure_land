@@ -67,7 +67,8 @@ const UPGRADEABLE_LEVELS = {
 	"pmace": 5,
 };
 
-const max_level_compound = 3;
+const max_level_compound = 2;
+game_log("max_level_compound: "+max_level_compound);
 var COMPOUNDABLE = ["hpamulet","ringsj","hpbelt","wbook0"];
 COMPOUNDABLE=COMPOUNDABLE.concat(["vitamulet","stramulet","intamulet","dexamulet"]);
 COMPOUNDABLE=COMPOUNDABLE.concat(["vitearring","strearring","intearring","dexearring"]);
@@ -177,3 +178,6 @@ if (character.name != NameWarrior) {
 	STATS_BESTIARY_KEY = "test";
 	STATS_BESTIARY = undefined;
 }
+
+
+game_log("Finished load_code( utils_init )");

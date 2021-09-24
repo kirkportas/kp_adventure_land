@@ -103,9 +103,11 @@ function scan_for_bestiary_updates() {
 		is_tracked = is_tracked && level in STATS_BESTIARY[mtype];
 
 		// Temporary, check for any new attributes
-		for (let attr of MOB_ATTRIBUTES) {
-			if (!(attr in STATS_BESTIARY[mtype][level])) {
-				is_tracked = false;
+		if (is_tracked) {
+			for (let attr of MOB_ATTRIBUTES) {
+				if (!(attr in STATS_BESTIARY[mtype][level])) {
+					is_tracked = false;
+				}
 			}
 		}
 
@@ -113,7 +115,7 @@ function scan_for_bestiary_updates() {
 			game_log(`Attempting Bestiary update: mtype "${mtype}" level ${level}.`);
 
 			// Init dict for level and fill in attributes
-			if (!STATS_BESTIARY[mtype][level]["name"]) {
+			if (!STATS_BESTIARY[mtype][level] || !STATS_BESTIARY[mtype][level]["name"]) {
 				STATS_BESTIARY[mtype][level] = {};
 			}
 			// Update every attr
@@ -172,3 +174,7 @@ function initialize_bestiary() {
 		game_log("Initialized Bestiary");
 	}
 }
+
+
+
+game_log("Finished load_code( stats )");

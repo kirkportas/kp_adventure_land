@@ -1,6 +1,4 @@
-game_log("Starting load_code(shared_executions)");
 Logger.functionEnter("Loading shared_executions");
-
 
 function run_shared_executions() {
 	party_up();
@@ -32,7 +30,6 @@ function run_shared_executions() {
 
 	Logger.functionEnter("trading()"); 
 	try {
-		// debounce(trading, 500);
 		trading();
 	} catch(err) {
 		game_log("Error in trading()");
@@ -45,10 +42,7 @@ function run_shared_executions() {
 		// kpmove("crabs");
 	} 
 
-	// 	if (character.name == NameMerchant) {
-	// 	}
-
-	if (character.name == LEADER || SLAVES.includes(character.name)) {
+	if (SLAVES.includes(character.name)) {
 		// kpmove("bees");
 		// kpmove("crabs");
 	}
@@ -138,4 +132,4 @@ function trading() {
 }
 
 Logger.functionExit("Loading shared_executions", Date.now()-start_ts);
-game_log("Finished load_code(shared_executions)");
+game_log("Finished load_code( shared_executions )");

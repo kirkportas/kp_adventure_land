@@ -25,3 +25,5 @@ function mainloop(){
 	Logger.functionExit(logFnName,runtime);
 	Logger.logPrintStack();
 }
+
+game_log("Finished load_code( mainloop )");

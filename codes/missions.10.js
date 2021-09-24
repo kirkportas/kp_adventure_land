@@ -11,3 +11,7 @@ High-level
 - ReadAllBankItems
 
 */
+
+
+
+game_log("Finished load_code( missions )");

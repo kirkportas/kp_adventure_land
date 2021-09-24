@@ -1,7 +1,4 @@
 
-
-game_log("Loading farming (15)");
-
 var name_map = {
 	'crabs': 'crab',
 };
@@ -263,3 +260,5 @@ function party_farm() {
 		}
 	}
 }
+
+game_log("Finished load_code( farming )");

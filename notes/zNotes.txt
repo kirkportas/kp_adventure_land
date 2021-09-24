@@ -19,6 +19,54 @@ TODO: Investigate GAME APIs
 - http://adventure.land/docs/code/functions/command_character
 - http://adventure.land/docs/code/functions/get_active_characters
 
+==
+
+monster targeting 
+
+function get_weight(current_entity,priority_list,reference){
+  let index = priority_list ? Math.max(priority_list.indexOf(current_entity.mtype),0) : 10
+  let weight = distance(reference,current_entity)/100
+  + Math.min(current_entity.hp/current_entity.max_hp, 0.9)
+  + index*100
+  return weight
+}
+
+==
+https://discord.com/channels/238332476743745536/238366540091621377/838500502043492414
+
+logger in use
+        let log_message = new GoldLootedLog(character.name, Math.round(Date.now() * 1000000), data.gold)
+        logger(log_message)
+
+
+logging class
+
+export class GoldLootedLog extends CharacterLogMessage {
+    public type_name: string = 'gold_looted'
+    public amount: number
+    constructor(character_name: string, timestamp: number, amount: number) {
+        super(character_name, timestamp)
+        this.amount = amount
+    }
+
+    to_influx_protocol(): string {
+        return `${this.type_name},character="${this.character_name}" amount=${this.amount} ${this.timestamp}`
+    }
+}
+class CharacterLogMessage {
+    public character_name: string
+    public timestamp: number // Date.now() * 1000000
+
+    constructor(character_name: string, timestamp: number) {
+        this.character_name = character_name
+        this.timestamp = timestamp
+    }
+
+    to_influx_protocol(): string {
+        return ``
+    }
+}
+
 
 == For banking library
 

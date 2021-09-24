@@ -109,3 +109,6 @@ show_json(character.bank)
    "gold": 200000
 
 */
+
+
+game_log("Finished load_code( utils_movement )");

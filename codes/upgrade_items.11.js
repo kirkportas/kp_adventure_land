@@ -1,7 +1,4 @@
 
-
-game_log("upgrade_items loading");
-
 // Will compound all whitelisted items to their maxlvl - defined in utils_init 
 function compound_items(){
 	if (character.q.compound) { return; }
@@ -229,3 +226,6 @@ function upgrade_all_item(itemname, target_lvl, stat_type) {
 	}
 
 }
+
+
+game_log("Finished load_code( upgrade_items )");

@@ -1,23 +1,6 @@
 
-// class CommandCenter {
-//   constructor() {
-//     this.height = 1;
-//   }
-
-//   // Getter
-//   get init() {
-//     return this.calcArea();
-//   }
-
-//   // Method
-//   calcArea() {
-//     return this.height * this.width;
-//   }
-// }
-
 
 init_cmd_center();
-// loopme(update_cmd_center, 1000/2);
 
 let $ = parent.$;
 
@@ -67,6 +50,8 @@ function init_cmd_center() {
 	// <div id="test">test</div>
 	// $('head').append(style_toggle);
 	// statbars.children().first().after(style_toggle);
+
+	// Insert the grid HTML above the lower-middle game HTML UI
 	statbars.children().first().after(gridlayout);
 
 	var $wrapper = $('#wrapper');
@@ -175,6 +160,8 @@ function give_items_wip() {
 	}
 }
 
+
+// Follow button toggling is broken
 var follow = false;
 function toggle_follow(elem) {
 	let $ = parent.$;
@@ -258,7 +245,7 @@ if (parent.prev_handlers_cmd_center) {
     }
 }
 
-game_log("command_center loaded!")
+game_log("Finished load_code( gui_command_center )");
 
 
 var style_test = `

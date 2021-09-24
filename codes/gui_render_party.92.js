@@ -40,3 +40,5 @@ parent.render_party = new_render_party;
 setInterval(function(){
 	new_render_party();
 }, 1000);
+
+game_log("Finished load_code( render_party )");

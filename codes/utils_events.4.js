@@ -49,3 +49,6 @@ function on_party_request(name)
 		accept_party_request(name);
 	}
 }
+
+
+game_log("Finished load_code( utils_events )");
