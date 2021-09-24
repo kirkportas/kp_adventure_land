@@ -13,6 +13,55 @@ function should_abort() {
 	return !attack_mode;
 }
 
+//Scan for any monsters attacking the party.
+function get_best_target() {
+
+	for(id in parent.entities)
+	{
+		var current=parent.entities[id];
+		if(current.type!="monster" || !current.visible || current.dead) continue;
+		if(current.target && ALLTOONS.includes(current.target) ) {
+			return current;
+		}
+
+		var c_dist=parent.distance(character,current);
+		if(c_dist<min_d) min_d=c_dist,target=current;
+	}
+}
+
+function attack_plus_skills(target) {
+
+	// Warrior Taunt
+	if (character.name == NameWarrior) {
+		if (!target.target && character.hp/character.max_hp<0.6) {
+			game_log("Waiting to engage until healed");
+			return;
+		}
+		if ("target" in target && target.target != NameWarrior) {
+			game_log("Taunting: "+target.mtype);
+			use_skill("taunt");
+		}
+	}
+
+	// Ranger HuntersMark. duration is 10seconds. 
+	if (character.name == NameRanger) {
+		let mp_ratio = character.mp / character.max_mp;
+		
+		// Mark if mp is near full and >~4k hitpoints left.
+		let should_mark = mp_ratio>0.9 && (target.hp > character.attack*6);
+		if (should_mark) {
+			game_log("HunterMark on: "+target.mtype);
+			use_skill("huntersmark");
+		} else {
+			game_log("mp_ratio: "+mp_ratio);
+			game_log("target.hp: "+target.hp);
+		}
+	}
+
+	set_message("Attacking");
+	attack(target);
+}
+
 function default_farm(mon_type) {
 	if (should_abort()) { 
 		game_log("ABORTING DEFAULT FARM()");
@@ -20,7 +69,9 @@ function default_farm(mon_type) {
 		return; 
 	}
 
-	// Disabled for Bats
+	// For priest, attempt to heal and skip attack if a heal occurs.
+	if (heal_party_member()) { return; }
+
 	// if (mon_type) {
 	// 	kpmove(mon_type);
 	// }
@@ -29,47 +80,45 @@ function default_farm(mon_type) {
 		mon_type = name_map[mon_type];
 	}
 	var target=get_targeted_monster();
-	if(!target)
-	{
-		if (mon_type) {
-			target=get_nearest_monster({min_xp:100,max_att:250, type:mon_type});
+	if(!target) {
+		// Restrict auto-fighting to a max ATT value.
+		// mob_params["path_check"] = true; // Optional path_check param
+		let mob_params = {"min_xp":100,"max_att":750};
+		if (mon_type) { mob_params["type"] = mon_type; }
+
+		target=get_nearest_monster(mob_params);
+		if(target) { 
+			change_target(target); 
 		} else {
-			target=get_nearest_monster({min_xp:100,max_att:250});
-		}
-		//target=get_nearest_monster({min_xp:1000,max_att:30,path_check:true});
-		if(target) change_target(target);
-		else
-		{
 			set_message("No Monsters");
 			return;
 		}
 	}
 	
-	if(!is_in_range(target))
-	{
-		move(
-			character.x+(target.x-character.x)/2,
-			character.y+(target.y-character.y)/2
-			);
+	if(!is_in_range(target)) {
 		// Walk half the distance
+		move(character.x+(target.x-character.x)/2,
+			 character.y+(target.y-character.y)/2);
 	}
 	else if(can_attack(target))
 	{
-		set_message("Attacking");
-		attack(target);
+		attack_plus_skills(target);
 	}
 }
 
 function stationary_farm() {
 	if (should_abort()) { return; }
-	
+	if (heal_party_member()) { return; }
+
 	// game_log("Stationary_farming");
 	var target=get_targeted_monster();
 	if(!target || !is_in_range(target))
 	{
 		target=get_nearest_monster({min_xp:200,max_att:70});
 		//target=get_nearest_monster({min_xp:1000,max_att:30,path_check:true});
-		if(target) change_target(target);
+		if(target) {
+			change_target(target);
+		}
 		else
 		{
 			set_message("No Monsters");
@@ -84,14 +133,44 @@ function stationary_farm() {
 	}
 }
 
+function heal_party_member() {
+
+	if (character.name == NamePriest) {
+		if (is_on_cooldown("attack")) {
+			return false;
+		}
+		// Heal if the missing HP is greater than the healpower
+		let weakest = lowest_health_partymember();
+		let missing_hp = weakest.max_hp - weakest.hp;
+		let heal_power = character.attack*0.8; // Heal with wasted 20%
+
+		let should_heal = missing_hp > heal_power || weakest.health_ratio < 0.8;
+		
+		if (should_heal) {
+			if (is_in_range(weakest)) {
+				game_log("Healing: "+weakest.name);
+				heal(weakest);
+			} else {
+				game_log("Healing: moving to "+weakest.name);
+				move(character.x+(weakest.x-character.x)/2,
+			 		 character.y+(weakest.y-character.y)/2);
+			}
+			return true;
+		}
+	}
+	return false;
+}
+
 function support_leader() {
 	if (should_abort()) { return; }
 	if (get_party()[LEADER] == undefined) { return; }
 
 	if (!is_moving(character)) {
+		heal_party_member();
 		move_to_leader();
 	}
 	if (is_moving(character)) {
+		heal_party_member();
 		return;
 	}
 
@@ -104,24 +183,14 @@ function support_leader() {
 
 	// The key:
 	// change_target(parent.entities[ranger_target])
-	if (character.name == NamePriest) {
-		// Heal if the missing HP is greater than the healpower
-		let weakest = lowest_health_partymember();
-		let missing_hp = weakest.max_hp - weakest.hp;
-		let should_heal = missing_hp > character.attack;
-		// let should_heal = weakest.health_ratio < 0.85;
-		
-		if (should_heal) {
-			heal(weakest);
-			return;
-		}
-	}
+	if (heal_party_member()) { return; }
+
 	var target=get_targeted_monster();
 	if (!target && get_entity(LEADER) && "target" in get_entity(LEADER)) {
 		var leader_target_id = get_entity(LEADER).target;
 		var mob_obj = parent.entities[leader_target_id];
 
-		if(mob_obj) {
+		if(mob_obj && "target" in mob_obj) {
 			// game_log(mob_obj.target);
 			// Logger.log("Changing target to leader target");
 			//  && mob_obj.target == LEADER
@@ -135,17 +204,9 @@ function support_leader() {
 		}
 	}
 	target=get_targeted_monster();
-		
-	// if(!is_in_range(target))
-	// {
-	// 	// Walk half the distance
-	// 	move(character.x+(target.x-character.x)/2,
-	// 		character.y+(target.y-character.y)/2 );
-	// }
-	
 	if(can_attack(target)) {
 		set_message("Attacking");
-		attack(target);
+		attack_plus_skills(target);
 	} else {
 		// Leader has no target
 	}
@@ -155,15 +216,6 @@ maps:
 "main", "cave"
 */
 
-
-// function party_farm() {
-// 	if (should_abort()) { return; }
-
-// 	// default_farm();
-// 	kpmove("bees");
-// 	stationary_farm();
-// }
-
 function party_farm() {
 	if (should_abort()) { return; }
 
@@ -172,14 +224,27 @@ function party_farm() {
 	// stationary_farm();
 	// return;
 
-	if (character.name == LEADER) {
-		// default_farm();
-		default_farm("snake");
-		// default_farm("scorpion");	
-	}
-	if (SLAVES.includes(character.name)) {	
-		default_farm("snake");
-		// support_leader();
-		// transport("main",4)
+	var greenjr_target = get_nearest_monster({"type":"greenjr"});
+
+	if (greenjr_target) {
+		if (character.name == LEADER) {
+			default_farm("greenjr");
+		}
+		if (SLAVES.includes(character.name)) {	
+			support_leader();
+		}
+	} 
+	else {
+		if (character.name == LEADER) {
+			default_farm();
+			// default_farm("snake");
+			// default_farm("scorpion");	
+		}
+		if (SLAVES.includes(character.name)) {	
+			// default_farm();
+			// default_farm("snake");
+			support_leader();
+			// transport("main",4)
+		}
 	}
 }

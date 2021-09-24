@@ -1,20 +1,19 @@
 
-class CommandCenter {
-  constructor() {
-    this.height = 1;
-  }
+// class CommandCenter {
+//   constructor() {
+//     this.height = 1;
+//   }
 
-  // Getter
-  get init() {
-    return this.calcArea();
-  }
+//   // Getter
+//   get init() {
+//     return this.calcArea();
+//   }
 
-  // Method
-  calcArea() {
-    return this.height * this.width;
-  }
-}
-
+//   // Method
+//   calcArea() {
+//     return this.height * this.width;
+//   }
+// }
 
 
 init_cmd_center();
@@ -174,9 +173,6 @@ function give_items_wip() {
 	for (item of all_to_get) {
 		request_item_from_all(item);
 	}
-	// for (item of ["wshoes","wcap"]) {
-	// 	request_item_from_all(item);
-	// }
 }
 
 var follow = false;
@@ -200,13 +196,14 @@ function toggle_follow(elem) {
 	// 		'background': 'orange',
 	// });
 }
+
 function gui_compound(elem) {
 	compound_items();
 }
 function gui_upgrade(elem) {
 	upgrade_items();
 }
-upgrade_items
+
 function stop_chars(elem) {
 	let $ = parent.$;
 	var $btn = $('#cmd_followme');
@@ -214,8 +211,8 @@ function stop_chars(elem) {
 	game_log('Stopping characters');
 	stop_character(NameRanger);
 	stop_character(NamePriest);
-
 }
+
 function render_follow_btn() {
 	let $ = parent.$;
 	var $btn = $('#cmd_followme');
@@ -232,13 +229,6 @@ function render_follow_btn() {
 }
 
 var count = 0;
-// function update_cmd_center()
-// {
-// 	let $ = parent.$;
-	
-// 	$(".box4").html("count: "+count);
-// 	count++;
-// }
 
 function gui_active_btn(elem) {
 		$elem.css({
@@ -268,67 +258,10 @@ if (parent.prev_handlers_cmd_center) {
     }
 }
 
-
 game_log("command_center loaded!")
-
 
 
 var style_test = `
 	<style> 
 		#test: {background: black; color: white;}
 	</style>`;
-// <label class="switch switch-left-right">
-// 	<input class="switch-input" type="checkbox" />
-// 	<span class="switch-label" data-on="On" data-off="Off"></span> 
-// 	<span class="switch-handle"></span> 
-// </label>
-
-// var style_toggle = `
-// <style type="text/css id="style_toggle">
-
-// #test {
-// 	background: white;
-// 	font-size: 2px;
-// }
-// /* Switch Left Right
-// ==========================*/
-// .switch-left-right .switch-label {
-// 	overflow: hidden;
-// }
-// .switch-left-right .switch-label:before, .switch-left-right .switch-label:after {
-// 	width: 20px;
-// 	height: 20px;
-// 	top: 4px;
-// 	left: 0;
-// 	right: 0;
-// 	bottom: 0;
-// 	padding: 11px 0 0 0;
-// 	text-indent: -12px;
-// 	border-radius: 20px;
-// 	box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.2), inset 0 0 3px rgba(0, 0, 0, 0.1);
-// }
-// .switch-left-right .switch-label:before {
-// 	background: #eceeef;
-// 	text-align: left;
-// 	padding-left: 80px;
-// }
-// .switch-left-right .switch-label:after {
-// 	text-align: left;
-// 	text-indent: 9px;
-// 	background: #FF7F50;
-// 	left: -100px;
-// 	opacity: 1;
-// 	width: 100%;
-// }
-// .switch-left-right .switch-input:checked ~ .switch-label:before {
-// 	opacity: 1;
-// 	left: 100px;
-// }
-// .switch-left-right .switch-input:checked ~ .switch-label:after {
-// 	left: 0;
-// }
-// .switch-left-right .switch-input:checked ~ .switch-label {
-// 	background: inherit;
-// }
-// </style>
-// `;

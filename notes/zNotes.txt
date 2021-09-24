@@ -14,6 +14,13 @@ Screeps People: Rising
 https://screeps.com/a/#!/rank/world/2017-09?page=21&highlight=206
 https://screeps.com/a/#!/profile/Rising
 
+
+TODO: Investigate GAME APIs 
+- http://adventure.land/docs/code/functions/command_character
+- http://adventure.land/docs/code/functions/get_active_characters
+
+
+
 ===
 function sort_inventory() {
     var moveStuff = {

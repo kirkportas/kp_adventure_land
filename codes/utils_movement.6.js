@@ -24,6 +24,13 @@ function kpmove(loc_name){
 		} 
 	}
 }
+
+function is_in_town() {
+	var cutoff = 200;
+	// todo investigate the in_check param (currently false)
+	return cutoff > distance(character, {x: -207, y: -108, map: "main"}, false );
+}
+
 function move_to_town(){
 	if (!is_moving(character)) {
 		smart_move("town");

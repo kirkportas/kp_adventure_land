@@ -1,4 +1,5 @@
 var lastcc = 0;
+
 init_ccmeter();
 function init_ccmeter() {
 	let $ = parent.$;
@@ -33,8 +34,6 @@ function init_ccmeter() {
 
 	update_ccmeter();
 }
-
-
 
 function update_ccmeter()
 {

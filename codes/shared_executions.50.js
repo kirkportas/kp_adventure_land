@@ -3,6 +3,8 @@ Logger.functionEnter("Loading shared_executions");
 
 
 function run_shared_executions() {
+	party_up();
+
 	if (character.rip) {
 		// Don't respawn on a PVP server.
 		// If dead, party was probably attacked and killed.
@@ -28,21 +30,18 @@ function run_shared_executions() {
 		}
 	}
 
-	party_up();
-	// regenerate_hp_mp();
-
 	Logger.functionEnter("trading()"); 
 	try {
+		// debounce(trading, 500);
 		trading();
 	} catch(err) {
 		game_log("Error in trading()");
 		game_log(err);
 	}
-	
 	Logger.functionExit("trading()", Date.now()-start_ts);
 
 	if (character.name == LEADER) {
-	// 	// kpmove("bees");
+	    // kpmove("bees");
 		// kpmove("crabs");
 	} 
 
@@ -88,8 +87,23 @@ show_json(get("bank-"+character.name))
 // Logger.log("items_to_send: "+items_to_send);
 // game_log('items_to_send: '+items_to_send);
 */
-function trading() {
+// function debounce(func, timeout = 500){
+//   let timer;
+//   return (...args) => {
+//     clearTimeout(timer);
+//     timer = setTimeout(() => { func.apply(this, args); }, timeout);
+//   };
+// }
 
+// function trading() {
+// 	game_log("TRADING ts: "+Date.now());
+// 	return debounce(trading, 500);
+// }
+
+// Todo this has a bug in it. It will send all the gold because 
+// Server latency is >200ms.
+function trading() {
+	// game_log("trading ts: "+Date.now());
 	//Trading code 
 	if (character.name == NameMerchant) {
 		return;
@@ -103,7 +117,7 @@ function trading() {
 
 		try {
 			for (itemname of items_to_send) {
-				Logger.log("Trying to send item: "+itemname);
+				// Logger.log("Trying to send item: "+itemname);
 
 				give_all_of_single_item(itemname);
 				var item_idx = locate_item(itemname);
@@ -122,5 +136,6 @@ function trading() {
 		}
 	}
 }
+
 Logger.functionExit("Loading shared_executions", Date.now()-start_ts);
 game_log("Finished load_code(shared_executions)");

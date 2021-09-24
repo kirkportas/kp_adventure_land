@@ -11,7 +11,7 @@ Logger.functionEnter("Loading utils_init");
 
 
 const LOADGUI = false;
-const LOADSLAVES = true;
+const LOADSLAVES = false;
 
 // Generic timestamps
 const TIMESTAMP_KEY = "ts-"+character.name;
@@ -33,7 +33,7 @@ const SLAVES = [NameRanger, NameMage, NamePriest];
 const ACTIVE_PARTY = [NameRanger, NamePriest];
 
 // Used for verifying that the requested is "friendly" for party requests
-const ALLTOONS = [NameWarrior,NameRanger, NamePriest, NameMage];
+const ALLTOONS = [NameWarrior, NameRanger, NamePriest, NameMage];
 const VALS_TOONS = ["AlextheGreat"];
 
 // Val's characters 
@@ -48,21 +48,34 @@ if (character.name == NameValWarrior) {
 }
 
 // Configure upgrade/compound actions
-const max_level_compound = 3;
 const max_level_upgrade = 3; // Only used for a GUI function (intended for lowlevel)
-const COMPOUNDABLE = ["hpamulet","ringsj","hpbelt","wbook0"];
-
 const UPGRADEABLE_LEVELS = {
 	"wshoes": 6,
 	"wcap": 6,
 	"wgloves": 5,
 	"wattire": 3,
+	"wbreeches": 3,
 	"wshield": 7,
 	"slimestaff": 7,
 	// "stinger": 5,     // Maybe trash
-	"pants1": 5       //RuggedPants
+	
+	"pants1": 5,       //RuggedPants
+	"coat1": 5,
+	"shoes1": 5,
+	"helmet1": 5
 	// Weapons
 };
+
+const max_level_compound = 3;
+var COMPOUNDABLE = ["hpamulet","ringsj","hpbelt","wbook0"];
+COMPOUNDABLE=COMPOUNDABLE.concat(["vitamulet","stramulet","intamulet","dexamulet"]);
+COMPOUNDABLE=COMPOUNDABLE.concat(["vitearring","strearring","intearring","dexearring"]);
+
+// const COMPOUNDABLE_LEVELS = {
+// 	"strearring": 6,
+// 	"wcap": 6,
+// };
+
 // Default all shop items to lvl 6 (to help clear out inventory)
 const shop_items = ["helmet","shoes","gloves","pants","coat", "bow","blade","staff","wshield"];
 for (itemname of shop_items) {
@@ -70,9 +83,11 @@ for (itemname of shop_items) {
 } 
 
 const UPGRADEABLE = Object.keys(UPGRADEABLE_LEVELS);
-var FARMABLE = ["crabclaw","beewings","seashell","gem0", "stinger","bwing","wbook0","snakeoil"];
+var FARMABLE = ["crabclaw","beewings","seashell","gem0","bwing","snakeoil","snakefang"];
 FARMABLE = FARMABLE.concat(["vitearring","strearring","dexearring","intearring"]);
 FARMABLE = FARMABLE.concat(["vitamulet","stramulet","dexamulet","intamulet"]);
+FARMABLE = FARMABLE.concat(["candy0","candy1"]);
+FARMABLE = FARMABLE.concat(["stinger","wbook0"]);
 // TRASH = []; 
 var TRASH = ["stinger"];
 

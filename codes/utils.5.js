@@ -66,12 +66,12 @@ function start_chars() {
 
 // http://adventure.land/docs/code/functions/send_party_invite
 
-var party_up_last_ts = Date.now();
+var partyup_last_ts = Date.now();
 function party_up() {
 	// Only run once per 2 seconds
-	var should_run = (Date.now() - party_up_last_ts) > 2000;
+	var should_run = (Date.now() - partyup_last_ts) > 2000;
 	if (!should_run) { return; }
-	party_up_last_ts = Date.now();
+	partyup_last_ts = Date.now();
 
 	// Logger.log("Checking party_up");
 	var is_in_party = get_party().length != undefined || character.name in get_party();
@@ -80,6 +80,7 @@ function party_up() {
 		
 	} else {
 		if (!is_in_party) {
+			game_log("party_up SEND_REQUEST");
 			send_party_invite(LEADER,1); // party request
 		}
 	}
@@ -231,63 +232,6 @@ function give_all_of_single_item(item) {
 	// }
 }
 
-function compound_items(){
-	if (character.q.compound) { return; }
-	for (item of COMPOUNDABLE) {
-
-		let lvl = 0;
-		for (; lvl <= max_level_compound; lvl++) {
-			var scroll_idx = locate_item("cscroll0");
-			if (scroll_idx < 0) {
-				buy("cscroll0",5);
-			}
-			var item_idxs = locate_items_of_level(item, lvl);
-			var count = item_idxs.length;
-			if (count >= 3) {
-				game_log(item);
-				game_log(item_idxs);
-
-				// var result = parent.socket.emit('compound', {
-				// 	item_idxs.slice(0,3);
-				// });
-
-				// builtin method 
-				compound(item_idxs[0],item_idxs[1],item_idxs[2],scroll_idx);
-				// game_log("result: "+result);
-			}
-		}
-	}
-}
-
-function upgrade_items(){
-	if (character.q.upgrade) { return; }
-	for (item of UPGRADEABLE) {
-
-		let lvl = 0;
-		for (; lvl < max_level_upgrade; lvl++) {
-			var scroll_idx = locate_item("scroll0");
-			if (scroll_idx < 0) {
-				buy("scroll0",5);
-			}
-			var item_idxs = locate_items_of_level(item, lvl);
-			var count = item_idxs.length;
-			if (count >= 1) {
-				game_log(item);
-				game_log(item_idxs);
-
-				// var result = parent.socket.emit('compound', {
-				// 	item_idxs.slice(0,3);
-				// });
-
-				// builtin method 
-				upgrade(item_idxs[0],scroll_idx);
-				// game_log("result: "+result);
-			}
-		}
-	}
-}
-
-
 	// Grade 0 => scroll0
 	// Grade 1 => scrol 1
 	// "grades": [7, 9, 10, 12 ],
@@ -306,168 +250,6 @@ function get_item_grade(item) {
 // game_log(locate_item(2))
 
 
-var allowed_past_7 = ["bow","blade","staff","helmet","shoes","gloves","pants","coat"];
-function upgrade_item(item_idx){
-	if (character.q.upgrade) { return; }
-
-	var item = character.items[item_idx];
-
-	var scrollname = "";
-	var grade = get_item_grade(item); 
-	if (grade == 0) {
-		scrollname = "scroll0";
-	} else if(grade ==1) {
-		scrollname = "scroll1";
-	} else if(grade >= 2){
-		Logger.log("upgrade_item called for grade 2+. NOT SUPPORTED");
-		Logger.log(`idx: ${item_idx}, name: ${item.name}`);
-		return;
-	} else {
-		Logger.log("unknown grade value: "+grade.toString());
-		Logger.log(`idx: ${item_idx}, name: ${item.name}`);
-		return;
-
-	}
-	var scroll_idx = locate_item(scrollname);
-	if (scroll_idx < 0) {
-		Logger.log("Buying a: scroll0");
-		buy(scrollname, 5);
-	}
-	// Only upgrade shop items 
-	if (item.level >=7 && !allowed_past_7.includes(item.name)) {
-		Logger.log("WILL NOT UPGRADE A LVL 7 ITEM.");
-		return false;
-	}
-	Logger.log("Upgrading a: "+character.items[item_idx].name);
-	upgrade(item_idx,scroll_idx);
-	return true;
-}
-
-function upgrade_item_stat(item_idx, stat_type) {
-	// strscroll intscroll dexscroll 
-	if (character.q.upgrade) { return; }
-
-	var scroll_idx = locate_item(stat_type);
-	if (scroll_idx < 0) {
-		Logger.log("Buying a: "+ stat_type);
-		buy(stat_type,1);
-	}
-
-	if (character.items[item_idx].level >=7) {
-		Logger.log("WILL NOT STAT-UPGRADE A LVL 7+ ITEM.");
-		return false;
-	}
-	Logger.log("Stat-upgrading a: "+character.items[item_idx].name);
-	upgrade(item_idx, scroll_idx);
-	return true;
-} 
-
-// Early game helper method.
-// Only intended for merchant use in first gear-up of fighter toons. 
-function get_upgraded_base_item(itemname, target_lvl, stat_type) {
-	if (character.q.upgrade) { return; }
-
-	var have_item = locate_items_at_or_above_level(itemname, target_lvl).length >= 1;
-
-	if (!have_item) {
-		var upgradeable_item_idx = locate_item_below_level(itemname, target_lvl);
-		if (upgradeable_item_idx == -1) {
-			buy(itemname);
-			Logger.log("0 base items available. Buying - "+itemname);
-		} else {
-			var item = character.items[upgradeable_item_idx];
-			Logger.log(`Item (${itemname}) level (${item.level})`);
-
-			var is_statupgradeable = "stat" in G.items[itemname];
-			var is_statupgraded = "stat_type" in item;
-
-			if (item.level == 6 && is_statupgradeable && !is_statupgraded) {
-				// Apply stat scroll
-				set_message("StatUpgrade");
-				Logger.log("Stat upgrade at level: "+item.level);
-				return upgrade_item_stat(upgradeable_item_idx, stat_type);
-			} else {
-				set_message("ItemUpgrade");
-				return upgrade_item(upgradeable_item_idx);
-			}
-		}
-		return true;
-	} else {
-		Logger.log("SUCCESS- upgraded: "+itemname+" lvl "+target_lvl);
-		return false;
-	}
-
-}
-
-
-function get_upgraded_nonbase_item(itemname, target_lvl, stat_type) {
-	if (character.q.upgrade) { return; }
-
-	var have_item = locate_items_at_or_above_level(itemname, target_lvl).length >= 1;
-
-	if (!have_item) {
-		var upgradeable_item_idx = locate_item_below_level(itemname, target_lvl);
-		if (upgradeable_item_idx == -1) {
-			Logger.log("No item available: "+itemname);
-			return false;
-		} else {
-			// Todo replace with call to upgrade_all_item()
-			var item = character.items[upgradeable_item_idx];
-			Logger.log(`Item (${itemname}) level (${item.level})`);
-
-			var is_statupgradeable = "stat" in G.items[itemname];
-			var is_statupgraded = "stat_type" in item;
-
-			if (item.level == 6 && is_statupgradeable && !is_statupgraded) {
-				// Apply stat scroll
-				set_message("StatUpgrade");
-				Logger.log("Stat upgrade at level: "+item.level);
-				return upgrade_item_stat(upgradeable_item_idx, stat_type);
-			} else {
-				set_message("ItemUpgrade");
-				return upgrade_item(upgradeable_item_idx);
-			}
-			game_log("SHOULD NOT REACH HERE");
-			return false;
-		}
-	} else {
-		Logger.log("SUCCESS- upgraded: "+itemname+" lvl "+target_lvl);
-		return false;
-	}
-
-}
-
-
-function upgrade_all_item(itemname, target_lvl, stat_type) {
-	if (character.q.upgrade) { return true; }
-
-	var upgradeable_item_idx = locate_item_below_level(itemname, target_lvl);
-	if (upgradeable_item_idx == -1) {
-		// Logger.log("No item available: "+itemname);
-		return false;
-	} else {
-		var item = character.items[upgradeable_item_idx];
-		if (item.level >= target_lvl) {
-			return;
-		}
-		Logger.log(`Item (${itemname}) level (${item.level})`);
-
-		var is_statupgradeable = "stat" in G.items[itemname];
-		var is_statupgraded = "stat_type" in item;
-
-		if (item.level == 6 && is_statupgradeable && !is_statupgraded) {
-			// Apply stat scroll
-			set_message("StatUpgrade");
-			Logger.log("Stat upgrade at level: "+item.level);
-			upgrade_item_stat(upgradeable_item_idx, stat_type);
-		} else {
-			set_message("ItemUpgrade");
-			upgrade_item(upgradeable_item_idx);
-		}
-		return true;
-	}
-
-}
 // const SCROLLS_BY_ITEM_GRADE = ["scroll0", "scroll1", "scroll2"];
 // const grade = item_grade(item);
 // const scroll_name = SCROLLS_BY_ITEM_GRADE[grade];
