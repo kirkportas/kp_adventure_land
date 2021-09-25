@@ -153,10 +153,13 @@ function init_cmd_center() {
 // The fighter will attempt to give those items if the Merchant is in range.
 // When a fighter has no more, the key will be removed from their "give queue"
 function give_items_wip() {
+	// NOTE: sometimes this breaks and the loop does not execute.
 	game_log("give_items_wip()");
 	var all_to_get = COMPOUNDABLE.concat(TRASH, FARMABLE, UPGRADEABLE);
-	for (item of all_to_get) {
-		request_item_from_all(item);
+	// game_log(all_to_get);
+
+	for (itemname of all_to_get) {
+		request_item_from_all(itemname);
 	}
 }
 

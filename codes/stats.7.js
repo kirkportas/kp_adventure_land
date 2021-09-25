@@ -106,7 +106,14 @@ function scan_for_bestiary_updates() {
 		if (is_tracked) {
 			for (let attr of MOB_ATTRIBUTES) {
 				if (!(attr in STATS_BESTIARY[mtype][level])) {
-					is_tracked = false;
+					// Ignore any Attributes in `MOB_ATTRIBUTES`` but not in `entity`.
+					if (attr in entity) {
+						game_log("Missing attr in bestiary: " + attr);
+						game_log("mtype: " + mtype);
+						game_log("level: " + level);
+						is_tracked = false;	
+						continue;
+					} 
 				}
 			}
 		}

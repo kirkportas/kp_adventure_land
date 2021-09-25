@@ -77,6 +77,12 @@ function party_up() {
 	var is_in_party = get_party().length != undefined || character.name in get_party();
 
 	if (character.name == LEADER) {
+		if (!is_in_party) {
+			game_log("Leader is not in party. party_up SEND_REQUEST");
+			for (charObj of get_characters()) {
+				send_party_invite(charObj.name, 1); // party request
+			}
+		}
 		
 	} else {
 		if (!is_in_party) {
@@ -124,6 +130,7 @@ function locate_items_of_level(name, level) {
 	}
 	return idxs;
 }
+
 function locate_items_below_level(name, level) {
 	idxs = [];
 	for(var i=0;i<42;i++) {
@@ -135,6 +142,7 @@ function locate_items_below_level(name, level) {
 	}
 	return idxs;
 }
+
 function locate_item_below_level(name, level) {
 	// Return first found slot of an item at given level
 	var slots = locate_items_below_level(name,level);
@@ -144,6 +152,7 @@ function locate_item_below_level(name, level) {
 		return -1;
 	}
 }
+
 function locate_items_at_or_above_level(name, level) {
 	idxs = [];
 	for(var i=0;i<42;i++) {
@@ -155,6 +164,7 @@ function locate_items_at_or_above_level(name, level) {
 	}
 	return idxs;
 }
+
 function locate_bank_items(name) {
 	//todo expand for more bank packs
 	var bankpacks = ["items0","items1"];
@@ -266,22 +276,25 @@ Example of data[0], e.g. a pontyItem
 	"rid": "iqxfs"
 }
 
-
-
 // Snippet to add a new item:
 	let ITEM_TO_ADD = "gslime";
-	let ITEM_TO_ADD = "crabclaw";
-	let QUANTITY = 10000;
+	let ITEM_TO_ADD = "vitearring";
+	let ITEM_TO_ADD = "gslime";
+	let ITEM_TO_ADD = "intring";
+	let QUANTITY = 9;
 	let ponty_key = "ponty_items_to_buy";
 	let ponty_desired = get(ponty_key);
 	ponty_desired[ITEM_TO_ADD] = QUANTITY;
 	set(ponty_key, ponty_desired);
 	show_json(get(ponty_key));
 
+	let ponty_key = "ponty_items_to_buy";
+	show_json(get(ponty_key));
 */
 
 function pontyPurchase()
 {
+	game_log("pontyPurchase()");
 	// Load from localStorage
 	let ponty_key = "ponty_items_to_buy";
 	if (!get(ponty_key) || get(ponty_key) == {}) {
@@ -294,15 +307,19 @@ function pontyPurchase()
 		}
 		set(ponty_key, desired);
 	}
-
-	let debug = true; // Set to false to debug
-	parent.socket.emit("secondhands");
     let itemsToBuy = get(ponty_key);
+
+	let debug = false; // Set to false to debug
+	parent.socket.emit("secondhands");
+
+	game_log("wtf2");
     parent.socket.once("secondhands", function (data)
     {    
+		game_log("wtf3");
+		game_log("itemsToBuy: "+itemsToBuy);
     	let should_save = false;
         for (let pontyItem of data) {
-        	if (!debug) {
+        	if (debug) {
         		game_log(pontyItem);
 				show_json(pontyItem);
         		debug = true;

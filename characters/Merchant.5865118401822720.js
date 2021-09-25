@@ -4,6 +4,8 @@ load_code("utils_init", function(){ game_log("Error loading utils_init"); });
 
 var attack_mode = true; // Just for use in fleeing.
 setInterval(main, 1000/2); 
+pontyPurchase();
+joinGiveAways();
 setInterval(pontyPurchase, 15000);
 setInterval(joinGiveAways, 29000);
 
@@ -41,12 +43,12 @@ function main(){
 	use_potion();
 
 	// Todo
-	if(character.rip || is_moving(character)) {
+	 // || is_moving(character)   // Dont stop merchant actions if moving
+	if(character.rip) {
 		Logger.functionExit(logFnName, 0);
 		return;
 	}
 
-	var did_upgrade = false;
 	if (is_in_town()) {	
 		sell_all_trash();
 		compound_items();
@@ -57,14 +59,10 @@ function main(){
 		// For one-off actions
 		custom_town_behavior();
 	}
+
 	// Store items in "items1", the 2nd from right in southern row. (Gabriella)
 	if (character.in == "bank") {
-		for (itemname of LOW_CRAFT_ITEMS) {
-			let itemidx = locate_item(itemname);
-			if (itemidx >= 0) {
-				bank_store(itemidx, "items1");
-			}
-		}
+		bank_store_craftables()
 	}
 
 	// Cast Mluck if not cast, or <58 minutes remaining
@@ -77,7 +75,7 @@ function main(){
 			}
 		}
 	}
-	
+
 	// End main loop
 	var runtime = Date.now()-start_ts;
 	Logger.functionExit(logFnName,runtime);
@@ -97,6 +95,14 @@ function merchant_handle_upgradeables(scrolltype) {
 	Logger.functionExit("handle UPGRADEABLE_LEVELS", 0);
 }
 
+function bank_store_craftables() {
+	for (itemname of LOW_CRAFT_ITEMS) {
+		let itemidx = locate_item(itemname);
+		if (itemidx >= 0) {
+			bank_store(itemidx, "items1");
+		}
+	}
+}
 
 // Learn Javascript: https://www.codecademy.com/learn/introduction-to-javascript
 // Write your own CODE: https://github.com/kaansoral/adventureland

@@ -79,6 +79,8 @@ function move_to_leader() {
 	var lead_entity = parent.entities[LEADER];
 	try {
 		if (lead_entity == undefined) {
+			// Todo this wont work when out of party *and* in a different map.
+			// Redo with get_characters() for same-window play
 			var p = get_party();
 			var destination = {'x': p[LEADER].x, 'y': p[LEADER].y, 'map': p[LEADER].map}
 			smart_move(destination);

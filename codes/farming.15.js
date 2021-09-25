@@ -146,6 +146,7 @@ function heal_party_member() {
 		if (is_on_cooldown("attack")) {
 			return false;
 		}
+
 		if (should_heal) {
 			if (is_in_range(weakest)) {
 				game_log("Healing: "+weakest.name);
@@ -156,6 +157,21 @@ function heal_party_member() {
 			 		 character.y+(weakest.y-character.y)/2);
 			}
 			return true;
+		} else {
+			// Corner case: If tank disconnects then check him specifically.	
+			if (!("Terazarrior" in get_party())) {
+				game_log("Terazarrior not in party");
+				let warrior = parent.entities[NameWarrior];
+				if (warrior) {
+					let missing_hp = warrior.max_hp - warrior.hp;
+					if (missing_hp > character.heal*0.8) {
+						game_log("Healing WARRIOR out of party scope");
+						game_log("Healing: "+warrior.name);
+						heal(warrior);
+						return true;
+					}
+				}
+			}
 		}
 	}
 	return false;
@@ -163,7 +179,8 @@ function heal_party_member() {
 
 function support_leader() {
 	if (should_abort()) { return; }
-	if (get_party()[LEADER] == undefined) { return; }
+	// Leader can disconnect -> should still heal and support while party_up() runs
+	// if (get_party()[LEADER] == undefined) { return; }
 
 	if (!is_moving(character)) {
 		heal_party_member();

@@ -45,9 +45,16 @@
 // called by the inviter's name - request = someone requesting to join your existing party
 function on_party_request(name) 
 {
-	if (SLAVES.includes(name) || VALS_TOONS.includes(name) || NameMerchant == name) { 
+	// In a chaotic failure where all party members lose party status,
+	// looping all charnames and requesting could cause a corner case failure. (e.g. 3 parties get formed) 
+	if (ALLTOONS.includes(name)) {
 		accept_party_request(name);
 	}
+	/* Debug
+		game_log("Received party request from: "+name);
+		game_log("ALLTOONS: "+ALLTOONS);
+		game_log("ALLTOONS.includes(name): "+ALLTOONS.includes(name));
+	*/
 }
 
 

@@ -1,4 +1,28 @@
+let PARENT = parent;
+if (!PARENT.cc_counter)
+{
+    PARENT.cc_counter = new PIXI.Text("0",{
+        fontFamily: "Pixel",
+        fontSize: 40,
+        fill: "red"
+    });
+    PARENT.cc_counter.position.set(10, 10);
+    PARENT.cc_counter.anchor.set(1, 1);
+    PARENT.cc_counter.parentGroup = PARENT.cc_counter.displayGroup = PARENT.chest_layer;
+    PARENT.cc_counter.zOrder = -999999999;
+    PARENT.window.inner_stage ? PARENT.inner_stage.addChild(PARENT.cc_counter) : PARENT.stage.addChild(PARENT.cc_counter);
+}
 
+setInterval(function() {
+    PARENT.cc_counter.text = "" + round_float(character.cc);
+    PARENT.cc_counter.position.set(PARENT.width - ("com" == PARENT.inside && 5 || 335) - 35, PARENT.height - ("com" == PARENT.inside && 5 || 0));
+}, 100);
+
+
+^^ Example from discord
+
+and if you wonder about the PARENT thing: parent becomes 
+undefined once you stop your own code, so the setInterval callback would break
 
 	// OG attempt 
 	// let cmd_center = $('<div id="cmd_center">cmd_center</div>').css({

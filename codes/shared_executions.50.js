@@ -62,6 +62,10 @@ function run_shared_executions() {
 
 function request_item_from_all(itemname) {
 	for (char of ALLTOONS) {
+		// Ignore offline or faroff characters
+		if (!get_entity(char)) continue;
+		// game_log("request_item_from_all() - "+char);
+
 		var key = "give_items_"+char;
 		var items = get(key);
 		if (!items.includes(itemname)) {
@@ -111,7 +115,7 @@ function trading() {
 
 		try {
 			for (itemname of items_to_send) {
-				// Logger.log("Trying to send item: "+itemname);
+				Logger.log("Trying to send item: "+itemname);
 
 				give_all_of_single_item(itemname);
 				var item_idx = locate_item(itemname);
@@ -119,7 +123,18 @@ function trading() {
 					items_to_send.splice(items_to_send.indexOf(itemname), 1);
 					set("give_items_"+character.name, items_to_send);
 				}
+				/* This should work but doesn't
+					
+				let item_idx = locate_item(itemname);
 
+				if (item_idx==-1) {
+					items_to_send.splice(items_to_send.indexOf(itemname), 1);
+					set("give_items_"+character.name, items_to_send);
+				} else {
+					give_all_of_single_item(itemname);
+					break;
+				}
+				*/
 				if (character.gold > 100000) {
 					game_log("character.gold: "+character.gold);
 					send_gold(NameMerchant,character.gold - 90000);

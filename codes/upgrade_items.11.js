@@ -206,7 +206,7 @@ function upgrade_all_item(itemname, target_lvl, stat_type) {
 	} else {
 		var item = character.items[upgradeable_item_idx];
 		if (item.level >= target_lvl) {
-			return;
+			return false;
 		}
 		Logger.log(`Item (${itemname}) level (${item.level})`);
 

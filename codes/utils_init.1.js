@@ -32,20 +32,20 @@ const LEADER = NameWarrior;
 const SLAVES = [NameRanger, NameMage, NamePriest];
 const ACTIVE_PARTY = [NameRanger, NamePriest];
 
-// Used for verifying that the requested is "friendly" for party requests
-const ALLTOONS = [NameWarrior, NameRanger, NamePriest, NameMage];
-const VALS_TOONS = ["AlextheGreat"];
-
 // Val's characters 
 const NameValWarrior = "AlextheGreat";
 const NameValMage = "LadyMary";
-
+const VALS_TOONS = [NameValWarrior, NameValMage];
 
 // Val's leader. (Overwrite values for Kirk if Val is using the code)
 if (character.name == NameValWarrior) {
 	LEADER = NameValWarrior;
 	SLAVES = [NameValMage];
 }
+
+// Used for verifying that the requested is "friendly" for party requests
+const ALLTOONS = [NameWarrior, NameRanger, NamePriest, NameMage, NameMerchant,
+				  NameValWarrior, NameValMage];
 
 // Configure upgrade/compound actions
 const max_level_upgrade = 3; // Only used for a GUI function (intended for lowlevel)
