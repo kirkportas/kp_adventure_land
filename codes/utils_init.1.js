@@ -47,6 +47,10 @@ if (character.name == NameValWarrior) {
 const ALLTOONS = [NameWarrior, NameRanger, NamePriest, NameMage, NameMerchant,
 				  NameValWarrior, NameValMage];
 
+// Misc constants
+const PONTY_KEY = "ponty_items_to_buy";
+
+
 // Configure upgrade/compound actions
 const max_level_upgrade = 3; // Only used for a GUI function (intended for lowlevel)
 const UPGRADEABLE_LEVELS = {
@@ -63,6 +67,7 @@ const UPGRADEABLE_LEVELS = {
 	"coat1": 5,
 	"shoes1": 5,
 	"helmet1": 5,
+	"gloves1": 5,
 	// Weapons
 	"pmace": 5,
 };

@@ -9,6 +9,11 @@ joinGiveAways();
 setInterval(pontyPurchase, 15000);
 setInterval(joinGiveAways, 29000);
 
+// Stores event names only 
+track_events();
+
+add_top_button("showPonty","showPonty", showPontyBuyList);
+
 // Use this to make do any custom or one-off stuff.
 function custom_town_behavior() {
 
@@ -61,7 +66,7 @@ function main(){
 	}
 
 	// Store items in "items1", the 2nd from right in southern row. (Gabriella)
-	if (character.in == "bank") {
+	if (is_in_bank()) {
 		bank_store_craftables()
 	}
 
@@ -96,6 +101,18 @@ function merchant_handle_upgradeables(scrolltype) {
 }
 
 function bank_store_craftables() {
+	for (itemname of LOW_CRAFT_ITEMS) {
+		let itemidx = locate_item(itemname);
+		if (itemidx >= 0) {
+			bank_store(itemidx, "items1");
+		}
+	}
+}
+
+function check_for_compoundable_trios() {
+	if (!is_in_bank()) {
+		game_log("Cannot scan bank")
+	}
 	for (itemname of LOW_CRAFT_ITEMS) {
 		let itemidx = locate_item(itemname);
 		if (itemidx >= 0) {

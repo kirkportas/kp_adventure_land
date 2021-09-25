@@ -281,23 +281,40 @@ Example of data[0], e.g. a pontyItem
 	let ITEM_TO_ADD = "vitearring";
 	let ITEM_TO_ADD = "gslime";
 	let ITEM_TO_ADD = "intring";
+	let ITEM_TO_ADD = "strearring";
 	let QUANTITY = 9;
-	let ponty_key = "ponty_items_to_buy";
-	let ponty_desired = get(ponty_key);
+	let PONTY_KEY = "ponty_items_to_buy";
+	let ponty_desired = get(PONTY_KEY);
 	ponty_desired[ITEM_TO_ADD] = QUANTITY;
-	set(ponty_key, ponty_desired);
-	show_json(get(ponty_key));
+	set(PONTY_KEY, ponty_desired);
+	show_json(get(PONTY_KEY));
 
-	let ponty_key = "ponty_items_to_buy";
-	show_json(get(ponty_key));
+	let PONTY_KEY = "ponty_items_to_buy";
+	show_json(get(PONTY_KEY));
 */
 
+function showPontyBuyList() {
+	show_json(get(PONTY_KEY));
+}
+
+/* Debugcode 
+	if (debug && pontyItem.name.includes("earring")) {
+        		game_log(pontyItem.name);
+        		game_log(itemsToBuy[pontyItem.name]);
+        		game_log(pontyItem.name in itemsToBuy);
+        		game_log(itemsToBuy[pontyItem.name] > 0);
+        	}
+            		if (debug) game_log(2);
+            		if (debug) game_log((pontyItem.q ?? 1));
+            		if (debug) game_log(itemsToBuy[pontyItem.name] - (pontyItem.q ?? 1));
+
+*/
 function pontyPurchase()
 {
 	game_log("pontyPurchase()");
+
 	// Load from localStorage
-	let ponty_key = "ponty_items_to_buy";
-	if (!get(ponty_key) || get(ponty_key) == {}) {
+	if (!get(PONTY_KEY) || get(PONTY_KEY) == {}) {
 		// Name and quantity
 		let desired = {
 			"strearring": 6,
@@ -305,23 +322,20 @@ function pontyPurchase()
 			"dexearring": 6,
 			"cape": 4,
 		}
-		set(ponty_key, desired);
+		set(PONTY_KEY, desired);
 	}
-    let itemsToBuy = get(ponty_key);
+    let itemsToBuy = get(PONTY_KEY);
 
 	let debug = false; // Set to false to debug
 	parent.socket.emit("secondhands");
-
-	game_log("wtf2");
     parent.socket.once("secondhands", function (data)
     {    
-		game_log("wtf3");
-		game_log("itemsToBuy: "+itemsToBuy);
+		game_log("secondhands returned");
     	let should_save = false;
         for (let pontyItem of data) {
         	if (debug) {
         		game_log(pontyItem);
-				show_json(pontyItem);
+				// show_json(pontyItem);
         		debug = true;
         	}
 
@@ -329,22 +343,22 @@ function pontyPurchase()
             
             // Ponty cost multiplied is 2
             // Skip if too expensive or can't afford
-            // TODO broken, always returns 1 
-            // let cost = parent.calculate_item_value(item) * 2 * (item.q ?? 1);
-            // if (cost > character.gold) continue;
-            // if (cost > 2 * 1000000) continue;
+            let cost = parent.calculate_item_value(pontyItem) * 2 * (pontyItem.q ?? 1);
+            let auto_buy_cost_limit = 2 * 1000 * 1000; // 2mill
+            if (cost > character.gold || cost > auto_buy_cost_limit) continue;
+    		// game_log(`Cost of - ${pontyItem.name}, q: ${pontyItem.q}: ${cost}`);
 
             // if (itemsToBuy.includes(pontyItem.name)) {
             if (pontyItem.name in itemsToBuy) {
             	if (itemsToBuy[pontyItem.name] > 0) {
-            		itemsToBuy[pontyItem.name] = itemsToBuy[pontyItem.name] - (item.q ?? 1);
+            		itemsToBuy[pontyItem.name] = itemsToBuy[pontyItem.name] - (pontyItem.q ?? 1);
                 	buy = true;
                 	should_save = true;
             	}
-            }
+            } 
 
             if (buy) {
-                log("Buying " + G.items[pontyItem.name].name + " from Ponty!");
+                game_log("Buying " + G.items[pontyItem.name].name + " from Ponty!");
                 parent.socket.emit("sbuy", { "rid": pontyItem.rid });
             }
         }

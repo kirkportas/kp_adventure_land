@@ -83,7 +83,10 @@ show_json( foo.[accessor1]?.bar )
 */
 // Relies on STATS_BESTIARY var from utils_init
 function scan_for_bestiary_updates() {
-	game_log("Checking monster stats");
+	let fnTxt = "bestiary_scan";
+	Logger.functionEnter(fnTxt);
+	let now = Date.now();
+	Logger.log("Checking monster stats");
 	let updated = false;
 
 	for (let id in parent.entities) {
@@ -137,6 +140,7 @@ function scan_for_bestiary_updates() {
 		set(STATS_BESTIARY_KEY, STATS_BESTIARY);
 		game_log("Saved Bestiary to localstorage");
 	}
+	Logger.functionExit(fnTxt, Date.now() - now);
 }
 
 //// Example from G.monsters
@@ -181,7 +185,5 @@ function initialize_bestiary() {
 		game_log("Initialized Bestiary");
 	}
 }
-
-
 
 game_log("Finished load_code( stats )");

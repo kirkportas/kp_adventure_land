@@ -31,6 +31,10 @@ function is_in_town() {
 	return cutoff > distance(character, {x: -207, y: -108, map: "main"}, false );
 }
 
+function is_in_bank() {
+	return character.in == "bank";
+}
+
 function move_to_town(){
 	if (!is_moving(character)) {
 		smart_move("town");
