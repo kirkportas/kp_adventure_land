@@ -59,9 +59,9 @@ const UPGRADEABLE_LEVELS = {
 	// Wanderers
 	"wcap": 6,
 	"wgloves": 7,
-	"wbreeches": 6,
-	"wshoes": 5,
-	"wattire": 3,
+	"wbreeches": 7,
+	"wshoes": 6,
+	"wattire": 5,
 	"wshield": 7,
 
 	// T2
@@ -72,21 +72,25 @@ const UPGRADEABLE_LEVELS = {
 	// "stinger": 5,     // Maybe trash
 	
 	// Rugged
-	"pants1": 5,       //RuggedPants
-	"coat1": 5,
-	"shoes1": 5,
-	"helmet1": 5,
-	"gloves1": 5,
+	"pants1": 6,       //RuggedPants
+	"coat1": 6,
+	"shoes1": 6,
+	"helmet1": 6,
+	"gloves1": 6,
 
 	// Weapons
 	"pmace": 5,
+	"hbow": 7
 };
 
 const max_level_compound = 2;
 game_log("max_level_compound: "+max_level_compound);
 var COMPOUNDABLE = ["hpamulet","ringsj","hpbelt","wbook0"];
-COMPOUNDABLE=COMPOUNDABLE.concat(["vitamulet","stramulet","intamulet","dexamulet"]);
-COMPOUNDABLE=COMPOUNDABLE.concat(["vitearring","strearring","intearring","dexearring"]);
+COMPOUNDABLE=COMPOUNDABLE.concat([
+	"vitamulet","stramulet","intamulet","dexamulet",
+	"vitearring","strearring","intearring","dexearring",
+	"vitring","dexring","intring","strring"]);
+
 
 // const COMPOUNDABLE_LEVELS = {
 // 	"strearring": 6,
