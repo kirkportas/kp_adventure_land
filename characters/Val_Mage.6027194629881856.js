@@ -20,8 +20,8 @@ setInterval(function(){
 	// "x": 535.4266509783768,
 	// "y": 1055.5682916853693,
 
+	run_shared_executions();
 	use_potion();
-	// use_hp_or_mp();
 	loot();
 
 	if(!attack_mode || character.rip || is_moving(character)) return;

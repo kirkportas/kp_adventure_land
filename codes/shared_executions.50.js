@@ -124,9 +124,20 @@ show_json(get("bank-"+character.name))
 
 // Todo this has a bug in it. It will send all the gold because 
 // Server latency is >200ms.
+
+
+
+
+
+var trading_last_ts = Date.now();
 function trading() {
-	// game_log("trading ts: "+Date.now());
 	//Trading code 
+
+	// Only run once per 2 seconds
+	var should_run = (Date.now() - trading_last_ts) > 1000;
+	if (!should_run) { return; }
+	trading_last_ts = Date.now();
+
 	if (character.name == NameMerchant) {
 		return;
 	} else {

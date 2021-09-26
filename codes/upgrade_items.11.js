@@ -1,4 +1,18 @@
 
+
+function merchant_handle_upgradeables(scrolltype) {
+	Logger.functionEnter("handle UPGRADEABLE_LEVELS");
+	let did_upgrade = false;
+	for (var [item, maxlvl] of Object.entries(UPGRADEABLE_LEVELS)) {
+		did_upgrade = upgrade_all_item(item, maxlvl, scrolltype); // "dexscroll" intscroll strscroll
+		if (did_upgrade) {
+			Logger.log("did_upgrade = true");
+			break;
+		}
+	}
+	Logger.functionExit("handle UPGRADEABLE_LEVELS", 0);
+}
+
 // Will compound all whitelisted items to their maxlvl - defined in utils_init 
 function compound_items(){
 	if (character.q.compound) { return; }
@@ -90,7 +104,7 @@ function upgrade_item(item_idx){
 	}
 	var scroll_idx = locate_item(scrollname);
 	if (scroll_idx < 0) {
-		Logger.log("Buying a: scroll0");
+		Logger.log("Buying a: "+scrollname);
 		buy(scrollname, 5);
 	}
 	// Only upgrade shop items 

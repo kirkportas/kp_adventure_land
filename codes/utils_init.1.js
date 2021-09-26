@@ -22,14 +22,14 @@ var start_ts = Date.now();
 const NameRanger = "Terranger";
 const NamePriest = "NoHeals4U";
 const NameWarrior = "Terazarrior";
-const NameMerchant = "CurvyMoney";
 const NameMage = "Terakazam";
 // For console pasting: ["Terazarrior","NoHeals4U","Terranger"]
 
-const LEADER = NameWarrior;
+var LEADER = NameWarrior;
+var NameMerchant = "CurvyMoney";
+var SLAVES = [NameRanger, NameMage, NamePriest];
 
 // var SLAVES = [NameRanger, NamePriest];    // **********************
-const SLAVES = [NameRanger, NameMage, NamePriest];
 const ACTIVE_PARTY = [NameRanger, NamePriest];
 
 // Val's characters 
@@ -39,9 +39,10 @@ const NameValMerchant = "LeglyBlonde";
 const VALS_TOONS = [NameValWarrior, NameValMage, NameValMerchant];
 
 // Val's leader. (Overwrite values for Kirk if Val is using the code)
-if (character.name == NameValWarrior) {
+if (VALS_TOONS.includes(character.name)) {
 	LEADER = NameValWarrior;
 	SLAVES = [NameValMage, NameValMerchant];
+	NameMerchant = NameValMerchant;
 }
 
 // Used for verifying that the requested is "friendly" for party requests
@@ -163,8 +164,8 @@ if (character.name == NameValWarrior) {
 	load_code("gui_minimap"); 
 
 	// Load slave toons
-	start_chars(); 
-	setInterval(start_chars, 15000);
+	// start_chars(); 
+	// setInterval(start_chars, 15000);
 }
 
 if (character.name == NameValMerchant) {

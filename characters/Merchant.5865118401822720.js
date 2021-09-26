@@ -87,19 +87,6 @@ function main(){
 	Logger.logPrintStack();
 };
 
-function merchant_handle_upgradeables(scrolltype) {
-	Logger.functionEnter("handle UPGRADEABLE_LEVELS");
-	let did_upgrade = false;
-	for (var [item, maxlvl] of Object.entries(UPGRADEABLE_LEVELS)) {
-		did_upgrade = upgrade_all_item(item, maxlvl, scrolltype); // "dexscroll" intscroll strscroll
-		if (did_upgrade) {
-			Logger.log("did_upgrade = true");
-			break;
-		}
-	}
-	Logger.functionExit("handle UPGRADEABLE_LEVELS", 0);
-}
-
 function bank_store_craftables() {
 	for (itemname of LOW_CRAFT_ITEMS) {
 		let itemidx = locate_item(itemname);
