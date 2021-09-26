@@ -156,11 +156,12 @@ function give_items_wip() {
 	// NOTE: sometimes this breaks and the loop does not execute.
 	game_log("give_items_wip()");
 	var all_to_get = COMPOUNDABLE.concat(TRASH, FARMABLE, UPGRADEABLE);
-	// game_log(all_to_get);
+	game_log(all_to_get);
 
-	for (itemname of all_to_get) {
-		request_item_from_all(itemname);
-	}
+	request_items_from_all(all_to_get);
+	// for (itemname of all_to_get) {
+	// 	request_item_from_all(itemname);
+	// }
 }
 
 

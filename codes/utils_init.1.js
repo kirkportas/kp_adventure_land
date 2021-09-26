@@ -54,20 +54,28 @@ const PONTY_KEY = "ponty_items_to_buy";
 // Configure upgrade/compound actions
 const max_level_upgrade = 3; // Only used for a GUI function (intended for lowlevel)
 const UPGRADEABLE_LEVELS = {
+	// Wanderers
 	"wcap": 6,
-	"wgloves": 6,
+	"wgloves": 7,
 	"wbreeches": 6,
 	"wshoes": 5,
 	"wattire": 3,
 	"wshield": 7,
+
+	// T2
+	"shield": 5,
+
+	// Misc
 	"slimestaff": 7,
 	// "stinger": 5,     // Maybe trash
 	
+	// Rugged
 	"pants1": 5,       //RuggedPants
 	"coat1": 5,
 	"shoes1": 5,
 	"helmet1": 5,
 	"gloves1": 5,
+
 	// Weapons
 	"pmace": 5,
 };
@@ -160,6 +168,9 @@ if (character.name == NameValWarrior) {
 
 if (character.name == NameMerchant) {
 	load_code("gui_command_center");
+} else {
+
+	add_top_button("showGive","showGive", showGiveItems);
 }
 
 Logger.functionExit("Loading utils_init", 0);

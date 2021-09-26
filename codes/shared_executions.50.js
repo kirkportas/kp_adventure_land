@@ -60,17 +60,41 @@ function run_shared_executions() {
  *    No executable code below. Only helper methods.                           *
  *******************************************************************************/
 
+// This had issues and became spotty on Sept25. It worked fine before that
+// Would only push the first item (hpamulet)
 function request_item_from_all(itemname) {
 	for (char of ALLTOONS) {
 		// Ignore offline or faroff characters
 		if (!get_entity(char)) continue;
 		// game_log("request_item_from_all() - "+char);
 
-		var key = "give_items_"+char;
+		let key = "give_items_"+char;
 		var items = get(key);
 		if (!items.includes(itemname)) {
 			items.push(itemname);
 		}
+		set(key, items);
+	}
+}
+
+function request_items_from_all(itemname_arr) {
+	for (char of ALLTOONS) {
+		// Ignore offline or faroff characters
+		if (!get_entity(char)) continue;
+		// game_log("request_item_from_all() - "+char);
+
+		let key = "give_items_"+char;
+		game_log(char);
+		game_log(key);
+		var items = get(key);
+		if (!items) items = [];
+		
+		for (itemname of itemname_arr) {
+			if (!items.includes(itemname)) {
+				items.push(itemname);
+			}
+		}
+		
 		set(key, items);
 	}
 }
@@ -115,16 +139,19 @@ function trading() {
 
 		try {
 			for (itemname of items_to_send) {
-				Logger.log("Trying to send item: "+itemname);
 
-				give_all_of_single_item(itemname);
 				var item_idx = locate_item(itemname);
+				give_all_of_single_item(itemname);
 				if (item_idx==-1) {
 					items_to_send.splice(items_to_send.indexOf(itemname), 1);
 					set("give_items_"+character.name, items_to_send);
+					game_log("removing item from sendlist: "+ itemname);
+				} else {
+
+					game_log("Sending item: "+ itemname);
+					give_all_of_single_item(itemname);
 				}
 				/* This should work but doesn't
-					
 				let item_idx = locate_item(itemname);
 
 				if (item_idx==-1) {

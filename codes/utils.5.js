@@ -281,8 +281,10 @@ Example of data[0], e.g. a pontyItem
 	let ITEM_TO_ADD = "vitearring";
 	let ITEM_TO_ADD = "gslime";
 	let ITEM_TO_ADD = "intring";
-	let ITEM_TO_ADD = "strearring";
-	let QUANTITY = 9;
+	
+
+	let ITEM_TO_ADD = "orbg";
+	let QUANTITY = 20;
 	let PONTY_KEY = "ponty_items_to_buy";
 	let ponty_desired = get(PONTY_KEY);
 	ponty_desired[ITEM_TO_ADD] = QUANTITY;
@@ -297,6 +299,9 @@ function showPontyBuyList() {
 	show_json(get(PONTY_KEY));
 }
 
+function showGiveItems() {
+	show_json(get("give_items_"+character.name));
+}
 /* Debugcode 
 	if (debug && pontyItem.name.includes("earring")) {
         		game_log(pontyItem.name);
