@@ -14,7 +14,7 @@ setInterval(function(){
 	use_potion();
 	// use_hp_or_mp();
 	loot();
-	// game_log('Val is great!!');
+	game_log('Val is great!! warr loop');
 
 	if(!attack_mode || character.rip || is_moving(character)) return;
 

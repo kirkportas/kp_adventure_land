@@ -35,17 +35,18 @@ const ACTIVE_PARTY = [NameRanger, NamePriest];
 // Val's characters 
 const NameValWarrior = "AlextheGreat";
 const NameValMage = "LadyMary";
-const VALS_TOONS = [NameValWarrior, NameValMage];
+const NameValMerchant = "LeglyBlonde";
+const VALS_TOONS = [NameValWarrior, NameValMage, NameValMerchant];
 
 // Val's leader. (Overwrite values for Kirk if Val is using the code)
 if (character.name == NameValWarrior) {
 	LEADER = NameValWarrior;
-	SLAVES = [NameValMage];
+	SLAVES = [NameValMage, NameValMerchant];
 }
 
 // Used for verifying that the requested is "friendly" for party requests
 const ALLTOONS = [NameWarrior, NameRanger, NamePriest, NameMage, NameMerchant,
-				  NameValWarrior, NameValMage];
+				  NameValWarrior, NameValMage, NameValMerchant];
 
 // Misc constants
 const PONTY_KEY = "ponty_items_to_buy";
@@ -166,7 +167,7 @@ if (character.name == NameValWarrior) {
 	setInterval(start_chars, 15000);
 }
 
-if (character.name == NameMerchant) {
+if (character.name == NameValMerchant) {
 	load_code("gui_command_center");
 } else {
 

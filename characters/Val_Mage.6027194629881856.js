@@ -3,6 +3,8 @@
 // If you don't know how to code, don't worry, It's easy.
 // Just set attack_mode to true and ENGAGE!
 
+
+
 var attack_mode=true;
 
 load_code("val_utils");
