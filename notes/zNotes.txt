@@ -21,6 +21,10 @@ TODO: Investigate GAME APIs
 
 ==
 
+Ok, i really should have looked in the character reference at some point. I just found out about character.xrange, .esize, .targets(which i always calculated myself) and character.cc, which i think are all useful to know about
+
+
+==
 monster targeting 
 
 function get_weight(current_entity,priority_list,reference){
@@ -29,6 +33,79 @@ function get_weight(current_entity,priority_list,reference){
   + Math.min(current_entity.hp/current_entity.max_hp, 0.9)
   + index*100
   return weight
+}
+
+==
+Cute bee info
+{
+    "x": -34.826582662967894,
+    "y": 167.05867344198663,
+    "width": 26,
+    "height": 34,
+    "alpha": 1,
+    "visible": true,
+    "cskin": "13",
+    "i": 1,
+    "j": 3,
+    "skin": "cutebee",
+    "stype": "full",
+    "updates": 638,
+    "type": "monster",
+    "mtype": "cutebee",
+    "in": "main",
+    "map": "main",
+    "hp": 300,
+    "max_hp": 300,
+    "mp": 2,
+    "max_mp": 15,
+    "speed": 12,
+    "xp": 400,
+    "attack": 16,
+    "frequency": 0.5,
+    "rage": 0.1,
+    "aggro": 1,
+    "damage_type": "physical",
+    "respawn": -1,
+    "range": 20,
+    "name": "Cute Bee",
+    "armor": 0,
+    "resistance": 0,
+    "id": "41472980",
+    "move_num": 89285877,
+    "cid": 1,
+    "s": {},
+    "last_ms": "2021-09-27T20:59:16.841Z",
+    "walking": 31,
+    "fx": {},
+    "emblems": {},
+    "c": {},
+    "real_alpha": 1,
+    "real_x": -34.826582662967894,
+    "real_y": 167.05867344198663,
+    "vx": 0,
+    "vy": -11.999999984399999,
+    "level": 1,
+    "base": {
+        "h": 12,
+        "v": 8.5,
+        "vn": 2
+    },
+    "drawn": true,
+    "resync": false,
+    "engaged_move": 89285877,
+    "moving": true,
+    "abs": false,
+    "from_x": -34.826582662967894,
+    "from_y": 226.91467336417554,
+    "going_x": -34.826582662967894,
+    "going_y": 26.914673364175542,
+    "ref_speed": 12,
+    "angle": -90,
+    "hp_width": 28,
+    "hp_color": 11609895,
+    "ms_walk": "2021-09-27T20:59:16.525Z",
+    "a_direction": 3,
+    "direction": 3
 }
 
 ==

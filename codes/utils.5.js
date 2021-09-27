@@ -291,6 +291,8 @@ Example of data[0], e.g. a pontyItem
 	set(PONTY_KEY, ponty_desired);
 	show_json(get(PONTY_KEY));
 
+	delete ponty_desired[ITEM_TO_ADD];
+
 	let PONTY_KEY = "ponty_items_to_buy";
 	show_json(get(PONTY_KEY));
 */
@@ -356,15 +358,16 @@ function pontyPurchase()
             // if (itemsToBuy.includes(pontyItem.name)) {
             if (pontyItem.name in itemsToBuy) {
             	if (itemsToBuy[pontyItem.name] > 0) {
-            		itemsToBuy[pontyItem.name] = itemsToBuy[pontyItem.name] - (pontyItem.q ?? 1);
+            		// itemsToBuy[pontyItem.name] = itemsToBuy[pontyItem.name] - (pontyItem.q ?? 1);
+            		itemsToBuy[pontyItem.name]--;
                 	buy = true;
-                	should_save = true;
             	}
             } 
 
             if (buy) {
                 game_log("Buying " + G.items[pontyItem.name].name + " from Ponty!");
                 parent.socket.emit("sbuy", { "rid": pontyItem.rid });
+            	should_save = true;
             }
         }
         // Save after any purchases.

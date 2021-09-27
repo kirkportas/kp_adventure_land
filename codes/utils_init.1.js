@@ -9,6 +9,8 @@ game_log("LOGGER INACTIVE");
 
 Logger.functionEnter("Loading utils_init");
 
+const specialMonsters = ["cutebee", "snowman", "goldenbat",
+    "wabbit", "phoenix", "fvampire", "grinch"];
 
 const LOADGUI = false;
 const LOADSLAVES = false;
@@ -23,11 +25,12 @@ const NameRanger = "Terranger";
 const NamePriest = "NoHeals4U";
 const NameWarrior = "Terazarrior";
 const NameMage = "Terakazam";
+const NameRogue = "Terrogue";
 // For console pasting: ["Terazarrior","NoHeals4U","Terranger"]
 
 var LEADER = NameWarrior;
 var NameMerchant = "CurvyMoney";
-var SLAVES = [NameRanger, NameMage, NamePriest];
+var SLAVES = [NameRanger, NameMage, NamePriest, NameRogue];
 
 // var SLAVES = [NameRanger, NamePriest];    // **********************
 const ACTIVE_PARTY = [NameRanger, NamePriest];
@@ -46,7 +49,7 @@ if (VALS_TOONS.includes(character.name)) {
 }
 
 // Used for verifying that the requested is "friendly" for party requests
-const ALLTOONS = [NameWarrior, NameRanger, NamePriest, NameMage, NameMerchant,
+const ALLTOONS = [NameWarrior, NameRanger, NamePriest, NameMage, NameMerchant, NameRogue,
 				  NameValWarrior, NameValMage, NameValMerchant];
 
 // Misc constants
@@ -63,6 +66,8 @@ const UPGRADEABLE_LEVELS = {
 	"wshoes": 6,
 	"wattire": 5,
 	"wshield": 7,
+
+	"cape": 3,
 
 	// T2
 	"shield": 5,
@@ -106,7 +111,7 @@ for (itemname of shop_items) {
 const UPGRADEABLE = Object.keys(UPGRADEABLE_LEVELS);
 
 var LOW_CRAFT_ITEMS = ["gslime","crabclaw","beewings","seashell","bwing","snakeoil","snakefang","spores","whiteegg"];
-var FARMABLE = ["gem0"];
+var FARMABLE = ["gem0", "leather", "bfur", "cscale", "feather0", "ascale"];
 FARMABLE = FARMABLE.concat(LOW_CRAFT_ITEMS);
 FARMABLE = FARMABLE.concat(["vitearring","strearring","dexearring","intearring"]);
 FARMABLE = FARMABLE.concat(["vitamulet","stramulet","dexamulet","intamulet"]);
@@ -172,10 +177,9 @@ if (character.name == NameValWarrior) {
 	// setInterval(start_chars, 15000);
 }
 
-if (character.name == NameValMerchant) {
+if (character.ctype == "merchant") {
 	load_code("gui_command_center");
 } else {
-
 	add_top_button("showGive","showGive", showGiveItems);
 }
 
@@ -188,7 +192,7 @@ parent.$('#gamelog').css({'width':'450px'});
 
 
 /**** Stats ********************************************************/
-
+// show_json(get("stats_bestiary"))
 // BESTIARY
 var STATS_BESTIARY_KEY = "stats_bestiary";
 if (character.name == NameWarrior) {

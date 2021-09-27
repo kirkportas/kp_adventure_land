@@ -21,6 +21,7 @@ function run_shared_executions() {
 		use_skill("use_town");
 		return;
 	} else {
+		// Recover from the "abort mode"
 		if (attack_mode == false) {		
 			Logger.log("Health recovering, no longer fleeing.");
 			game_log("Health recovering, no longer fleeing.");
@@ -29,27 +30,13 @@ function run_shared_executions() {
 	}
 
 	Logger.functionEnter("trading()"); 
-	try {
-		trading();
-	} catch(err) {
+	try { 
+		trading(); 
+	}  catch(err) {
 		game_log("Error in trading()");
 		game_log(err);
 	}
 	Logger.functionExit("trading()", Date.now()-start_ts);
-
-	if (character.name == LEADER) {
-	    // kpmove("bees");
-		// kpmove("crabs");
-	} 
-
-	if (SLAVES.includes(character.name)) {
-		// kpmove("bees");
-		// kpmove("crabs");
-	}
-
-	// if (character.name == NameMerchant) {
-	// 	trading();
-	// }
 }
 
 
@@ -81,11 +68,8 @@ function request_items_from_all(itemname_arr) {
 	for (char of ALLTOONS) {
 		// Ignore offline or faroff characters
 		if (!get_entity(char)) continue;
-		// game_log("request_item_from_all() - "+char);
 
 		let key = "give_items_"+char;
-		game_log(char);
-		game_log(key);
 		var items = get(key);
 		if (!items) items = [];
 		
@@ -129,11 +113,9 @@ show_json(get("bank-"+character.name))
 
 
 
+// Only run once per 2 seconds
 var trading_last_ts = Date.now();
 function trading() {
-	//Trading code 
-
-	// Only run once per 2 seconds
 	var should_run = (Date.now() - trading_last_ts) > 1000;
 	if (!should_run) { return; }
 	trading_last_ts = Date.now();

@@ -66,11 +66,11 @@ function reset_track_hits() {
 
 // Start!
 reset_track_hits();
-character.on("target_hit", function(data){
-	// game_log("Hit for: "+data.damage); // evades still fire the event, with damage==0
+// character.on("target_hit", function(data){
+// 	// game_log("Hit for: "+data.damage); // evades still fire the event, with damage==0
 
-	// Only track basic attacks
-	if (data.source == "attack") {
-		track_hits();
-	}
-});
+// 	// Only track basic attacks
+// 	if (data.source == "attack") {
+// 		track_hits();
+// 	}
+// });

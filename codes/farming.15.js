@@ -10,38 +10,38 @@ function should_abort() {
 	return !attack_mode;
 }
 
-//Scan for any monsters attacking the party.
-function get_best_target() {
-
-	for(id in parent.entities)
-	{
-		var current=parent.entities[id];
-		if(current.type!="monster" || !current.visible || current.dead) continue;
-		if(current.target && ALLTOONS.includes(current.target) ) {
-			return current;
+function taunt_attackers() {
+	for(id in parent.entities) {
+		let mob = parent.entities[id];
+		if(mob.type!="monster" || !mob.visible || mob.dead) continue;
+		if ("target" in mob && mob.target != NameWarrior && ALLTOONS.includes(mob.target)) {
+			use_skill("taunt", mob);
+			break;
 		}
-
-		var c_dist=parent.distance(character,current);
-		if(c_dist<min_d) min_d=c_dist,target=current;
 	}
 }
-
 function attack_plus_skills(target) {
 
 	// Warrior Taunt
-	if (character.name == NameWarrior) {
-		if (!target.target && character.hp/character.max_hp<0.6) {
+	if (character.ctype == "warrior") {
+		taunt_attackers();
+
+		// Pause and heal up if the selected target has no target.
+		// i.e. Don't start a new fight, but do defend if targeted.
+		if (!target.target && character.hp/character.max_hp<0.7) {
 			game_log("Waiting to engage until healed");
 			return;
 		}
-		if ("target" in target && target.target != NameWarrior) {
+
+		// If the selected target is targeting a friendly, taunt them.
+		if ("target" in target && target.target != NameWarrior && ALLTOONS.includes(target.target)) {
 			game_log("Taunting: "+target.mtype);
 			use_skill("taunt");
 		}
 	}
 
 	// Ranger HuntersMark. duration is 10seconds. 
-	if (character.name == NameRanger) {
+	if (character.ctype == "ranger") {
 		let mp_ratio = character.mp / character.max_mp;
 		
 		// Mark if mp is near full and >~4k hitpoints left.
@@ -57,6 +57,64 @@ function attack_plus_skills(target) {
 
 	set_message("Attacking");
 	attack(target);
+}
+
+function get_mobs_attacking_party() {
+	let mobs = [];
+	for(id in parent.entities) {
+		var current=parent.entities[id];
+		if(current.type!="monster" || !current.visible || current.dead) continue;
+		
+		// Target if attacking party members
+		if(current.target && ALLTOONS.includes(current.target)) {
+			mobs.push(current);
+		}
+	}
+	return mobs;
+}
+//Scan for any monsters attacking the party.
+function get_best_target() {
+	let attacking_mobs = get_mobs_attacking_party();
+	if (attacking_mobs.length == 0) {
+		return default_get_monster();
+	}
+
+	for (attacker of attacking_mobs) {
+		if (attacker.target != LEADER) {
+			//todo 
+		}
+	}
+
+	for(id in parent.entities)
+	{
+		var current=parent.entities[id];
+		if(current.type!="monster" || !current.visible || current.dead) continue;
+		
+		// Target if attacking party members
+		if(current.target && ALLTOONS.includes(current.target) && current.target != LEADER) {
+			return current;
+		}
+
+		// var c_dist=parent.distance(character,current);
+		// if(c_dist<min_d) min_d=c_dist,target=current;
+	}
+}
+
+function default_get_monster(mon_type) {
+
+	// Restrict auto-fighting to a max ATT value.
+	// mob_params["path_check"] = true; // Optional path_check param
+	let mob_params = {"min_xp":100,"max_att":1250};
+	if (mon_type) { mob_params["type"] = mon_type; }
+
+	let target=get_nearest_monster(mob_params);
+	if(target) { 
+		change_target(target); 
+	} else {
+		set_message("No Monsters");
+		return;
+	}
+	return target;
 }
 
 function default_farm(mon_type) {
@@ -78,21 +136,10 @@ function default_farm(mon_type) {
 	}
 	var target=get_targeted_monster();
 	if(!target) {
-		// Restrict auto-fighting to a max ATT value.
-		// mob_params["path_check"] = true; // Optional path_check param
-		let mob_params = {"min_xp":100,"max_att":750};
-		if (mon_type) { mob_params["type"] = mon_type; }
-
-		target=get_nearest_monster(mob_params);
-		if(target) { 
-			change_target(target); 
-		} else {
-			set_message("No Monsters");
-			return;
-		}
+		target = default_get_monster(mon_type);
 	}
 	
-	if(!is_in_range(target)) {
+	if(target && !is_in_range(target)) {
 		// Walk half the distance
 		move(character.x+(target.x-character.x)/2,
 			 character.y+(target.y-character.y)/2);
@@ -238,12 +285,8 @@ var RARE_MOB_TYPES = ["cutebee","greenjr","goldenbat","phoenix","squigtoad"];
 function party_farm() {
 	if (should_abort()) { return; }
 
-	// default_farm();
 	// kpmove("bees");
 	// stationary_farm();
-	// return;
-
-	// var greenjr_target = get_nearest_monster({"type":"greenjr"});
 
 	// Stop and kill any rare mobs that spawn nearby
 	let rare_target = undefined;
@@ -253,7 +296,6 @@ function party_farm() {
 			break;
 		}
 	} 
-
 
 	if (rare_target) {
 		if (character.name == LEADER) {
@@ -265,14 +307,16 @@ function party_farm() {
 	} 
 	else {
 		if (character.name == LEADER) {
-			default_farm();
+			default_farm("croc");
+			// default_farm("croc");
 			// default_farm("snake");
 			// default_farm("scorpion");	
 		}
-		if (SLAVES.includes(character.name)) {	
-			// default_farm();
+		if (SLAVES.includes(character.name)) {
+			default_farm("armadillo");
+			// default_farm("croc");	
 			// default_farm("snake");
-			support_leader();
+			// support_leader();
 			// transport("main",4)
 		}
 	}

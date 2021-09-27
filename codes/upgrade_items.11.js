@@ -4,6 +4,10 @@ function merchant_handle_upgradeables(scrolltype) {
 	Logger.functionEnter("handle UPGRADEABLE_LEVELS");
 	let did_upgrade = false;
 	for (var [item, maxlvl] of Object.entries(UPGRADEABLE_LEVELS)) {
+		// no dex for ranger items
+		if (["wgloves","wcap"].includes(item)) {
+			scrolltype = "intscroll";
+		}
 		did_upgrade = upgrade_all_item(item, maxlvl, scrolltype); // "dexscroll" intscroll strscroll
 		if (did_upgrade) {
 			Logger.log("did_upgrade = true");

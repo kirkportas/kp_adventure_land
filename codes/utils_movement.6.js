@@ -75,7 +75,7 @@ smart_move(destination)
 var last_called_move_to_leader = Date.now();
 function move_to_leader() {
 	if (is_moving(character)) { return; }
-	if (Date.now() - last_called_move_to_leader < 500) {
+	if (Date.now() - last_called_move_to_leader < 800) {
 		return;
 	}
 	last_called_move_to_leader = Date.now();
@@ -95,7 +95,9 @@ function move_to_leader() {
 	}
 
 	try {
-		if (100 < distance(character, parent.entities[LEADER], true)) {
+		// todo
+		// shortening range from 100 to 10 for boar fighting)
+		if (10 < distance(character, parent.entities[LEADER], true)) {
 			move(character.x+(lead_entity.x-character.x)/2,
 				  character.y+(lead_entity.y-character.y)/2 );
 		}
