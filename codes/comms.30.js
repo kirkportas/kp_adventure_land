@@ -1,12 +1,12 @@
 
 
-if (!init_comms) {
-	var count = 0;
-	var zmax = 5;
-	init_comms = true;
-	game_log("Comms initted");
-}
-var name = character.name;
+// if (!init_comms) {
+// 	var count = 0;
+// 	var zmax = 5;
+// 	init_comms = true;
+// 	game_log("Comms initted");
+// }
+// var name = character.name;
 
 function comms() {
 	if (name == NameRanger) {
@@ -20,14 +20,24 @@ function comms() {
 
 function on_cm(name,data)
 {
-	var is_slave = SLAVES.includes(character.name);
-	var is_leader = LEADER ==  character.name;
+	// var is_slave = SLAVES.includes(character.name);
+	// var is_leader = LEADER == character.name;
 
-	if(name!=NameMerchant) // Make sure to check who the CM came from
+	if(!ALLTOONS.includes(name) && name != "kouin") // Make sure to check who the CM came from
 	{
 		game_log("Unauthorized CM from "+name);
 		return;
 	}
-	show_json(data);
+	game_log("CM from "+name);
+	game_log(data);
+
+	if (data.constructor == Object) {
+		let cmlog_i = 0;
+		for (var [k, v] of Object.entries(data)) {
+			game_log(`{ ${k}: ${v} }`);
+			cmlog_i++;
+			if (cmlog_i > 200) break;
+		}
+	}
 }
 game_log("Finished load_code( comms )");

@@ -43,6 +43,8 @@ function main(){
 	start_ts = Date.now();
 	Logger.functionEnter(logFnName);
 
+	try {
+
 	run_shared_executions();
 	loot();
 	use_potion();
@@ -81,6 +83,10 @@ function main(){
 		}
 	}
 
+	} catch(err) {
+		game_log("Error in merchant main loop");
+		Logger.log("Error in merchant main loop");
+	}
 	// End main loop
 	var runtime = Date.now()-start_ts;
 	Logger.functionExit(logFnName,runtime);

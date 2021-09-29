@@ -1,13 +1,15 @@
 
 
 function merchant_handle_upgradeables(scrolltype) {
+	if (character.q.upgrade) return;  // Skip if already upgrading
+
 	Logger.functionEnter("handle UPGRADEABLE_LEVELS");
 	let did_upgrade = false;
 	for (var [item, maxlvl] of Object.entries(UPGRADEABLE_LEVELS)) {
 		// no dex for ranger items
-		if (["wgloves","wcap"].includes(item)) {
-			scrolltype = "intscroll";
-		}
+		// if (["wgloves","wcap"].includes(item)) {
+		// 	scrolltype = "intscroll";
+		// }
 		did_upgrade = upgrade_all_item(item, maxlvl, scrolltype); // "dexscroll" intscroll strscroll
 		if (did_upgrade) {
 			Logger.log("did_upgrade = true");
@@ -215,7 +217,7 @@ function get_upgraded_nonbase_item(itemname, target_lvl, stat_type) {
 }
 
 function upgrade_all_item(itemname, target_lvl, stat_type) {
-	if (character.q.upgrade) { return true; }
+	if (character.q.upgrade) { return false; }
 
 	var upgradeable_item_idx = locate_item_below_level(itemname, target_lvl);
 	if (upgradeable_item_idx == -1) {

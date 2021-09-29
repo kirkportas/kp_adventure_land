@@ -87,7 +87,13 @@ function party_up() {
 	} else {
 		if (!is_in_party) {
 			game_log("party_up SEND_REQUEST");
-			send_party_invite(LEADER,1); // party request
+			if (LEADER in parent.entities) {
+				send_party_invite(LEADER,1); // party request
+			} else {
+				for (charObj of get_characters()) {
+					send_party_invite(charObj.name, 1); // party request
+				}
+			}
 		}
 	}
 }
@@ -192,7 +198,8 @@ function sell_all_trash(){
     character.items.forEach((item, index) => {
         if (item
             && TRASH.includes(item.name)
-            && item_grade(item) < 2) {
+            && item_grade(item) < 2
+            && item.level < 2) {
             log(`Merchant is unloading trash ${item.name}`);
             item.q ? sell(index, item.q) : sell(index, item);
         }
@@ -351,7 +358,7 @@ function pontyPurchase()
             // Ponty cost multiplied is 2
             // Skip if too expensive or can't afford
             let cost = parent.calculate_item_value(pontyItem) * 2 * (pontyItem.q ?? 1);
-            let auto_buy_cost_limit = 2 * 1000 * 1000; // 2mill
+            let auto_buy_cost_limit = 1 * 1000 * 1000; // 1mill
             if (cost > character.gold || cost > auto_buy_cost_limit) continue;
     		// game_log(`Cost of - ${pontyItem.name}, q: ${pontyItem.q}: ${cost}`);
 
@@ -359,7 +366,7 @@ function pontyPurchase()
             if (pontyItem.name in itemsToBuy) {
             	if (itemsToBuy[pontyItem.name] > 0) {
             		// itemsToBuy[pontyItem.name] = itemsToBuy[pontyItem.name] - (pontyItem.q ?? 1);
-            		itemsToBuy[pontyItem.name]--;
+            		itemsToBuy[pontyItem.name] = itemsToBuy[pontyItem.name] -1;
                 	buy = true;
             	}
             } 

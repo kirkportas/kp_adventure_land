@@ -25,6 +25,11 @@ function kpmove(loc_name){
 	}
 }
 
+function move_halfway(target) {
+	move(character.x+(target.x-character.x)/2,
+ 		 character.y+(target.y-character.y)/2);	
+}
+
 function is_in_town() {
 	var cutoff = 200;
 	// todo investigate the in_check param (currently false)
@@ -96,8 +101,8 @@ function move_to_leader() {
 
 	try {
 		// todo
-		// shortening range from 100 to 10 for boar fighting)
-		if (10 < distance(character, parent.entities[LEADER], true)) {
+		// shorten range from 100 to 10 for boar fighting)
+		if (100 < distance(character, parent.entities[LEADER], true)) {
 			move(character.x+(lead_entity.x-character.x)/2,
 				  character.y+(lead_entity.y-character.y)/2 );
 		}

@@ -20,6 +20,7 @@ function taunt_attackers() {
 		}
 	}
 }
+
 function attack_plus_skills(target) {
 
 	// Warrior Taunt
@@ -50,13 +51,114 @@ function attack_plus_skills(target) {
 			game_log("HunterMark on: "+target.mtype);
 			use_skill("huntersmark");
 		} else {
-			game_log("mp_ratio: "+mp_ratio);
-			game_log("target.hp: "+target.hp);
+			// game_log("mp_ratio: "+mp_ratio);
+			// game_log("target.hp: "+target.hp);
+		}
+	}
+
+	// todo half-arsed energize code.
+	// Meant to support Ranger while 3shot farming
+	if (character.ctype == "mage" && character.mp >= 1000) {
+		// show_json(is_in_range(parent.entities["Terranger"], "energize"))
+		let rangerObj = parent.entities[NameRanger];
+		let priestObj = parent.entities[NamePriest];
+
+		if (is_in_range(rangerObj, "energize")) {
+			let amount = rangerObj.max_mp - rangerObj.mp;
+			use_skill("energize", NameRanger, amount);
+			game_log("energize amount: "+amount);
+			// .then(
+			// 	function(){ game_log("energize resolved")}, 
+			// 	function(){});
+		} 
+		else if (is_in_range(priestObj, "energize")) {
+			let amount = priestObj.max_mp - priestObj.mp;
+			// game_log("Energizing "+NamePriest);
+			use_skill("energize", NamePriest, amount);
 		}
 	}
 
 	set_message("Attacking");
 	attack(target);
+}
+
+// Intended for use with Ranger and 3shot
+function get_in_range_mobs(mtype, skill_name) {
+	let mobs = [];
+	for(id in parent.entities) {
+		var current=parent.entities[id];
+		if(current.type!="monster" || !current.visible || current.dead) continue;
+		if (mtype && current.mtype != mtype) continue;
+		if(current && is_in_range(current, skill_name)) {
+			mobs.push(current);
+		}
+	}
+	return mobs;
+}
+
+//
+var last_undefined = Date.now();
+async function fire_3_shot(mtype) {
+	console.log("Entering fire_3_shot()");
+	let mobs = get_in_range_mobs("bee", "3shot");
+
+	// let mobs = get_in_range_mobs(mtype); // can pass undefined
+	// use_skill("3shot", [])
+	if (mobs.length >=3 && character.mp > 350) {
+
+		// let targets = mobs.slice(0,3); 
+		let targets = [ mobs[0], mobs[1], mobs[2] ];
+
+	    let result = await use_skill("3shot", targets);
+	    if (!result) {
+	    	console.log("'result' is undefined: "+result);
+	    	console.log("since last_undefined: "+(Date.now()-last_undefined));
+	    	last_undefined = Date.now();
+	    } else {
+			console.log("'result' is defined: "+result);
+	    }
+	    result.then(function(res) { 
+	    	console.log('3shot resolved'); 
+	    	console.log(res); 
+	    	// game_log('3shot resolved: ' + res); 
+			return true;
+	    }, function(rej) {
+	    	console.log('3shot rejected'); 
+	    	console.log(rej); 
+	    	// game_log('3shot rejected: ' + rej); 
+			return false;
+	    });
+
+	    game_log("SHOULD NOT BE HIT");
+	    console.log("SHOULD NOT BE HIT");
+	} else {
+		return false;
+	}
+}
+
+
+// WIP method - todo refactor
+function three_shot_farm() {
+	// return;
+	// fire_3_shot()
+	// 	.then(val => { 
+	// 		game_log("fire_3_shot resolved: "+val);
+	// 	})
+	// 	.catch(val => {
+	// 		game_log("fire_3_shot rejected: "+val);
+	// 		default_farm();
+		// });
+
+	// Note any async function is a promise.
+	// Note any return type of Promises is "truthy"
+
+	console.log("Calling fire_3_shot()");
+	if (fire_3_shot() == true) {
+		game_log("fire_3_shot true");
+	} else {
+		// game_log("fire_3_shot false");
+		default_farm();
+	}
 }
 
 function get_mobs_attacking_party() {
@@ -72,32 +174,41 @@ function get_mobs_attacking_party() {
 	}
 	return mobs;
 }
-//Scan for any monsters attacking the party.
+
+
+// WIP method 
 function get_best_target() {
+	let current_target=get_targeted_monster();
+
+	// Switch to 
 	let attacking_mobs = get_mobs_attacking_party();
-	if (attacking_mobs.length == 0) {
+	if (attacking_mobs.length == 0 && !current_target) {
 		return default_get_monster();
 	}
 
+	if (current_target) return current_target;
+
 	for (attacker of attacking_mobs) {
 		if (attacker.target != LEADER) {
+			return attacker;
 			//todo 
 		}
 	}
-
-	for(id in parent.entities)
-	{
-		var current=parent.entities[id];
-		if(current.type!="monster" || !current.visible || current.dead) continue;
+	game_log("get_best_target end of method");
+	return default_get_monster();
+	// for(id in parent.entities)
+	// {
+	// 	var current=parent.entities[id];
+	// 	if(current.type!="monster" || !current.visible || current.dead) continue;
 		
-		// Target if attacking party members
-		if(current.target && ALLTOONS.includes(current.target) && current.target != LEADER) {
-			return current;
-		}
+	// 	// Target if attacking party members
+	// 	if(current.target && ALLTOONS.includes(current.target) && current.target != LEADER) {
+	// 		return current;
+	// 	}
 
-		// var c_dist=parent.distance(character,current);
-		// if(c_dist<min_d) min_d=c_dist,target=current;
-	}
+	// 	// var c_dist=parent.distance(character,current);
+	// 	// if(c_dist<min_d) min_d=c_dist,target=current;
+	// }
 }
 
 function default_get_monster(mon_type) {
@@ -150,6 +261,7 @@ function default_farm(mon_type) {
 	}
 }
 
+
 function stationary_farm() {
 	if (should_abort()) { return; }
 	if (heal_party_member()) { return; }
@@ -170,53 +282,53 @@ function stationary_farm() {
 		}
 	}
 	
-	if(can_attack(target))
+	if(is_in_range(target))
 	{
 		set_message("Attacking");
-		attack(target);
+		attack_plus_skills(target);
 	}
 }
 
 function heal_party_member() {
 
-	if (character.name == NamePriest) {
-		// Heal if the missing HP is greater than the healpower
-		let weakest = lowest_health_partymember();
-		let missing_hp = weakest.max_hp - weakest.hp;
-		let heal_power = character.attack*0.8; // Heal with wasted 20%
+	if (character.ctype != "priest") return false;
 
-		let should_heal = missing_hp > heal_power || weakest.health_ratio < 0.8;
-		if (weakest.health_ratio < 0.4) {
-			game_log("partyheal! Please don't die!");
-			use_skill("partyheal");
-		}
-		if (is_on_cooldown("attack")) {
-			return false;
-		}
+	// Heal if the missing HP is greater than the healpower
+	let weakest = lowest_health_partymember();
+	let missing_hp = weakest.max_hp - weakest.hp;
+	let heal_power = character.attack*0.8; // Heal with wasted 20%
 
-		if (should_heal) {
-			if (is_in_range(weakest)) {
-				game_log("Healing: "+weakest.name);
-				heal(weakest);
-			} else {
-				game_log("Healing: moving to "+weakest.name);
-				move(character.x+(weakest.x-character.x)/2,
-			 		 character.y+(weakest.y-character.y)/2);
-			}
-			return true;
+	let should_heal = missing_hp > heal_power || weakest.health_ratio < 0.8;
+	if (weakest.health_ratio < 0.4) {
+		game_log("partyheal! Please don't die!");
+		use_skill("partyheal");
+	}
+	if (is_on_cooldown("attack")) {
+		return false;
+	}
+
+	if (should_heal) {
+		if (is_in_range(weakest)) {
+			game_log("Healing: "+weakest.name);
+			heal(weakest);
 		} else {
-			// Corner case: If tank disconnects then check him specifically.	
-			if (!("Terazarrior" in get_party())) {
-				game_log("Terazarrior not in party");
-				let warrior = parent.entities[NameWarrior];
-				if (warrior) {
-					let missing_hp = warrior.max_hp - warrior.hp;
-					if (missing_hp > character.heal*0.8) {
-						game_log("Healing WARRIOR out of party scope");
-						game_log("Healing: "+warrior.name);
-						heal(warrior);
-						return true;
-					}
+			game_log("Healing: moving to "+weakest.name);
+			move(character.x+(weakest.x-character.x)/2,
+		 		 character.y+(weakest.y-character.y)/2);
+		}
+		return true;
+	} else {
+		// Corner case: If tank disconnects then check him specifically.	
+		if (!("Terazarrior" in get_party())) {
+			game_log("Terazarrior not in party");
+			let warrior = parent.entities[NameWarrior];
+			if (warrior) {
+				let missing_hp = warrior.max_hp - warrior.hp;
+				if (missing_hp > character.heal*0.8) {
+					game_log("Healing WARRIOR out of party scope");
+					game_log("Healing: "+warrior.name);
+					heal(warrior);
+					return true;
 				}
 			}
 		}
@@ -238,11 +350,7 @@ function support_leader() {
 		return;
 	}
 
-	// show_json(get_entity("Terranger").target)
-	// show_json(get_entity(get_entity("Terranger").target))
-	// var ranger_target = get_entity("Terranger").target;
-	// game_log(ranger_target);
-	// change_target(ranger_target)
+
 	// show_json(get_entity(get_entity("Terranger").target))
 
 	// The key:
@@ -254,7 +362,10 @@ function support_leader() {
 		var leader_target_id = get_entity(LEADER).target;
 		var mob_obj = parent.entities[leader_target_id];
 
-		if(mob_obj && "target" in mob_obj) {
+		// dont start a fight if the mob isnt targeting leader yet.
+		// UNLESS its a cutebee, which doesn't fight back
+		let should_attack = mob_obj && (["cutebee"].includes(mob_obj.mtype) || "target" in mob_obj);
+		if(should_attack) {
 			// game_log(mob_obj.target);
 			// Logger.log("Changing target to leader target");
 			//  && mob_obj.target == LEADER
@@ -280,11 +391,15 @@ maps:
 "main", "cave"
 */
 
+var FARMING_DEBUG = false;
+// if (character.name == NameRanger) { FARMING_DEBUG = true; }
 
 var RARE_MOB_TYPES = ["cutebee","greenjr","goldenbat","phoenix","squigtoad"];
 function party_farm() {
+	FARMING_DEBUG && game_log("party_farm");
 	if (should_abort()) { return; }
 
+	var stop_for_rares = false;  // Ignore any rare monsters while farming
 	// kpmove("bees");
 	// stationary_farm();
 
@@ -297,27 +412,40 @@ function party_farm() {
 		}
 	} 
 
-	if (rare_target) {
+	if (stop_for_rares && rare_target) {
 		if (character.name == LEADER) {
-			default_farm("greenjr");
+			// default_farm("greenjr");
+			default_farm(rare_target.mtype);
 		}
 		if (SLAVES.includes(character.name)) {	
 			support_leader();
 		}
 	} 
 	else {
+		// default_farm("scorpion");
+		// default_farm("snake");	
+		// transport("main",4)
+
 		if (character.name == LEADER) {
 			default_farm("croc");
-			// default_farm("croc");
-			// default_farm("snake");
-			// default_farm("scorpion");	
-		}
-		if (SLAVES.includes(character.name)) {
-			default_farm("armadillo");
+		} 
+		else if (character.name == NameRogue) {
+			default_farm("bee");	
+			// attack loop testing
+			// let target = get_best_target();
+			// change_target(get_best_target());
+			// if (target && !is_in_range(target) && !is_moving(character)) {
+			// 	move_halfway(target);
+			// }
+
+		} 
+		else if (character.name == NameRanger) {
+			three_shot_farm();
+
+		} else if (SLAVES.includes(character.name)) {
+			stationary_farm();
 			// default_farm("croc");	
-			// default_farm("snake");
 			// support_leader();
-			// transport("main",4)
 		}
 	}
 }

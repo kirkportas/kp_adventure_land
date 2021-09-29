@@ -19,10 +19,143 @@ TODO: Investigate GAME APIs
 - http://adventure.land/docs/code/functions/command_character
 - http://adventure.land/docs/code/functions/get_active_characters
 
+****
+send_item("Terranger",0,10000);
+send_item("Terazarrior",0,10000);
+send_item("NoHeals4U",0,10000);
+send_item("Terakazam",0,10000);
+send_item("Terrogue",0,10000);;
+
+***
+==
+LOOT ALL CHESTS 
+
+let i = 0;
+let limit = 25; // max at once (avoid 200 per second code cost)
+for (const [key, value] of Object.entries(parent.chests)) {
+  loot(key);
+    i++;
+    if (i>limit) break;
+}
+
+
+==
+Promise example:
+const promise1 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    //resolve('foo');
+    reject('bar');
+  }, 300);
+});
+
+promise1
+  .then((value) => { console.log(value); })
+  .catch((value) => { console.log(value); });
+
+
+console.log(promise1);
+// expected output: [object Promise]
+
+
+
+===
+
+have multiple warriors stun them and only attack them while stunned using jacko when stun runs out
+you can solo any monster that is not immune to stun that way regardless of stats
+==
+  socket.on('start',function(data){
+        // alert(JSON.stringify(data));
+        if(!no_html)
+        {
+            $("#progressui").remove();
+            $("#content").html("");
+            $("#topmid,#bottommid,#toprightcorner,#bottomleftcorner2,#bottomleftcorner").show();
+            $(".xpsui").css("display","block");
+            $(".tutorialui").css("display","block");
+            $("body").append('<input id="chatinput" onkeypress="if(event.keyCode==13) say($(this).rfval()); send_typing();" type="text" autocomplete="off" name="alchatinput" placeholder=""/>');
+        }
+
+    UI menu controls 
+         // locate menu
+          const topRightCorner = parent.document.getElementById("toprightcorner");
+          if (!topRightCorner) {
+            game_log("Cannot find top right corner menu");
+            return;
+          }
+
+          // Find code button
+          const gameButtons = topRightCorner.getElementsByClassName("gamebutton");
+          let codeButton;
+
+          for (const gameButton of gameButtons) {
+            if (gameButton.innerText === "CODE") {
+              codeButton = gameButton;
+              break;
+            }
+          }
+
+          // Create new button
+          const aiButton = parent.document.createElement("div");
+          aiButton.className = "gamebutton";
+          aiButton.appendChild(parent.document.createTextNode("AI \uD83E\uDD16"));
+          aiButton.id = "aiuibutton";
+          aiButton.setAttribute("onclick", "");
+
+          // Add button
+          topRightCorner.insertBefore(aiButton, codeButton);
+          topRightCorner.insertBefore(
+            parent.document.createTextNode("\n\t\t\t"),
+            codeButton
+          );
+
+          // Create event
+          aiButton.onclick = showAiDialog;
+        that onclick attribute that is added is just for css rule :p
+        function showAiDialog() {
+          parent.show_modal(
+            `<div id="modal-ai-settings"><h1>Ai settings<h1>${getAiDialogContent()}</div>`
+          );
+        }
+        forget that manual code editing to update the bot :smile:
+        checkbox:
+                optionsContent += `
+                    <li>
+                        <label>
+                            <input type="checkbox"${
+                              settings[settingType] && " checked"
+                            } onchange="code_eval(\`set('${settingType}', \${this.checked})\`)" />
+                            ${settingType}
+                        </label>
+                    </li>
+                    `;
+
+
+
 ==
 
 Ok, i really should have looked in the character reference at some point. I just found out about character.xrange, .esize, .targets(which i always calculated myself) and character.cc, which i think are all useful to know about
+===
+SpadarFaar — 09/06/2020
+If you want rare/valuable equipment, you need to go ranger mage unless you want fiery stuff
+[1:47 PM]
+Then just mage
+[1:48 PM]
+If you want gold you have a pretty limited set of monsters to choose from and they're pretty generic except for ents where you need to tank
+[1:48 PM]
+We don't really have any sources of equipment that can utilize diverse parties
+[1:50 PM]
+Armor/weapon boxes - cgoos
 
+Book of secrets/agile quiver/fury - rats
+
+Sucker punches - tiny crabs
+
+==
+
+How can we get access to the parent object of the methods in runner_functions.js? 
+I want to wrap some of those methods with cache helpers, to do things like cache the bank in localstorage.  These methods aren't stored on window or some places under it that I manually explored.
+
+parent.$("#maincode")[0].contentWindow
 
 ==
 monster targeting 

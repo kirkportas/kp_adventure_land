@@ -67,7 +67,7 @@ const UPGRADEABLE_LEVELS = {
 	"wattire": 5,
 	"wshield": 7,
 
-	"cape": 3,
+	"cape": 5,
 
 	// T2
 	"shield": 5,
@@ -85,16 +85,21 @@ const UPGRADEABLE_LEVELS = {
 
 	// Weapons
 	"pmace": 5,
-	"hbow": 7
+	"hbow": 7,
+	"cclaw": 7,
+	"rapier": 5
 };
 
 const max_level_compound = 2;
 game_log("max_level_compound: "+max_level_compound);
 var COMPOUNDABLE = ["hpamulet","ringsj","hpbelt","wbook0"];
 COMPOUNDABLE=COMPOUNDABLE.concat([
-	"vitamulet","stramulet","intamulet","dexamulet",
-	"vitearring","strearring","intearring","dexearring",
-	"vitring","dexring","intring","strring"]);
+	"vitamulet","stramulet","intamulet","dexamulet",			// Amulets
+	"vitearring","strearring","intearring","dexearring", 		// Earrings
+	"vitring","dexring","intring","strring", 					// Rings
+	"orbg" 														// Orbs
+	 															// Weapons
+]); 
 
 
 // const COMPOUNDABLE_LEVELS = {
@@ -119,8 +124,8 @@ FARMABLE = FARMABLE.concat(["candy0","candy1"]);
 FARMABLE = FARMABLE.concat(["stinger","wbook0"]);
 FARMABLE = FARMABLE.concat(["vitscroll","scroll0","scroll1"]);
 
-// TRASH = []; 
-var TRASH = ["stinger"];
+// This won't sell at item.level >=2  (check method sell_all_trash)
+var TRASH = ["stinger","hpamulet","hpbelt","ringsj"];
 
 // These localstorage vars are used for passing items to the Merchant
 set("give_items_"+NameWarrior, []);
@@ -140,7 +145,7 @@ Logger.functionEnter("Loading shared code files");
 	try { load_code("utils_movement"); }    catch(err) { Logger.log("Error loading utils_movement: "+err); } 
 	try { load_code("stats"); }    			catch(err) { Logger.log("Error loading stats: "+err); } 
 	// var init_comms = false;
-	// try { load_code("comms"); }    			catch(err) { Logger.log("Error loading comms: "+err); } 
+	try { load_code("comms"); }    			catch(err) { Logger.log("Error loading comms: "+err); } 
 Logger.functionExit("Loading shared code files", 0);
 
 if (character.name == LEADER) {
