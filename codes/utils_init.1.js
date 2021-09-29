@@ -67,7 +67,7 @@ const UPGRADEABLE_LEVELS = {
 	"wattire": 5,
 	"wshield": 7,
 
-	"cape": 5,
+	"cape": 6,
 
 	// T2
 	"shield": 5,
@@ -85,9 +85,13 @@ const UPGRADEABLE_LEVELS = {
 
 	// Weapons
 	"pmace": 5,
-	"hbow": 7,
+	"hbow": 5,
 	"cclaw": 7,
-	"rapier": 5
+	"rapier": 5,
+	"woodensword": 6,
+
+	// Christmas set
+	"merry": 5,
 };
 
 const max_level_compound = 2;
@@ -116,7 +120,7 @@ for (itemname of shop_items) {
 const UPGRADEABLE = Object.keys(UPGRADEABLE_LEVELS);
 
 var LOW_CRAFT_ITEMS = ["gslime","crabclaw","beewings","seashell","bwing","snakeoil","snakefang","spores","whiteegg"];
-var FARMABLE = ["gem0", "leather", "bfur", "cscale", "feather0", "ascale"];
+var FARMABLE = ["gem0", "leather", "bfur", "cscale", "feather0", "ascale", "spidersilk"];
 FARMABLE = FARMABLE.concat(LOW_CRAFT_ITEMS);
 FARMABLE = FARMABLE.concat(["vitearring","strearring","dexearring","intearring"]);
 FARMABLE = FARMABLE.concat(["vitamulet","stramulet","dexamulet","intamulet"]);

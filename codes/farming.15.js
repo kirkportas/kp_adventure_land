@@ -157,7 +157,7 @@ function three_shot_farm() {
 		game_log("fire_3_shot true");
 	} else {
 		// game_log("fire_3_shot false");
-		default_farm();
+		stationary_farm();
 	}
 }
 
@@ -427,7 +427,7 @@ function party_farm() {
 		// transport("main",4)
 
 		if (character.name == LEADER) {
-			default_farm("croc");
+			default_farm("spider"); 
 		} 
 		else if (character.name == NameRogue) {
 			default_farm("bee");	

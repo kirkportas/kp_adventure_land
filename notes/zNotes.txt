@@ -27,6 +27,21 @@ send_item("Terakazam",0,10000);
 send_item("Terrogue",0,10000);;
 
 ***
+
+
+let foo = find_npc("newupgrade");
+show_json(distance(character, foo))
+
+
+==
+
+
+Luck modifiers apply based on the person the monster was targetting when it died, or the character who one-shot it. 
+
+Gold modifiers apply based on the person who opened the chest. 
+
+Every character in party benefits from the party having a specific looter and specific luck user (usually tank)
+
 ==
 LOOT ALL CHESTS 
 
@@ -151,11 +166,26 @@ Book of secrets/agile quiver/fury - rats
 Sucker punches - tiny crabs
 
 ==
+For Devltools: filter these out to clean up consoleLog
+-returning -_use -cooldown -Instant -bestiary
 
 How can we get access to the parent object of the methods in runner_functions.js? 
 I want to wrap some of those methods with cache helpers, to do things like cache the bank in localstorage.  These methods aren't stored on window or some places under it that I manually explored.
 
 parent.$("#maincode")[0].contentWindow
+
+parent.socket.emit
+    socket.emit=function(packet){
+        var is_transport=in_arr(arguments && arguments["0"],["transport","enter","leave"]);
+        // if(is_transport) alert("transport intercepted");
+        if(mode.log_calls) console.log('CALL',JSON.stringify(arguments)+" "+new Date());
+        if(!(transporting && is_transport && ssince(transporting)<8))
+        {
+            original_emit.apply(socket,arguments);
+            if(is_transport) transporting=new Date();
+        }
+    };
+
 
 ==
 monster targeting 
@@ -318,6 +348,9 @@ items3, items0, items1, items4
 
 
 ==
+https://adventure.land/docs/ref/dungeon-crypt
+
+
 Future Crypt issues:
 
 There's some issue in the crypt where characters leaving the crypt will still be visible there. I can still see them in parent.entities. Happened on disconnect and also just now after killing a1.

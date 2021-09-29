@@ -8,6 +8,7 @@ load_code("pattack");
 
 setInterval(mainloop, 1000/5); // Loops every 1/5 seconds.
 setInterval(scan_for_bestiary_updates, 11000);
+setInterval(cache_loop, 5000); 
 
 
 

@@ -43,4 +43,28 @@ function attackloop() {
 	}
 }
 
+// Less frequent execution
+function cache_loop() {
+	cache_inventory();
+}
+
+ /*  [null,{"name": "scroll0", "q": 3 }, null, ...] */
+ // todo relocate to cache file
+function cache_inventory() {
+	let key = "cache_inventory_"+character.name;
+	let cache_val = get(key); 
+	if (!cache_val) { cache_val = {"items":[], "ts": 0}; }
+
+	let new_val = {
+		"items": character.items,
+		"ts": Date.now()
+	}
+	if (cache_val.items != character.items || mssince(cache_val.ts) > 5000) {
+		set(key, new_val);
+		game_log("Cached inventory");
+	} else {
+		game_log("cache_inventory() called more often than it should be (5 second limit)");
+	}
+}
+
 game_log("Finished load_code( mainloop )");

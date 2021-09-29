@@ -59,6 +59,8 @@ function main(){
 	if (is_in_town()) {	
 		sell_all_trash();
 		compound_items();
+		buy_potions();
+
 
 		// Upgrade "common" items to a specified level (e.g. 7)
 		merchant_handle_upgradeables("dexscroll");
@@ -75,11 +77,16 @@ function main(){
 	// Cast Mluck if not cast, or <58 minutes remaining
 	for (let char of ALLTOONS) {
 		var entity = parent.entities[char];
-		if (entity && is_in_range(entity) && entity.s) {
+		if (!entity) return;
+
+		if (is_in_range(entity) && entity.s) {
 	        if (!("mluck" in entity.s) || entity.s.mluck.ms < 58*60*1000) {
 				game_log("use_skill mluck: "+char)
 				use_skill("mluck",entity);
 			}
+		}
+		if (is_in_range(entity)) {
+			// give_potions(entity);
 		}
 	}
 
@@ -92,6 +99,33 @@ function main(){
 	Logger.functionExit(logFnName,runtime);
 	Logger.logPrintStack();
 };
+
+function buy_potions() {
+	let mpot0_count = get_item_count_in_inventory("mpot0");
+	let hpot0_count = get_item_count_in_inventory("hpot0");
+
+	if (mpot0_count < 9999) { buy("mpot0", 9999-mpot0_count); }
+	if (hpot0_count < 9999) { buy("hpot0", 9999-hpot0_count); }
+}
+
+// function give_potions(entity) {
+// 	let char_inv_cache = get("cache_inventory_"+entity.name);
+// 	if (!char_inv_cache) { 
+// 		game_log("Error reading inventorycache for "+entity.name); 
+// 		return;
+// 	}
+// 	if (mssince(char_inv_cache.ts) > 15000) { 
+// 		game_log("Error: inventorycache out of date for "+entity.name+" by "+mssince(char_inv_cache.ts/1000)+"s"); 
+// 		return;
+// 	}
+
+// 	// todo generalize getcount to accept a character.items object
+// 	let mpot0_count = char_inv_cache.items.filter(item => item.);
+// 	let hpot0_count = get_item_count_in_inventory("hpot0");
+
+// 	if (mpot0_count < 9999) { buy("mpot0", 9999-mpot0_count); }
+// 	if (hpot0_count < 9999) { buy("hpot0", 9999-hpot0_count); }
+// }
 
 function bank_store_craftables() {
 	for (itemname of LOW_CRAFT_ITEMS) {

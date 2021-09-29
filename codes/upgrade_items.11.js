@@ -64,6 +64,7 @@ function upgrade_items(){
 			if (count >= 1) {
 				// game_log(item);
 				// game_log(item_idxs);
+				use_skill("massproduction");
 				upgrade(item_idxs[0],scroll_idx);
 			}
 		}
@@ -119,6 +120,7 @@ function upgrade_item(item_idx){
 		return false;
 	}
 	Logger.log("Upgrading a: "+character.items[item_idx].name);
+	use_skill("massproduction");
 	upgrade(item_idx,scroll_idx);
 	return true;
 }

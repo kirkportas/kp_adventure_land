@@ -115,6 +115,21 @@ function get_parent(name) {
     }
 }
 
+function get_item_count_in_inventory(name) {
+	let count = 0;
+	for(var i=0;i<42;i++) {
+		let item = character.items[i];
+		if(item && item.name==name) {
+			if (item.q) {
+				count += item.q;
+			} else {
+				count += 1;
+			}
+		}
+	}
+	return count;
+}
+
 function locate_items(name) {
 	idxs = [];
 	for(var i=0;i<42;i++) {
