@@ -1,0 +1,22 @@
+{
+  "name": "kp_adventureland",
+  "version": "1.0.0",
+  "description": "KP's awesome Adventureland Bot!",
+  "main": "characters/Warrior.5941701024153600.js",
+  "scripts": {
+    "test": "n/a"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kirkportas/kp_adventure_land.git"
+  },
+  "author": "Kirk Portas",
+  "license": "SEE LICENSE IN NO.TXT",
+  "bugs": {
+    "url": "https://github.com/kirkportas/kp_adventure_land/issues"
+  },
+  "homepage": "https://github.com/kirkportas/kp_adventure_land#readme",
+  "devDependencies": {
+    "eslint": "^7.32.0"
+  }
+}
