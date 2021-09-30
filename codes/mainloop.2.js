@@ -18,6 +18,9 @@ function mainloop(){
 			party_farm();
 		} catch(err) {
 			game_log("Error in mainloop for: "+character.name);
+			game_log(err);
+			console.log("Error in mainloop for: "+character.name);
+			console.log(err);
 		}
 	}
 

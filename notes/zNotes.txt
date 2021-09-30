@@ -28,6 +28,17 @@ send_item("Terrogue",0,10000);;
 
 ***
 
+==
+C:\Users\kirkp\AppData\Roaming\Adventure Land\autosync4984500319158272\adventureland\codes>
+
+node "C:\\Users\\kirkp\\AppData\\Roaming\\Sublime Text\\Packages\\ESLint\\linter.js" "C:\\Users\\kirkp\\AppData\\Roaming\\Adventure Land\\autosync4984500319158272\\adventureland\\codes\\farming.15.js" "" ""
+WORKS
+
+Error: Cannot find module 'eslint'  SOLUTION: install eslint locally in that folder via `eslint --init`
+
+node "C:\\Users\\kirkp\\AppData\\Roaming\\Sublime Text\\Packages\\ESLint\\linter.js" "'"C:\\Users\\kirkp\\AppData\\Roaming\\Adventure Land\\autosync4984500319158272\\adventureland\\.eslintrc.json" "" ""
+
+===
 
 let foo = find_npc("newupgrade");
 show_json(distance(character, foo))

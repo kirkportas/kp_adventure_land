@@ -305,7 +305,7 @@ Example of data[0], e.g. a pontyItem
 	let ITEM_TO_ADD = "intring";
 	
 
-	let ITEM_TO_ADD = "orbg";
+	let ITEM_TO_ADD = "cape";
 	let QUANTITY = 20;
 	let PONTY_KEY = "ponty_items_to_buy";
 	let ponty_desired = get(PONTY_KEY);
@@ -313,7 +313,11 @@ Example of data[0], e.g. a pontyItem
 	set(PONTY_KEY, ponty_desired);
 	show_json(get(PONTY_KEY));
 
+	let PONTY_KEY = "ponty_items_to_buy";
+	let ponty_desired = get(PONTY_KEY);
 	delete ponty_desired[ITEM_TO_ADD];
+	set(PONTY_KEY, ponty_desired);
+	show_json(get(PONTY_KEY));
 
 	let PONTY_KEY = "ponty_items_to_buy";
 	show_json(get(PONTY_KEY));

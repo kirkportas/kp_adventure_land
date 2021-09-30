@@ -45,59 +45,61 @@ function main(){
 
 	try {
 
-	run_shared_executions();
-	loot();
-	use_potion();
+		run_shared_executions();
+		loot();
+		use_potion();
 
-	// Todo
-	 // || is_moving(character)   // Dont stop merchant actions if moving
-	if(character.rip) {
-		Logger.functionExit(logFnName, 0);
-		return;
-	}
+		// Todo
+		 // || is_moving(character)   // Dont stop merchant actions if moving
+		if(character.rip) {
+			Logger.functionExit(logFnName, 0);
+			return;
+		}
 
-	if (is_in_town()) {	
-		sell_all_trash();
-		compound_items();
-		buy_potions();
+		if (is_in_town()) {	
+			sell_all_trash();
+			compound_items();
+			buy_potions();
 
 
-		// Upgrade "common" items to a specified level (e.g. 7)
-		merchant_handle_upgradeables("dexscroll");
+			// Upgrade "common" items to a specified level (e.g. 7)
+			merchant_handle_upgradeables("dexscroll");
 
-		// For one-off actions
-		custom_town_behavior();
-	}
+			// For one-off actions
+			custom_town_behavior();
+		}
 
-	// Store items in "items1", the 2nd from right in southern row. (Gabriella)
-	if (is_in_bank()) {
-		bank_store_craftables()
-	}
+		// Store items in "items1", the 2nd from right in southern row. (Gabriella)
+		if (is_in_bank()) {
+			bank_store_craftables()
+		}
 
-	// Cast Mluck if not cast, or <58 minutes remaining
-	for (let char of ALLTOONS) {
-		var entity = parent.entities[char];
-		if (!entity) return;
+		// Cast Mluck if not cast, or <58 minutes remaining
+		for (let char of ALLTOONS) {
+			var entity = parent.entities[char];
+			if (!entity) return;
 
-		if (is_in_range(entity) && entity.s) {
-	        if (!("mluck" in entity.s) || entity.s.mluck.ms < 58*60*1000) {
-				game_log("use_skill mluck: "+char)
-				use_skill("mluck",entity);
+			if (is_in_range(entity) && entity.s) {
+		        if (!("mluck" in entity.s) || entity.s.mluck.ms < 58*60*1000) {
+					game_log("use_skill mluck: "+char)
+					use_skill("mluck",entity);
+				}
+			}
+			if (is_in_range(entity)) {
+				// give_potions(entity);
 			}
 		}
-		if (is_in_range(entity)) {
-			// give_potions(entity);
-		}
-	}
 
 	} catch(err) {
 		game_log("Error in merchant main loop");
 		Logger.log("Error in merchant main loop");
+
+	} finally {
+		// End main loop
+		var runtime = Date.now()-start_ts;
+		Logger.functionExit(logFnName,runtime);
+		Logger.logPrintStack();
 	}
-	// End main loop
-	var runtime = Date.now()-start_ts;
-	Logger.functionExit(logFnName,runtime);
-	Logger.logPrintStack();
 };
 
 function buy_potions() {
@@ -128,6 +130,12 @@ function buy_potions() {
 // }
 
 function bank_store_craftables() {
+	for (itemname of ["gem0", "spidersilk"]) {
+		let itemidx = locate_item(itemname);
+		if (itemidx >= 0) {
+			bank_store(itemidx, "items1");
+		}
+	}	
 	for (itemname of LOW_CRAFT_ITEMS) {
 		let itemidx = locate_item(itemname);
 		if (itemidx >= 0) {

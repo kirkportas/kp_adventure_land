@@ -139,16 +139,6 @@ async function fire_3_shot(mtype) {
 
 // WIP method - todo refactor
 function three_shot_farm() {
-	// return;
-	// fire_3_shot()
-	// 	.then(val => { 
-	// 		game_log("fire_3_shot resolved: "+val);
-	// 	})
-	// 	.catch(val => {
-	// 		game_log("fire_3_shot rejected: "+val);
-	// 		default_farm();
-		// });
-
 	// Note any async function is a promise.
 	// Note any return type of Promises is "truthy"
 
@@ -159,6 +149,21 @@ function three_shot_farm() {
 		// game_log("fire_3_shot false");
 		stationary_farm();
 	}
+}
+
+function get_mobs_attacking_me() {
+	// Rely on party method to avoid doublechecking all entities
+	let hostile_mobs = get_mobs_attacking_party();
+	let mobs = [];
+	for(mob of hostile_mobs) {
+		var current=parent.entities[id];
+		
+		// Target if attacking party members
+		if(current.target == character.name) {
+			mobs.push(current);
+		}
+	}
+	return mobs;
 }
 
 function get_mobs_attacking_party() {
@@ -178,33 +183,35 @@ function get_mobs_attacking_party() {
 
 // WIP method 
 function get_best_target() {
+	console.log("temp: 1");
 	let current_target=get_targeted_monster();
 
 	// Switch to 
 	let attacking_mobs = get_mobs_attacking_party();
+	console.log("temp: attacking_mobs "+ attacking_mobs[0]);
 	if (attacking_mobs.length == 0 && !current_target) {
 		return default_get_monster();
 	}
 
-	if (current_target) return current_target;
+	console.log("temp: 2");
+	// Keep current target if present, and is targeting the party
+	if (current_target && "target" in current_target && ALLTOONS.includes(current_target.target)) {
+		return current_target;
+	}
 
-	for (attacker of attacking_mobs) {
+	//todo Prioritize targeting the weakest or the most dangerous
+	// if (!attacker)
+	console.log("temp: 3");
+	for (let attacker of attacking_mobs) {
 		if (attacker.target != LEADER) {
 			return attacker;
-			//todo 
 		}
+		return attacker;
 	}
+
+	console.log("temp: 4");
 	game_log("get_best_target end of method");
 	return default_get_monster();
-	// for(id in parent.entities)
-	// {
-	// 	var current=parent.entities[id];
-	// 	if(current.type!="monster" || !current.visible || current.dead) continue;
-		
-	// 	// Target if attacking party members
-	// 	if(current.target && ALLTOONS.includes(current.target) && current.target != LEADER) {
-	// 		return current;
-	// 	}
 
 	// 	// var c_dist=parent.distance(character,current);
 	// 	// if(c_dist<min_d) min_d=c_dist,target=current;
@@ -228,15 +235,29 @@ function default_get_monster(mon_type) {
 	return target;
 }
 
-function default_farm(mon_type) {
+//to do  t.getTime is not a frunction error on mssince. 
+var default_farm_last_hit_ts = Date.now();
+function default_farm(mon_type, zone) {
 	if (should_abort()) { 
 		game_log("ABORTING DEFAULT FARM()");
 		set_message("ABORTING");
 		return; 
 	}
-
 	// For priest, attempt to heal and skip attack if a heal occurs.
 	if (heal_party_member()) { return; }
+
+	if (zone) {
+		// x,y, maxdistance
+		let out_of_range = distance(character, zone) > zone.maxRadius;
+		let is_bad_state = Date.now() - default_farm_last_hit_ts > 5000;
+		if (is_bad_state && out_of_range) {
+			// todo can get stuck on corners
+			move(zone);
+			game_log("Returning to zone");
+			return;
+		}
+	}
+
 
 	// if (mon_type) {
 	// 	kpmove(mon_type);
@@ -245,18 +266,23 @@ function default_farm(mon_type) {
 	if (mon_type in name_map) {
 		mon_type = name_map[mon_type];
 	}
-	var target=get_targeted_monster();
+
+	var target = get_best_target();
+	// var target=get_targeted_monster();
 	if(!target) {
 		target = default_get_monster(mon_type);
 	}
+	// Todo prioritize targeting monsters that are attacking us
+	// if(target && )
 	
 	if(target && !is_in_range(target)) {
 		// Walk half the distance
 		move(character.x+(target.x-character.x)/2,
 			 character.y+(target.y-character.y)/2);
 	}
-	else if(can_attack(target))
+	else if(is_in_range(target))
 	{
+		default_farm_last_hit_ts = Date.now();
 		attack_plus_skills(target);
 	}
 }
@@ -427,12 +453,14 @@ function party_farm() {
 		// transport("main",4)
 
 		if (character.name == LEADER) {
-			default_farm("spider"); 
+			// default_farm("spider"); 
+
+			let ratzone = {"x":0, "y":0, "maxRadius":210};
+			default_farm("rat", ratzone); 
 		} 
 		else if (character.name == NameRogue) {
 			default_farm("bee");	
 			// attack loop testing
-			// let target = get_best_target();
 			// change_target(get_best_target());
 			// if (target && !is_in_range(target) && !is_moving(character)) {
 			// 	move_halfway(target);

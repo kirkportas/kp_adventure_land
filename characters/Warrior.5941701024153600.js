@@ -68,9 +68,9 @@ function reset_track_hits() {
 
 // Start!
 reset_track_hits();
-character.on("target_hit", function(data){
-	// Only track basic attacks
-	if (data.source == "attack") {
-		track_hits();
-	}
-});
+// character.on("target_hit", function(data){
+// 	// Only track basic attacks
+// 	if (data.source == "attack") {
+// 		track_hits();
+// 	}
+// });

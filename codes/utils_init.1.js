@@ -89,14 +89,15 @@ const UPGRADEABLE_LEVELS = {
 	"cclaw": 7,
 	"rapier": 5,
 	"woodensword": 6,
+	"t2bow": 6,
 
 	// Christmas set
 	"merry": 5,
 };
 
-const max_level_compound = 2;
+const max_level_compound = 3;
 game_log("max_level_compound: "+max_level_compound);
-var COMPOUNDABLE = ["hpamulet","ringsj","hpbelt","wbook0"];
+var COMPOUNDABLE = ["wbook0"]; // = ["hpamulet","ringsj","hpbelt","wbook0"];
 COMPOUNDABLE=COMPOUNDABLE.concat([
 	"vitamulet","stramulet","intamulet","dexamulet",			// Amulets
 	"vitearring","strearring","intearring","dexearring", 		// Earrings
@@ -105,10 +106,10 @@ COMPOUNDABLE=COMPOUNDABLE.concat([
 	 															// Weapons
 ]); 
 
-
 // const COMPOUNDABLE_LEVELS = {
-// 	"strearring": 6,
-// 	"wcap": 6,
+// 	"wbook0": 3,
+// 	"strearring": 3,
+// 	"vitearring"
 // };
 
 // Default all shop items to lvl 6 (to help clear out inventory)
@@ -124,7 +125,7 @@ var FARMABLE = ["gem0", "leather", "bfur", "cscale", "feather0", "ascale", "spid
 FARMABLE = FARMABLE.concat(LOW_CRAFT_ITEMS);
 FARMABLE = FARMABLE.concat(["vitearring","strearring","dexearring","intearring"]);
 FARMABLE = FARMABLE.concat(["vitamulet","stramulet","dexamulet","intamulet"]);
-FARMABLE = FARMABLE.concat(["candy0","candy1"]);
+FARMABLE = FARMABLE.concat(["candy0","candy1","pvptoken"]);
 FARMABLE = FARMABLE.concat(["stinger","wbook0"]);
 FARMABLE = FARMABLE.concat(["vitscroll","scroll0","scroll1"]);
 

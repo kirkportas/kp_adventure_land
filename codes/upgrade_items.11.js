@@ -22,6 +22,7 @@ function merchant_handle_upgradeables(scrolltype) {
 // Will compound all whitelisted items to their maxlvl - defined in utils_init 
 function compound_items(){
 	if (character.q.compound) { return; }
+	// for (var [item, maxlvl] of Object.entries(COMPOUNDABLE_LEVELS)) {
 	for (item of COMPOUNDABLE) {
 
 		let lvl = 0;
