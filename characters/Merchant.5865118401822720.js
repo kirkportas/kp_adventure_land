@@ -8,6 +8,7 @@ pontyPurchase();
 joinGiveAways();
 setInterval(pontyPurchase, 15000);
 setInterval(joinGiveAways, 29000);
+setInterval(serverLoop, 5*60*1000); // 5 minutes
 
 // Stores event names only 
 track_events();
@@ -38,6 +39,23 @@ function custom_town_behavior() {
 	// 	Logger.functionExit("Warrior base items", 0);
 	// }
 }
+
+var servers = [["US","I"],["US","II"],["US","III"],["US","PVP"],["EU","I"],["EU","II"],["EU","PVP"]];
+const SERVER_I_KEY = "server_i"; 
+var server_i = get(SERVER_I_KEY) || 0;
+function serverLoop() {
+	if (!is_in_town()) { return; }
+
+	server_i++;
+	if (server_i > servers.length-1) { server_i = 0 };
+	set(SERVER_I_KEY, server_i);
+
+	let region = servers[server_i][0];
+	let name = servers[server_i][1];
+	game_log("Changing servers!");
+	change_server(region, name); // change_server("EU","I") ("ASIA","PVP") or ("US","III")
+}
+
 
 function main(){
 	start_ts = Date.now();
@@ -130,7 +148,7 @@ function buy_potions() {
 // }
 
 function bank_store_craftables() {
-	for (itemname of ["gem0", "spidersilk"]) {
+	for (itemname of ["gem0", "spidersilk","rattail"]) {
 		let itemidx = locate_item(itemname);
 		if (itemidx >= 0) {
 			bank_store(itemidx, "items1");

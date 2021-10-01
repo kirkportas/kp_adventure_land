@@ -2,6 +2,8 @@ zNotes
 
 
 
+cd "/c/Users/kirkp/AppData/Roaming/Adventure Land/autosync4984500319158272/adventureland"
+
 cd ~/AppData/Roaming/Adventure\ Land/autosync4984500319158272/adventureland
 yarn add --dev jest
 
@@ -28,6 +30,26 @@ send_item("Terrogue",0,10000);;
 
 ***
 
+function runtimetest() {
+    let start = Date.now();
+    let count = 100 * 1000000; // 100 million
+    let i = 0;
+    for (; i<count; i++) {
+        let foo = ["name1","name2","name3"];
+    }
+    let runtime_ms = Date.now()-start;
+    let runtime_sec = runtime_ms/1000;
+    console.log(`Runtime for ${count} array creations: ${runtime_ms}ms`);
+    console.log(`Runtime for ${count} array creations: ${runtime_sec} seconds`);
+
+    return 1;
+    try {
+        console.log('trying');
+    } catch(err) {
+        console.log(err);
+    }
+}
+runtimetest()
 ==
 C:\Users\kirkp\AppData\Roaming\Adventure Land\autosync4984500319158272\adventureland\codes>
 
@@ -43,6 +65,61 @@ node "C:\\Users\\kirkp\\AppData\\Roaming\\Sublime Text\\Packages\\ESLint\\linter
 let foo = find_npc("newupgrade");
 show_json(distance(character, foo))
 
+==
+let items_with_speed = [];
+for (let [itemname, item_obj] of Object.entries(G.items)) {
+    if ("speed" in item_obj) {
+        items_with_speed.push(item_obj);
+    }
+}
+show_json(items_with_speed);
+
+var filtered = Object.keys(Gitems).reduce(function (filtered, key) {
+    if (Gitems[key] > 1) filtered[key] = dict[key];
+    return filtered;
+}, {});
+
+==
+here, have the info I've managed to put together regarding doors since there's not much in the way of info in game on them
+/*
+door[0] is x coord
+door[1] is y coord
+door[2] unknown(door width?)
+door[3] unknown(door height?)
+door[4] map it leads to
+door[5] the spawns index for the map being gone to
+door[6] the spawns index for this door on this map
+
+spawn[0] is x coord
+spawn[1] is y coord
+spawn[2] is direction set when spawning at this place (i.e. when moving through a door, characters direction is set based on the destination spawn's direction)
+  0/undefined = down
+  1 = left
+  2 = right
+  3 = up
+*/
+
+===
+let items_with_speed = [];
+for (let [itemname, item_obj] of Object.entries(G.items)) {
+    if ("speed" in item_obj && item_obj["speed"] > 0) {
+        let small_item = {};
+
+        let itemtype = item_obj["type"];
+
+        if (!itemtype in small_item) {
+            small_item[itemtype] = [];
+        }
+        
+        let attrs = ["name", "speed"];
+        for (let attr of attrs) {
+            small_item[attr] = item_obj[attr];
+        }
+
+        items_with_speed.push(small_item);
+    }
+}
+show_json(items_with_speed);
 
 ==
 
@@ -419,6 +496,45 @@ Examples:
 Object.keys(localStorage) 
 14: "cstore_stats_bestiary"
 18: "cstore_give_items_Terazarrior"
+
+function localStorageALCacheSize() {
+    var allStrings = '';
+    let c_keys = Object.keys(localStorage).filter(x => x.slice(0,7) == "cstore_");
+    for (let cache_key of c_keys) {
+        if(window.localStorage.hasOwnProperty(cache_key)){
+            allStrings += window.localStorage[cache_key];
+        }
+    }
+    return allStrings ? 3 + ((allStrings.length*16)/(8*1024)) + ' KB' : 'Empty (0 KB)';
+}
+localStorageALCacheSize();
+
+function localStorageALCacheSizeByKey() {
+    var allStrings = '';
+    let c_keys = Object.keys(localStorage).filter(x => x.slice(0,7) == "cstore_");
+    for (let key of c_keys) {
+        if(window.localStorage.hasOwnProperty(key)){
+            let cstring = window.localStorage[key];
+            allStrings += cstring;
+
+            let stringkb = 3 + ((cstring.length*16)/(8*1024));
+            console.log(`${key}: ${stringkb} KB`)
+        }
+    }
+    return allStrings ? 3 + ((allStrings.length*16)/(8*1024)) + ' KB' : 'Empty (0 KB)';
+}
+localStorageALCacheSizeByKey();
+
+var localStorageSpace = function(){
+    var allStrings = '';
+    for(var key in window.localStorage){
+        if(window.localStorage.hasOwnProperty(key)){
+            allStrings += window.localStorage[key];
+        }
+    }
+    return allStrings ? 3 + ((allStrings.length*16)/(8*1024)) + ' KB' : 'Empty (0 KB)';
+};
+localStorageSpace();
 ==
 
 

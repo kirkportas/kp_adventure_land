@@ -99,7 +99,6 @@ function get_in_range_mobs(mtype, skill_name) {
 //
 var last_undefined = Date.now();
 async function fire_3_shot(mtype) {
-	console.log("Entering fire_3_shot()");
 	let mobs = get_in_range_mobs("bee", "3shot");
 
 	// let mobs = get_in_range_mobs(mtype); // can pass undefined
@@ -111,40 +110,58 @@ async function fire_3_shot(mtype) {
 
 	    let result = await use_skill("3shot", targets);
 	    if (!result) {
-	    	console.log("'result' is undefined: "+result);
-	    	console.log("since last_undefined: "+(Date.now()-last_undefined));
+	    	Logger.log("'result' is undefined: "+result);
+	    	Logger.log("since last_undefined: "+(Date.now()-last_undefined));
 	    	last_undefined = Date.now();
 	    } else {
 			console.log("'result' is defined: "+result);
 	    }
 	    result.then(function(res) { 
-	    	console.log('3shot resolved'); 
-	    	console.log(res); 
-	    	// game_log('3shot resolved: ' + res); 
+	    	Logger.log('3shot resolved'); 
+	    	Logger.log(res); 
 			return true;
 	    }, function(rej) {
-	    	console.log('3shot rejected'); 
-	    	console.log(rej); 
-	    	// game_log('3shot rejected: ' + rej); 
+	    	Logger.log('3shot rejected'); 
+	    	Logger.log(rej); 
 			return false;
 	    });
 
 	    game_log("SHOULD NOT BE HIT");
-	    console.log("SHOULD NOT BE HIT");
+	    Logger.log("SHOULD NOT BE HIT");
 	} else {
 		return false;
 	}
 }
 
+let PVP_ENEMIES = ["RangerS", "MoneyS", "RogueS"];
+function attack_pvp_enemies() {
+	return false;
+	for (let name of PVP_ENEMIES) {
+		let bastard = parent.entities[name];
+		if (!bastard) continue;
+		if (bastard.rip) continue;
 
+		if (character.ctype=="ranger" && is_in_range(bastard, "supershot")) {
+			use_skill("supershot", bastard);
+		} 
+
+		if (is_in_range(bastard, "attack")) {
+			attack(bastard);
+			return true;
+		}
+	}
+	return false;
+}
 // WIP method - todo refactor
 function three_shot_farm() {
+	let pvp = attack_pvp_enemies();
+	if (pvp) return;
+
 	// Note any async function is a promise.
 	// Note any return type of Promises is "truthy"
 
-	console.log("Calling fire_3_shot()");
 	if (fire_3_shot() == true) {
-		game_log("fire_3_shot true");
+		Logger("fire_3_shot true");
 	} else {
 		// game_log("fire_3_shot false");
 		stationary_farm();
@@ -240,6 +257,7 @@ var default_farm_last_hit_ts = Date.now();
 function default_farm(mon_type, zone) {
 	if (should_abort()) { 
 		game_log("ABORTING DEFAULT FARM()");
+		Logger.log("ABORTING DEFAULT FARM()");
 		set_message("ABORTING");
 		return; 
 	}
@@ -291,8 +309,9 @@ function default_farm(mon_type, zone) {
 function stationary_farm() {
 	if (should_abort()) { return; }
 	if (heal_party_member()) { return; }
+	let pvp = attack_pvp_enemies();
+	if (pvp) return;
 
-	// game_log("Stationary_farming");
 	var target=get_targeted_monster();
 	if(!target || !is_in_range(target))
 	{

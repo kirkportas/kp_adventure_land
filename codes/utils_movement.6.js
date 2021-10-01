@@ -31,7 +31,7 @@ function move_halfway(target) {
 }
 
 function is_in_town() {
-	var cutoff = 200;
+	var cutoff = 250;
 	// todo investigate the in_check param (currently false)
 	return cutoff > distance(character, {x: -207, y: -108, map: "main"}, false );
 }

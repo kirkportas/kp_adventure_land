@@ -90,9 +90,12 @@ const UPGRADEABLE_LEVELS = {
 	"rapier": 5,
 	"woodensword": 6,
 	"t2bow": 6,
+	"throwingstars": 7,
+	"candycanesword": 5,
 
 	// Christmas set
 	"merry": 5,
+
 };
 
 const max_level_compound = 3;
@@ -102,8 +105,9 @@ COMPOUNDABLE=COMPOUNDABLE.concat([
 	"vitamulet","stramulet","intamulet","dexamulet",			// Amulets
 	"vitearring","strearring","intearring","dexearring", 		// Earrings
 	"vitring","dexring","intring","strring", 					// Rings
-	"orbg" 														// Orbs
+	"orbg", 													// Orbs
 	 															// Weapons
+	"lbelt", "hpbelt"											// asd
 ]); 
 
 // const COMPOUNDABLE_LEVELS = {
@@ -128,9 +132,11 @@ FARMABLE = FARMABLE.concat(["vitamulet","stramulet","dexamulet","intamulet"]);
 FARMABLE = FARMABLE.concat(["candy0","candy1","pvptoken"]);
 FARMABLE = FARMABLE.concat(["stinger","wbook0"]);
 FARMABLE = FARMABLE.concat(["vitscroll","scroll0","scroll1"]);
+FARMABLE = FARMABLE.concat(["lostearring","rattail"]);
 
 // This won't sell at item.level >=2  (check method sell_all_trash)
-var TRASH = ["stinger","hpamulet","hpbelt","ringsj"];
+var TRASH = ["stinger","hpamulet","ringsj"];
+// "hpbelt"
 
 // These localstorage vars are used for passing items to the Merchant
 set("give_items_"+NameWarrior, []);
@@ -153,6 +159,7 @@ Logger.functionEnter("Loading shared code files");
 	try { load_code("comms"); }    			catch(err) { Logger.log("Error loading comms: "+err); } 
 Logger.functionExit("Loading shared code files", 0);
 
+load_code("gui_codecost");
 if (character.name == LEADER) {
 // if (character.name == "DONTRUN") {
 	Logger.functionEnter("Loading LEADER files");
