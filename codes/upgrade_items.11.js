@@ -167,7 +167,7 @@ function get_upgraded_base_item(itemname, target_lvl, stat_type) {
 			if (item.level == 6 && is_statupgradeable && !is_statupgraded) {
 				// Apply stat scroll
 				set_message("StatUpgrade");
-				Logger.log("Stat upgrade at level: "+item.level);
+				Logger.log("ShopItem Stat upgrade at level: "+item.level);
 				return upgrade_item_stat(upgradeable_item_idx, stat_type);
 			} else {
 				set_message("ItemUpgrade");
@@ -200,10 +200,10 @@ function get_upgraded_nonbase_item(itemname, target_lvl, stat_type) {
 			var is_statupgradeable = "stat" in G.items[itemname];
 			var is_statupgraded = "stat_type" in item;
 
-			if (item.level == 6 && is_statupgradeable && !is_statupgraded) {
+			if (item_grade(item) == 0 && is_statupgradeable && !is_statupgraded) {
 				// Apply stat scroll
 				set_message("StatUpgrade");
-				Logger.log("Stat upgrade at level: "+item.level);
+				Logger.log("Nonbase Stat upgrade at level: "+item.level);
 				return upgrade_item_stat(upgradeable_item_idx, stat_type);
 			} else {
 				set_message("ItemUpgrade");
@@ -236,10 +236,10 @@ function upgrade_all_item(itemname, target_lvl, stat_type) {
 		var is_statupgradeable = "stat" in G.items[itemname];
 		var is_statupgraded = "stat_type" in item;
 
-		if (item.level == 6 && is_statupgradeable && !is_statupgraded) {
+		if (item_grade(item) == 0 && is_statupgradeable && !is_statupgraded) {
 			// Apply stat scroll
 			set_message("StatUpgrade");
-			Logger.log("Stat upgrade at level: "+item.level);
+			Logger.log("upgrade_all Stat upgrade at level: "+item.level);
 			upgrade_item_stat(upgradeable_item_idx, stat_type);
 		} else {
 			set_message("ItemUpgrade");

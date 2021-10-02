@@ -493,7 +493,7 @@ function party_farm() {
 			// }
 
 		} 
-		else if (character.name == NameRanger) {
+		else if (character.ctype == "ranger") {
 			three_shot_farm();
 
 		} else if (SLAVES.includes(character.name)) {

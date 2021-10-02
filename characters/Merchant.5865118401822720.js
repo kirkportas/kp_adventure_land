@@ -156,35 +156,6 @@ function buy_potions() {
 	if (hpot0_count < target) { buy("hpot0", target-hpot0_count); }
 }
 
-// function give_potions_all() {
-// 	var inv;
-// 	for (let charObj of onlineChars()) {
-// 		if (!parent.entities[charObj.name] || !is_in_range(charObj, "send_item")) {
-// 			game_log("Give potions out of range: " +charObj.name);
-// 			continue;
-// 		}
-
-// 		if (is_character_local(charObj.name)) {
-// 			inv = get("cache_inventory_"+charObj.name);
-// 		} else {
-// 			game_log("NON LOCAL CHARACTER IN POTION LOGIC");
-// 			continue;
-// 		}
-
-// 		// Fill them up to a full stack of 9999 potions
-// 		let mpot0_count = get_item_count_in_inventory_array(inv, "mpot0");
-// 		if (mpot0_count < 9999) { 
-// 			let mpot_idx = locate_item("mpot0");
-// 			send_item(charObj.name, "mpot0", 9999-mpot0_count); 
-// 		}
-
-// 		let hpot0_count = get_item_count_in_inventory_array(inv, "hpot0");
-// 		if (hpot0_count < 9999) { 
-// 			let hpot_idx = locate_item("hpot0");
-// 			send_item(charObj.name, "hpot0", 9999-hpot0_count); 
-// 		}
-// 	}
-// }
 
 // function give_item(charname, itemname, count) {
 // 	// assumes in range and item present.
@@ -194,7 +165,8 @@ function buy_potions() {
 function give_potions(entity) {
 	let charObj = entity;
 	let charname = entity.name;
-	let char_inv_cache = get("cache_inventory_"+charname);
+	let inv_cache_key = "cache_inventory_"+charname;
+	let char_inv_cache = get(inv_cache_key);
 	if (!char_inv_cache) { 
 		game_log("Error reading inventorycache for "+charname); 
 		return;
@@ -208,6 +180,7 @@ function give_potions(entity) {
 		return;
 	}
 	// Todo Check if merchant has potions in inventory.
+	// Todo this will oversend. because it does not update the cached inv count
 
 	// Fill them up to a full stack of 9999 potions
 	let mpot0_count = get_item_count_in_inventory_array(char_inv_cache.items, "mpot0");

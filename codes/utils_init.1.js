@@ -1,3 +1,4 @@
+/* exports ACTIVE_PARTY */
 // Line 1. Note that this file only runs once.
 set_message("Start!");
 
@@ -26,6 +27,8 @@ const NamePriest = "NoHeals4U";
 const NameWarrior = "Terazarrior";
 const NameMage = "Terakazam";
 const NameRogue = "Terrogue";
+const NameRanger2 = "BigBowBigHo";
+const KIRKS_TOONS = [NameRanger, NamePriest, NameWarrior, NameMage, NameRogue, NameRanger2];
 // For console pasting: ["Terazarrior","NoHeals4U","Terranger"]
 
 var LEADER = NameWarrior;
@@ -49,8 +52,7 @@ if (VALS_TOONS.includes(character.name)) {
 }
 
 // Used for verifying that the requested is "friendly" for party requests
-const ALLTOONS = [NameWarrior, NameRanger, NamePriest, NameMage, NameMerchant, NameRogue,
-				  NameValWarrior, NameValMage, NameValMerchant];
+const ALLTOONS = KIRKS_TOONS.concat(VALS_TOONS);
 
 // Misc constants
 const PONTY_KEY = "ponty_items_to_buy";
@@ -60,14 +62,14 @@ const PONTY_KEY = "ponty_items_to_buy";
 const max_level_upgrade = 3; // Only used for a GUI function (intended for lowlevel)
 const UPGRADEABLE_LEVELS = {
 	// Wanderers
-	"wcap": 6,
+	"wcap": 7,
 	"wgloves": 7,
 	"wbreeches": 7,
-	"wshoes": 6,
+	"wshoes": 7,
 	"wattire": 5,
 	"wshield": 7,
 
-	"cape": 6,
+	"cape": 7,
 
 	// T2
 	"shield": 5,
@@ -77,11 +79,16 @@ const UPGRADEABLE_LEVELS = {
 	// "stinger": 5,     // Maybe trash
 	
 	// Rugged
-	"pants1": 6,       //RuggedPants
-	"coat1": 6,
-	"shoes1": 6,
-	"helmet1": 6,
-	"gloves1": 6,
+	"pants1": 7,       //RuggedPants
+	"coat1": 7,
+	"shoes1": 7,
+	"helmet1": 7,
+	"gloves1": 7,
+
+	// Heavy (starts at Rare)
+	// "hpants": 3,
+	// "hgloves": 3,
+
 
 	// Weapons
 	"pmace": 5,
@@ -93,6 +100,8 @@ const UPGRADEABLE_LEVELS = {
 	"throwingstars": 7,
 	"candycanesword": 5,
 	"oozingterror": 5,
+
+	"firebow": 5,
 
 	// Christmas set
 	"merry": 5,
