@@ -50,9 +50,9 @@ function on_party_request(name)
 	}
 	// In a chaotic failure where all party members lose party status,
 	// looping all charnames and requesting could cause a corner case failure. (e.g. 3 parties get formed) 
-	// if (ALLTOONS.includes(name)) {
-	// 	accept_party_request(name);
-	// }
+	if (ALLTOONS.includes(name)) {
+		accept_party_request(name);
+	}
 
 	/* Debug
 		game_log("Received party request from: "+name);

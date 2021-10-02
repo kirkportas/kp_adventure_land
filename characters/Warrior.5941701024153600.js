@@ -74,3 +74,11 @@ reset_track_hits();
 // 		track_hits();
 // 	}
 // });
+
+// import { parse } from 'node-html-parser'; // import only in module
+// let stats = require('stats'); // require is not defined
+// import { add, subtract } from './stats';
+
+// console.log(`The addition is: ${stats.add(2, 3)}`);
+// console.log(`The addition is: ${add(2, 3)}`);
+// console.log(`The suntraction is: ${subtract(21, 19)}`);

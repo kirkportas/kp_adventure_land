@@ -51,12 +51,12 @@ function run_shared_executions() {
 // This had issues and became spotty on Sept25. It worked fine before that
 // Would only push the first item (hpamulet)
 function request_item_from_all(itemname) {
-	for (char of ALLTOONS) {
+	for (charname of ALLTOONS) {
 		// Ignore offline or faroff characters
-		if (!get_entity(char)) continue;
-		// game_log("request_item_from_all() - "+char);
+		if (!get_entity(charname)) continue;
+		// game_log("request_item_from_all() - "+charname);
 
-		let key = "give_items_"+char;
+		let key = "give_items_"+charname;
 		var items = get(key);
 		if (!items.includes(itemname)) {
 			items.push(itemname);
@@ -66,11 +66,13 @@ function request_item_from_all(itemname) {
 }
 
 function request_items_from_all(itemname_arr) {
-	for (char of ALLTOONS) {
+	for (charname of ALLTOONS) {
 		// Ignore offline or faroff characters
-		if (!get_entity(char)) continue;
+		if (!get_entity(charname)) continue;
 
-		let key = "give_items_"+char;
+		let key = "give_items_"+charname;
+		game_log("Requesting items from "+charname);
+		game_log("Key: "+key);
 		var items = get(key);
 		if (!items) items = [];
 		

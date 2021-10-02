@@ -92,6 +92,7 @@ const UPGRADEABLE_LEVELS = {
 	"t2bow": 6,
 	"throwingstars": 7,
 	"candycanesword": 5,
+	"oozingterror": 5,
 
 	// Christmas set
 	"merry": 5,

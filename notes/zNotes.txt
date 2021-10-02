@@ -50,6 +50,17 @@ function runtimetest() {
     }
 }
 runtimetest()
+
+===
+stand stall 
+function open_booth(){
+    parent.socket.emit("merchant",{num:0})
+}
+
+function close_booth(){
+    parent.socket.emit("merchant",{close:1})
+}
+
 ==
 C:\Users\kirkp\AppData\Roaming\Adventure Land\autosync4984500319158272\adventureland\codes>
 

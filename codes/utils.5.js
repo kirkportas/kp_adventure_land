@@ -16,6 +16,12 @@ function move_to(entity) {
 	smart_move(entity);
 }
 
+function onlineChars() {
+	return get_characters().filter(
+	   x => x.online != 0 && x.name != character.name
+	);
+}
+
 function debounce(func, wait, immediate) {
   var timeout;
   return function() {
@@ -115,6 +121,24 @@ function get_parent(name) {
     }
 }
 
+// Used for checking other char's inventories.
+// Should receive a `character.items` object
+function get_item_count_in_inventory_array(item_array, name) {
+	let count = 0;
+	for(var i=0;i<42;i++) {
+		let item = item_array[i];
+		if(item && item.name==name) {
+			if (item.q) {
+				count += item.q;
+			} else {
+				count += 1;
+			}
+		}
+	}
+	return count;
+}
+
+// todo collapse with above function
 function get_item_count_in_inventory(name) {
 	let count = 0;
 	for(var i=0;i<42;i++) {

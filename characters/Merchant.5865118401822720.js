@@ -6,9 +6,15 @@ var attack_mode = true; // Just for use in fleeing.
 setInterval(main, 1000/2); 
 pontyPurchase();
 joinGiveAways();
+
+
+// Location based - 0-time actions 
 setInterval(pontyPurchase, 15000);
 setInterval(joinGiveAways, 29000);
+
+// Time-costly actions/missions
 setInterval(serverLoop, 5*60*1000); // 5 minutes
+// setInterval(collectItems, 12*60*1000); // 15 minutes
 
 // Stores event names only 
 track_events();
@@ -57,6 +63,24 @@ function serverLoop() {
 }
 
 
+// function collectItems() {
+// 	/* Check if mission should commence */
+// 	// Get other online chars (exclude merchant)
+// 	let onlineChars = get_characters().filter(
+// 		x => x.online != 0 && x.name != character.name
+// 	);
+// 	for (let charObj in onlineChars) {
+// 		let cache_key = "cache_inventory_"+charObj.name;
+// 		let inv = get(cache_key);	
+// 		return inv;
+// 	}
+// }
+
+// function collectItemsMission() {
+
+// }
+
+
 function main(){
 	start_ts = Date.now();
 	Logger.functionEnter(logFnName);
@@ -93,24 +117,28 @@ function main(){
 		}
 
 		// Cast Mluck if not cast, or <58 minutes remaining
-		for (let char of ALLTOONS) {
-			var entity = parent.entities[char];
+		for (let charObj of onlineChars()) {
+			let charName = charObj.name;
+			var entity = parent.entities[charName];
 			if (!entity) return;
 
-			if (is_in_range(entity) && entity.s) {
+			if (is_in_range(entity, "mluck") && entity.s) {
 		        if (!("mluck" in entity.s) || entity.s.mluck.ms < 58*60*1000) {
-					game_log("use_skill mluck: "+char)
+					game_log("use_skill mluck: "+charName)
 					use_skill("mluck",entity);
 				}
 			}
-			if (is_in_range(entity)) {
-				// give_potions(entity);
+			// todo find distance for sending items
+			if (distance(character, entity) < 300) {
+				give_potions(entity);
 			}
 		}
 
 	} catch(err) {
 		game_log("Error in merchant main loop");
+		game_log(err);
 		Logger.log("Error in merchant main loop");
+		Logger.log(err);
 
 	} finally {
 		// End main loop
@@ -123,38 +151,86 @@ function main(){
 function buy_potions() {
 	let mpot0_count = get_item_count_in_inventory("mpot0");
 	let hpot0_count = get_item_count_in_inventory("hpot0");
-
-	if (mpot0_count < 9999) { buy("mpot0", 9999-mpot0_count); }
-	if (hpot0_count < 9999) { buy("hpot0", 9999-hpot0_count); }
+	let target = 9999*2; // 2 stacks
+	if (mpot0_count < target) { buy("mpot0", target-mpot0_count); }
+	if (hpot0_count < target) { buy("hpot0", target-hpot0_count); }
 }
 
-// function give_potions(entity) {
-// 	let char_inv_cache = get("cache_inventory_"+entity.name);
-// 	if (!char_inv_cache) { 
-// 		game_log("Error reading inventorycache for "+entity.name); 
-// 		return;
-// 	}
-// 	if (mssince(char_inv_cache.ts) > 15000) { 
-// 		game_log("Error: inventorycache out of date for "+entity.name+" by "+mssince(char_inv_cache.ts/1000)+"s"); 
-// 		return;
-// 	}
+// function give_potions_all() {
+// 	var inv;
+// 	for (let charObj of onlineChars()) {
+// 		if (!parent.entities[charObj.name] || !is_in_range(charObj, "send_item")) {
+// 			game_log("Give potions out of range: " +charObj.name);
+// 			continue;
+// 		}
 
-// 	// todo generalize getcount to accept a character.items object
-// 	let mpot0_count = char_inv_cache.items.filter(item => item.);
-// 	let hpot0_count = get_item_count_in_inventory("hpot0");
+// 		if (is_character_local(charObj.name)) {
+// 			inv = get("cache_inventory_"+charObj.name);
+// 		} else {
+// 			game_log("NON LOCAL CHARACTER IN POTION LOGIC");
+// 			continue;
+// 		}
 
-// 	if (mpot0_count < 9999) { buy("mpot0", 9999-mpot0_count); }
-// 	if (hpot0_count < 9999) { buy("hpot0", 9999-hpot0_count); }
+// 		// Fill them up to a full stack of 9999 potions
+// 		let mpot0_count = get_item_count_in_inventory_array(inv, "mpot0");
+// 		if (mpot0_count < 9999) { 
+// 			let mpot_idx = locate_item("mpot0");
+// 			send_item(charObj.name, "mpot0", 9999-mpot0_count); 
+// 		}
+
+// 		let hpot0_count = get_item_count_in_inventory_array(inv, "hpot0");
+// 		if (hpot0_count < 9999) { 
+// 			let hpot_idx = locate_item("hpot0");
+// 			send_item(charObj.name, "hpot0", 9999-hpot0_count); 
+// 		}
+// 	}
 // }
 
+// function give_item(charname, itemname, count) {
+// 	// assumes in range and item present.
+
+// }
+
+function give_potions(entity) {
+	let charObj = entity;
+	let charname = entity.name;
+	let char_inv_cache = get("cache_inventory_"+charname);
+	if (!char_inv_cache) { 
+		game_log("Error reading inventorycache for "+charname); 
+		return;
+	}
+	if ( (Date.now() - char_inv_cache.ts) > 15000) { 
+		game_log("Error: inventorycache out of date for "+entity.name+" by "+mssince(char_inv_cache.ts/1000)+"s"); 
+		return;
+	}
+	if (distance(character, entity) > 300) {
+		game_log("Give potions out of range: " +charObj.name);
+		return;
+	}
+	// Todo Check if merchant has potions in inventory.
+
+	// Fill them up to a full stack of 9999 potions
+	let mpot0_count = get_item_count_in_inventory_array(char_inv_cache.items, "mpot0");
+	if (mpot0_count < 9999) { 
+		send_item(charname, locate_item("mpot0"), 9999-mpot0_count); 
+		// game_log(`Sent ${9999-mpot0_count} mpot0's to ${charname}`);
+	}
+
+	let hpot0_count = get_item_count_in_inventory_array(char_inv_cache.items, "hpot0");
+	if (hpot0_count < 9999) { 
+		send_item(charname, locate_item("hpot0"), 9999-hpot0_count); 
+		// game_log(`Sent ${9999-mpot0_count} hpot0's to ${charname}`);
+	}
+}
+
 function bank_store_craftables() {
-	for (itemname of ["gem0", "spidersilk","rattail"]) {
+	for (let itemname of ["gem0", "spidersilk","rattail"]) {
 		let itemidx = locate_item(itemname);
 		if (itemidx >= 0) {
 			bank_store(itemidx, "items1");
 		}
 	}	
-	for (itemname of LOW_CRAFT_ITEMS) {
+	for (let itemname of LOW_CRAFT_ITEMS) {
 		let itemidx = locate_item(itemname);
 		if (itemidx >= 0) {
 			bank_store(itemidx, "items1");
@@ -166,7 +242,7 @@ function check_for_compoundable_trios() {
 	if (!is_in_bank()) {
 		game_log("Cannot scan bank")
 	}
-	for (itemname of LOW_CRAFT_ITEMS) {
+	for (let itemname of LOW_CRAFT_ITEMS) {
 		let itemidx = locate_item(itemname);
 		if (itemidx >= 0) {
 			bank_store(itemidx, "items1");

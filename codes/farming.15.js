@@ -264,6 +264,13 @@ function default_farm(mon_type, zone) {
 	// For priest, attempt to heal and skip attack if a heal occurs.
 	if (heal_party_member()) { return; }
 
+
+	// Intended to handle respawn, and manual actions 
+	if (zone && zone.map != character.map) {
+		smart_move(zone);
+		return;
+	}
+
 	if (zone) {
 		// x,y, maxdistance
 		let out_of_range = distance(character, zone) > zone.maxRadius;
@@ -474,7 +481,7 @@ function party_farm() {
 		if (character.name == LEADER) {
 			// default_farm("spider"); 
 
-			let ratzone = {"x":0, "y":0, "maxRadius":210};
+			let ratzone = {"x":0, "y":0, "map":"mansion", "maxRadius":210};
 			default_farm("rat", ratzone); 
 		} 
 		else if (character.name == NameRogue) {

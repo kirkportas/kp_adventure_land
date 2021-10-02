@@ -8,5 +8,11 @@
         "ecmaVersion": 12
     },
     "rules": {
+    },
+    "globals": {
+        "game_log": true,
+        "load_code": true,
+        "set": true,
+        "get": true
     }
 }
