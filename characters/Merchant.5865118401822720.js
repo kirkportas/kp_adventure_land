@@ -154,14 +154,15 @@ function main(){
 
 var buy_potion_ts = Date.now();
 function buy_potions() {
-	if (Date.now() - buy_potion_ts < 2000) { return; }
+	if (Date.now() - buy_potion_ts < 3000) { return; }
 	buy_potion_ts = Date.now();
 
 	let mpot0_count = get_item_count_in_inventory("mpot0");
 	let hpot0_count = get_item_count_in_inventory("hpot0");
 	let target = 9999*2; // 2 stacks
-	if (mpot0_count < target) { buy("mpot0", target-mpot0_count); }
-	if (hpot0_count < target) { buy("hpot0", target-hpot0_count); }
+	// Avoid latency issues and overbuying
+	if (mpot0_count < target) { buy("mpot0", Math.max(1,(target-mpot0_count)/3)); }
+	if (hpot0_count < target) { buy("hpot0", Math.max(1,(target-hpot0_count)/3)); }
 }
 
 
@@ -170,7 +171,12 @@ function buy_potions() {
 
 // }
 
+var give_potion_ts = {}; 
 function give_potions(entity) {
+	if (!give_potion_ts[entity]) give_potion_ts[entity] = 0;
+	if (Date.now() - give_potion_ts[entity] < 3000) { return; }
+	give_potion_ts[entity] = Date.now();
+
 	let charObj = entity;
 	let charname = entity.name;
 	let inv_cache_key = "cache_inventory_"+charname;
@@ -207,7 +213,7 @@ function give_potions(entity) {
 }
 
 function bank_store_craftables() {
-	for (let itemname of ["gem0", "spidersilk","rattail"]) {
+	for (let itemname of ["gem0", "spidersilk","rattail","bfur","gemfragment"]) {
 		let itemidx = locate_item(itemname);
 		if (itemidx >= 0) {
 			bank_store(itemidx, "items1");

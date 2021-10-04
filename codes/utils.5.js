@@ -210,6 +210,82 @@ function locate_items_at_or_above_level(name, level) {
     return idxs;
 }
 
+function get_compoundables_in_inventory() {
+    let raw_inv = {}
+    for (var i=0;i<42;i++) {
+        let item = character.items[i];
+        if(item && ALL_COMPOUNDABLE_ITEMS.has(item.name)) {
+            if (this.verbose) Logger.log(`Adding inv item ${item.name} lvl ${item.level}`);
+            if (!(item.name in raw_inv)) { raw_inv[item.name] = {}; };
+            if (!(item.level in raw_inv[item.name])) { raw_inv[item.name][item.level] = 0; };
+            raw_inv[item.name][item.level]++;
+        }
+    }
+    return raw_inv;
+}
+
+// Note the hpbelt hack
+function inv_has_compoundable_trio() {
+    let raw_inv = get_compoundables_in_inventory()
+    for (let [itemname, leveldict] of Object.entries(raw_inv)) {
+        for (let level of Object.keys(leveldict)) {
+            if (leveldict[level].length >= 3) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+
+function bank_get_compoundables_count() {
+    if (!is_in_bank()) { return [] }
+    this.verbose = true;
+
+    if (this.verbose) Logger.log(`bank_get_compoundables_count()`);
+    // Detailed count with bankpack locations for Bank items
+    let raw = {};
+    for (let [packname,pack] of Object.entries(character.bank)) {
+        if (this.verbose) Logger.log(`Checking pack: ${packname}`);
+        for (var i=0;i<42;i++) {
+            let item = pack[i];
+            if(item && ALL_COMPOUNDABLE_ITEMS.has(item.name)) {
+                if (this.verbose) Logger.log(`Adding bank item ${item.name} lvl ${item.level}`);
+                if (!(item.name in raw)) { raw[item.name] = {} };
+                if (!(item.level in raw[item.name])) { raw[item.name][item.level] = [] };
+
+                // set in utils init
+                if (item.level >= max_level_compound) continue;
+                if (item.name=="hpbelt" && item.level == 2) continue; // hack
+
+                raw[item.name][item.level].push({'packname':packname, 'idx': i});
+            }
+        }
+    }
+
+    // Numeric count for inventory items by level
+    let raw_inv = get_compoundables_in_inventory(); // {}
+
+    let items_to_retrieve = [];
+    for (let [itemname, leveldict] of Object.entries(raw)) {
+        for (let level of Object.keys(leveldict)) {
+            let invcount = 0;
+            if (raw_inv[itemname] && raw_inv[itemname][level]) {
+                invcount += raw_inv[itemname][level];
+                if (this.verbose) Logger.log(`Counting item in inv ${itemname} ${level}`);
+            }
+
+            if (leveldict[level].length >= 3 - invcount) {
+                if (this.verbose) Logger.log(`Adding item tor retrieve list lvl ${itemname} ${level}`);
+                items_to_retrieve = items_to_retrieve.concat(leveldict[level]);
+            }
+        }
+    }
+    // show_json(raw);
+    // show_json(items_to_retrieve);
+    return items_to_retrieve;
+}
+
 function locate_bank_items(name) {
     //todo expand for more bank packs
     var bankpacks = ["items0","items1"];

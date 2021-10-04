@@ -10,12 +10,18 @@ function mainloop(){
 	use_potion(); 
 	loot(); 
 
+	// smart_move({"x":-24,"y":32,"map":"level2w"})
 	if (attack_mode && !is_moving(character)) {
 		try {
 			// default_farm();	
 			// default_farm("crabs");
 			// stationary_farm();
-			party_farm();
+			if (character.name != NameWarrior) {
+				party_farm();
+			} else {
+				// default_farm();
+				franky_farm();
+			}
 		} catch(err) {
 			game_log("Error in mainloop for: "+character.name);
 			game_log(err);

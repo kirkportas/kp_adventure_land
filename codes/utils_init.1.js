@@ -91,16 +91,18 @@ const UPGRADEABLE_LEVELS = {
 
 
 	// Weapons
+	"cclaw": 7,
+	"throwingstars": 7,
+	"woodensword": 6,
+	"oozingterror": 6,
+	"t2bow": 6,
 	"pmace": 5,
 	"hbow": 5,
-	"cclaw": 7,
-	"rapier": 5,
-	"woodensword": 6,
-	"t2bow": 6,
-	"throwingstars": 7,
 	"candycanesword": 5,
-	"oozingterror": 6,
-
+	"maceofthedead": 5,
+	"bowofthedead": 5,
+	"staffofthedead": 5,
+	"rapier": 5,
 	"firebow": 5,
 
 	// Christmas set
@@ -154,7 +156,7 @@ FARMABLE = FARMABLE.concat(["gemfragment"]);
 
 
 // This won't sell at item.level >=2  (check method sell_all_trash)
-var TRASH = ["stinger","hpamulet","ringsj"];
+var TRASH = ["stinger","hpamulet","ringsj", "hpbelt"];
 // "hpbelt"
 
 // These localstorage vars are used for passing items to the Merchant
@@ -241,6 +243,91 @@ if (character.name != NameWarrior) {
 	STATS_BESTIARY_KEY = "test";
 	STATS_BESTIARY = undefined;
 }
+
+
+
+
+/* 
+var filtered = Object.keys(G.items).reduce(function (filtered, key) {
+    if ("compound" in G.items[key]) filtered[key] = G.items[key];
+    return filtered;
+}, {});
+show_json( Object.keys(filtered))
+*/
+
+var ALL_COMPOUNDABLE_ITEMS = new Set([
+    "dexamulet",
+    "armorring",
+    "jacko",
+    "mbelt",
+    "goldbooster",
+    "rednose",
+    "test_orb",
+    "zapper",
+    "t2dexamulet",
+    "dexbelt",
+    "hpbelt",
+    "t2stramulet",
+    "orbofdex",
+    "molesteeth",
+    "lbelt",
+    "darktristone",
+    "ringofluck",
+    "ctristone",
+    "lostearring",
+    "dexring",
+    "rabbitsfoot",
+    "goldring",
+    "strbelt",
+    "charmer",
+    "orbofint",
+    "northstar",
+    "orbofvit",
+    "trigger",
+    "xpbooster",
+    "intbelt",
+    "orbofsc",
+    "ftrinket",
+    "mearring",
+    "solitaire",
+    "cearring",
+    "cdarktristone",
+    "strearring",
+    "wbook0",
+    "wbook1",
+    "t2intamulet",
+    "mpxamulet",
+    "tristone",
+    "coal",
+    "resistancering",
+    "sanguine",
+    "hpamulet",
+    "orbofstr",
+    "ringsj",
+    "talkingskull",
+    "lantern",
+    "luckbooster",
+    "intring",
+    "cring",
+    "dexearring",
+    "intearring",
+    "amuletofm",
+    "santasbelt",
+    "vitring",
+    "vring",
+    "suckerpunch",
+    "snring",
+    "intamulet",
+    "vorb",
+    "exoarm",
+    "mpxbelt",
+    "vitearring",
+    "stramulet",
+    "strring",
+    "dexearringx",
+    "orbg"
+]);
+
 
 
 game_log("Finished load_code( utils_init )");

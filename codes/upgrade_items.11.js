@@ -27,13 +27,30 @@ function compound_items(){
 
 		let lvl = 0;
 		for (; lvl < max_level_compound; lvl++) {
-			var scroll_idx = locate_item("cscroll0");
-			if (scroll_idx < 0) {
-				buy("cscroll0",5);
-			}
 			var item_idxs = locate_items_of_level(item, lvl);
 			var count = item_idxs.length;
 			if (count >= 3) {
+
+				var grade = item_grade(character.items[item_idxs[0]]); 
+				if (grade == 0) {
+					scrollname = "cscroll0";
+				} else if(grade ==1) {
+					scrollname = "cscroll1";
+				} else if(grade >= 2){
+					Logger.log("compound_item called for grade 2+. NOT SUPPORTED");
+					Logger.log(`name: ${item}`);
+					return;
+				} else {
+					Logger.log("unknown grade value: "+grade.toString());
+					Logger.log(`name: ${item}`);
+					return;
+				}
+
+				var scroll_idx = locate_item(scrollname);
+				if (scroll_idx < 0) {
+					buy(scrollname, 5);
+				}
+
 				game_log(item);
 				game_log(item_idxs);
 
@@ -108,8 +125,8 @@ function upgrade_item(item_idx){
 		Logger.log("unknown grade value: "+grade.toString());
 		Logger.log(`idx: ${item_idx}, name: ${item.name}`);
 		return;
-
 	}
+
 	var scroll_idx = locate_item(scrollname);
 	if (scroll_idx < 0) {
 		Logger.log("Buying a: "+scrollname);

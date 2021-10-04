@@ -25,11 +25,17 @@ class MissionControl {
     constructor() {
         this.q = []; // queue
         this.intervals = [];
+
+        this.update_last_cycle();
     }
 
     // For "standard" missions
     init() {
-        let missions = [FishingMission, MiningMission, GoHomeMission];
+        let missions = [];
+        missions = missions.concat([FishingMission, MiningMission]);
+        missions.push(GoHomeMission);
+        missions.push(HandleCompoundablesMission);
+        // missions.push(DepositEverythingMission);
 
         for (let m of missions) {
             this.q.push(new m());
@@ -54,6 +60,17 @@ class MissionControl {
         } else {
             game_log("Mission already exists: "+m.name);
         }
+    }
+
+    update_last_cycle() {        
+        // todo coded while hazy. Likely buggy
+        let last_cycle_key = "mission_last_cycle";
+        if (!get(last_cycle_key)) {
+            set(last_cycle_key, Date.now());
+        }
+
+        this.last_cycle = Date.now();
+        set(last_cycle_key, this.last_cycle);
     }
 
     sort() {
@@ -116,6 +133,13 @@ MissionControl.prototype._scan_for_missions = function() {
             this.addMission(new CollectItemsMission(charObj.name)); 
         }
     }
+
+    let cycle_time = 10*60*1000; // 10 minutes
+    if (Date.now() - this.last_cycle > cycle_time) {
+        this.addMission(new DepositEverythingMission());
+        this.addMission(new HandleCompoundablesMission());
+        this.update_last_cycle();
+    }
     // todo bank items mission
 
     // todo scan bank and upgrade/compount mission
@@ -173,8 +197,12 @@ class Mission {
     return false;
   }
 
-  // Each mission must define its starting requirements
-  can_run() { return false }
+    cancel() {
+        this.status = STATE_DONE;
+    }
+
+    // Each mission must define its starting requirements
+    can_run() { return false }
 }
 
 const MISSION_PRIORITY = {
@@ -184,10 +212,13 @@ const MISSION_PRIORITY = {
     'TrashCompound': 20,
     'DepositFarmable': 22,
     'collect_items_': 25,
+    "HandleCompoundables": 6,
+    "DepositEverything": 5,   // On boot or to reset. deposit all but a whitelist
 }
 /*****************************************************************************/
 
 var LOCATION_TOWN = new Location(-207, -108, "main")
+var LOCATION_BANK = new Location(0, -176, "bank")
 
 // TODO get Compoundables / Upgradeables from bank and work on them
 
@@ -353,13 +384,150 @@ class CollectItemsMission extends Mission {
   }
 }
 
+/*****************************************************************************/
+
+class HandleCompoundablesMission extends Mission {
+    /* 
+    Go to bank, check for compoundables, retrieve them
+    Go to town, wait for upgrades.
+    Deposit remaining items in bank
+    */
+    constructor() {
+        let name = "HandleCompoundables";
+        let prio = MISSION_PRIORITY[name];
+        super(name, prio); 
+
+        // Todo Consider logic for multi-location missions
+        this.locations = [LOCATION_BANK, LOCATION_TOWN];
+        this.location_idx = 0;
+
+        this.verbose = true;
+        this.toDeposit = new Set(FARMABLE.concat(COMPOUNDABLE));
+        this.startTimeMs = undefined;
+    }
+
+  // Check if fishing rod in mainhand or inventory.
+    can_run() { 
+        return true;
+    }
+
+    run() {
+        if (!this.startTimeMs) { this.startTimeMs = Date.now(); }
+
+        if (this.verbose) Logger.log(`${this.name} Run()`);
+        if (!this.can_run()) {
+            Logger.log("Unable to run mission "+this.name);
+            return;
+        }
+
+        // Move if needed
+        if (this.move_to_location()) { return }
+
+        if (this.retrieve()) { return }
+        this.location_idx = 1;
+
+        // wait
+        if (!inv_has_compoundable_trio()) {
+            this.cancel();
+        }
+
+    }
+
+    retrieve() {
+        game_log("this._retrieve_done: "+this._retrieve_done);
+        if (this._retrieve_done == false) return this._retrieve_done;
+        if (!is_in_bank) { game_log("retrieve() called out of bank - BAD"); }
+        let items_to_retrieve = bank_get_compoundables_count();
+        let i = 20;
+        for (let packinfo of items_to_retrieve) {
+            // limit code calls
+            if (i>0) {
+                bank_retrieve(packinfo.packname, packinfo.idx);
+                i--;
+            }
+        }
+        if (i==0 || character.esize == 0 || items_to_retrieve) {
+            this._retrieve_done = false;
+        } else {
+            this._retrieve_done = true;
+        }
+        return this._retrieve_done;
+    }
+
+    deposit() {
+        // Store all farmable items
+        for(let i=0;i<42;i++) {
+            if(character.items[i]) {
+                let name = character.items[i].name;
+                if (this.toDeposit.has(name)) {
+                    bank_store(i);
+                }
+            }
+        }
+    }
+
+    move_to_location() {
+        this.location = this.locations[this.location_idx];
+        super.move_to_location();
+    }
+
+    // After Runtime or abort
+    cancel() {
+        // Teleport and/or smart_move to town.
+        this.status = STATE_DONE;
+    }
+}
+
+/*****************************************************************************/
+
+class DepositEverythingMission extends Mission {
+  constructor() {
+    let name = "DepositEverything";
+    let prio = MISSION_PRIORITY[name];
+    super(name, prio); // This should be a unique name?
+
+    this.location = LOCATION_BANK;
+    this.verbose = true;
+    this.whitelist = new Set(["hpot0","mpot0","stand0","rod","pickaxe"]);
+  }
+
+  // Check if fishing rod in mainhand or inventory.
+  can_run() { 
+    return true;
+  }
+
+  run() {
+    if (this.verbose) Logger.log(`${this.name} Run()`);
+    if (!this.can_run()) {
+        Logger.log("Unable to run mission "+this.name);
+        return;
+    }
+
+    // Move if needed
+    if (this.move_to_location()) { return }
+
+    // Store almost all items
+    for(let i=0;i<42;i++) {
+        if(character.items[i]) {
+            let name = character.items[i].name;
+            if (!this.whitelist.has(name) && !name.includes("scroll")) {
+                bank_store(i);
+            }
+        }
+    }
+    this.cancel();
+  }
+}
+
+/*****************************************************************************/
+
 class DepositFarmablesMission extends Mission {
   constructor() {
     let name = "DepositFarmable";
     let prio = MISSION_PRIORITY[name];
     super(name, prio); // This should be a unique name?
 
-    this.location = new Location(0, -176, "bank");
+    this.location = LOCATION_BANK;
     this.verbose = true;
 
     this.toDeposit = new Set(FARMABLE.concat(COMPOUNDABLE));
@@ -489,7 +657,7 @@ class MiningMission extends Mission {
     }
 
     // Execute fishing action
-    if(!character.c.fishing) {
+    if(!character.c.mining) {
         use_skill("mining");
     }
   }
