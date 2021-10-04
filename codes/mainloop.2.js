@@ -49,17 +49,32 @@ function attackloop() {
 // Less frequent execution
 function cache_loop() {
 	cache_inventory();
+	cache_location();
+}
+
+function cache_location() {
+	let key = "cache_char_location_"+character.name;
+	let new_val = {
+		"x": character.x,
+		"y": character.y, 
+		"map": character.map,
+		"ts": Date.now()
+	}
+	set(key, new_val);
+	game_log("Cached location");
 }
 
  /*  [null,{"name": "scroll0", "q": 3 }, null, ...] */
  // todo relocate to cache file
+ // show_json( get("cache_inventory_Terranger" ))
 function cache_inventory() {
 	let key = "cache_inventory_"+character.name;
 	let cache_val = get(key); 
-	if (!cache_val) { cache_val = {"items":[], "ts": 0}; }
+	if (!cache_val) { cache_val = {"items":[], "ts": 0, "esize":undefined }; }
 
 	let new_val = {
 		"items": character.items,
+		"esize": character.esize, // empty slots
 		"ts": Date.now()
 	}
 

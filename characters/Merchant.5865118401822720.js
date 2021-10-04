@@ -46,7 +46,9 @@ function custom_town_behavior() {
 	// }
 }
 
+
 var servers = [["US","I"],["US","II"],["US","III"],["US","PVP"],["EU","I"],["EU","II"],["EU","PVP"]];
+servers.push(["US","PVP"]); // Todo, doubled up on us pvp for now
 const SERVER_I_KEY = "server_i"; 
 var server_i = get(SERVER_I_KEY) || 0;
 function serverLoop() {
@@ -71,6 +73,11 @@ game_log("missionControl.q: " + missionControl.q);
 missionControl.run_missions();
 // setInterval(missionControl.run_missions.bind(missionControl), 1000);
 
+add_top_button("showMissions","showMissions", showMissions);
+function showMissions() {
+	show_json(missionControl.q);
+}
+
 function main(){
 	start_ts = Date.now();
 	Logger.functionEnter(logFnName);
@@ -79,6 +86,13 @@ function main(){
 		run_shared_executions();
 		loot();
 		use_potion();
+
+
+		//  Unequip to walk faster 
+		if (is_moving(character)) { 
+			unequip("mainhand"); 
+			close_booth();
+		}
 
 		// Todo
 		 // || is_moving(character)   // Dont stop merchant actions if moving
@@ -137,7 +151,11 @@ function main(){
 	}
 };
 
+var buy_potion_ts = Date.now();
 function buy_potions() {
+	if (Date.now() - buy_potion_ts < 2000) { return; }
+	buy_potion_ts = Date.now();
+
 	let mpot0_count = get_item_count_in_inventory("mpot0");
 	let hpot0_count = get_item_count_in_inventory("hpot0");
 	let target = 9999*2; // 2 stacks
@@ -214,7 +232,10 @@ function check_for_compoundable_trios() {
 	}
 }
 
-// Learn Javascript: https://www.codecademy.com/learn/introduction-to-javascript
-// Write your own CODE: https://github.com/kaansoral/adventureland
-// NOTE: If the tab isn't focused, browsers slow down the game
-// NOTE: Use the performance_trick() function as a workaround
+function open_booth() {
+    parent.socket.emit("merchant",{num:0})
+}
+
+function close_booth() {
+    parent.socket.emit("merchant",{close:1})
+}

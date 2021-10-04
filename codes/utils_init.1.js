@@ -28,12 +28,12 @@ const NameWarrior = "Terazarrior";
 const NameMage = "Terakazam";
 const NameRogue = "Terrogue";
 const NameRanger2 = "BigBowBigHo";
-const KIRKS_TOONS = [NameRanger, NamePriest, NameWarrior, NameMage, NameRogue, NameRanger2];
 // For console pasting: ["Terazarrior","NoHeals4U","Terranger"]
 
-var LEADER = NameWarrior;
 var NameMerchant = "CurvyMoney";
+var LEADER = NameWarrior;
 var SLAVES = [NameRanger, NameMage, NamePriest, NameRogue];
+const KIRKS_TOONS = [NameMerchant, NameRanger, NamePriest, NameWarrior, NameMage, NameRogue, NameRanger2];
 
 // var SLAVES = [NameRanger, NamePriest];    // **********************
 const ACTIVE_PARTY = [NameRanger, NamePriest];
@@ -146,6 +146,8 @@ FARMABLE = FARMABLE.concat(["candy0","candy1","pvptoken"]);
 FARMABLE = FARMABLE.concat(["stinger","wbook0"]);
 FARMABLE = FARMABLE.concat(["vitscroll","scroll0","scroll1"]);
 FARMABLE = FARMABLE.concat(["lostearring","rattail"]);
+FARMABLE = FARMABLE.concat(["gemfragment"]);
+
 
 // This won't sell at item.level >=2  (check method sell_all_trash)
 var TRASH = ["stinger","hpamulet","ringsj"];

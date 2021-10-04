@@ -3,7 +3,7 @@
 
 function onlineChars() {
     return get_characters().filter(
-       x => x.online != 0 && x.name != character.name
+       x => x.online != 0 // && x.name != character.name
     );
 }
 
@@ -59,6 +59,7 @@ function party_up() {
         if (!is_in_party) {
             game_log("Leader is not in party. party_up SEND_REQUEST");
             for (charObj of onlineChars()) {
+                if (charObj.name == character.name) continue;
                 if (charObj.server == parent.server_region+parent.server_identifier) {
                     send_party_invite(charObj.name, 1); // party request
                 }
@@ -74,6 +75,7 @@ function party_up() {
                 send_party_request(LEADER); // party request
             } else {
                 for (charObj of onlineChars()) {    
+                    if (charObj.name == character.name) continue;
                     if (charObj.server == parent.server_region+parent.server_identifier) {
                         send_party_request(charObj.name); // party request
                         game_log("party_up request to "+charObj.name);
