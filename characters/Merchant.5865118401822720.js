@@ -63,30 +63,19 @@ function serverLoop() {
 }
 
 
-// function collectItems() {
-// 	/* Check if mission should commence */
-// 	// Get other online chars (exclude merchant)
-// 	let onlineChars = get_characters().filter(
-// 		x => x.online != 0 && x.name != character.name
-// 	);
-// 	for (let charObj in onlineChars) {
-// 		let cache_key = "cache_inventory_"+charObj.name;
-// 		let inv = get(cache_key);	
-// 		return inv;
-// 	}
-// }
 
-// function collectItemsMission() {
 
-// }
-
+let missionControl = new MissionControl();
+missionControl.init(); 
+game_log("missionControl.q: " + missionControl.q);
+missionControl.run_missions();
+// setInterval(missionControl.run_missions.bind(missionControl), 1000);
 
 function main(){
 	start_ts = Date.now();
 	Logger.functionEnter(logFnName);
 
 	try {
-
 		run_shared_executions();
 		loot();
 		use_potion();
@@ -171,8 +160,10 @@ function give_potions(entity) {
 		game_log("Error reading inventorycache for "+charname); 
 		return;
 	}
-	if ( (Date.now() - char_inv_cache.ts) > 15000) { 
-		game_log("Error: inventorycache out of date for "+entity.name+" by "+mssince(char_inv_cache.ts/1000)+"s"); 
+	let cache_age_ms = Date.now() - char_inv_cache.ts;
+	if (cache_age_ms > 15000) { 
+
+		game_log("Error: inventorycache out of date for "+entity.name+" by "+(cache_age_ms/1000)+"s"); 
 		return;
 	}
 	if (distance(character, entity) > 300) {

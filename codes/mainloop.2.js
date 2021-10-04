@@ -62,7 +62,9 @@ function cache_inventory() {
 		"items": character.items,
 		"ts": Date.now()
 	}
-	if (cache_val.items != character.items || mssince(cache_val.ts) > 5000) {
+
+	let time_since_ms = Date.now() - cache_val.ts;
+	if (cache_val.items != character.items || time_since_ms > 5000) {
 		set(key, new_val);
 		game_log("Cached inventory");
 	} else {

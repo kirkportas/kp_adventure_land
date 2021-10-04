@@ -99,6 +99,11 @@ function get_in_range_mobs(mtype, skill_name) {
 //
 var last_undefined = Date.now();
 async function fire_3_shot(mtype) {
+	
+	// Skip if below lvl60
+	if (character.level < G.skills["3shot"].level) {
+		return false;
+	}
 	let mobs = get_in_range_mobs("bee", "3shot");
 
 	// let mobs = get_in_range_mobs(mtype); // can pass undefined

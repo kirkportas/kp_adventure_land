@@ -58,21 +58,26 @@ function party_up() {
     if (character.name == LEADER) {
         if (!is_in_party) {
             game_log("Leader is not in party. party_up SEND_REQUEST");
-            for (charObj of get_characters()) {
-                send_party_invite(charObj.name, 1); // party request
+            for (charObj of onlineChars()) {
+                if (charObj.server == parent.server_region+parent.server_identifier) {
+                    send_party_invite(charObj.name, 1); // party request
+                }
             }
         }
         
     } else {
         if (!is_in_party) {
             game_log("party_up SEND_REQUEST");
-            if (LEADER in onlineChars()) {
-                game_log
+            // todo bug here
+            let leaderArr = onlineChars().filter(x => x.name == LEADER);
+            if (leaderArr.length > 0) {
                 send_party_request(LEADER); // party request
             } else {
                 for (charObj of onlineChars()) {    
-                    game_log("party_up request to "+charObj.name);
-                    send_party_request(charObj.name); // party request
+                    if (charObj.server == parent.server_region+parent.server_identifier) {
+                        send_party_request(charObj.name); // party request
+                        game_log("party_up request to "+charObj.name);
+                    }
                 }
             }
         }

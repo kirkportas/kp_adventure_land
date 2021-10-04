@@ -106,6 +106,9 @@ const UPGRADEABLE_LEVELS = {
 	// Christmas set
 	"merry": 5,
 
+	"rod": 4,
+	"pickaxe": 4
+
 };
 
 const max_level_compound = 3;
@@ -166,7 +169,8 @@ Logger.functionEnter("Loading shared code files");
 	try { load_code("utils_movement"); }    catch(err) { Logger.log("Error loading utils_movement: "+err); } 
 	try { load_code("stats"); }    			catch(err) { Logger.log("Error loading stats: "+err); } 
 	// var init_comms = false;
-	try { load_code("comms"); }    			catch(err) { Logger.log("Error loading comms: "+err); } 
+	try { load_code("comms"); }    			catch(err) { Logger.log("Error loading comms: "+err); }
+	try { load_code("missions"); }    		catch(err) { Logger.log("Error loading missions: "+err); }  
 Logger.functionExit("Loading shared code files", 0);
 
 load_code("gui_codecost");
