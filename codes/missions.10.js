@@ -94,7 +94,7 @@ MissionControl.prototype._scan_for_missions = function() {
         this.addMission(new MiningMission());
     }
 
-    // todo Go collect items mission
+    // todo Perform Go collect items mission on a timer to ensure mluck uptime
     for (charObj of onlineChars()) {
         if (charObj.name == character.name) { continue; }
 
@@ -163,7 +163,11 @@ class Mission {
         smart_move(this.location);
         return true;
     } else if (distance(character, this.location) > 3) {
-        smart_move(this.location);
+        if (!is_in_town() && character.map == "main" && this.location.map == "main") {
+            use_skill("use_town");
+        } else {
+            smart_move(this.location);
+        }
         return true;
     }
     return false;
@@ -177,16 +181,16 @@ const MISSION_PRIORITY = {
     'GoHome': 900,
     "Mining": 15,
     "Fishing": 15,
-    'TrashCompound': 17,
-    'DepositFarmable': 19,
-    'collect_items_': 20,
+    'TrashCompound': 20,
+    'DepositFarmable': 22,
+    'collect_items_': 25,
 }
 /*****************************************************************************/
 
 var LOCATION_TOWN = new Location(-207, -108, "main")
 
 // TODO get Compoundables / Upgradeables from bank and work on them
- 
+
 class GoHomeMission extends Mission {
   constructor() {
     let name = "GoHome"; 
@@ -272,6 +276,7 @@ class CollectItemsMission extends Mission {
     super(name, prio);
 
     this.charname = charname;
+    this.charObj = onlineChars().filter(x=>x.name == charname);
 
     // TODO major bug. Calling update_location() doesn't update it and chokes
     // in the parent mission move_to_location() method
@@ -288,11 +293,19 @@ class CollectItemsMission extends Mission {
 
   run() {
     if (this.verbose) Logger.log(`${this.name} Run()`);
-    if (this.verbose) game_log(`${this.name} Location: ${this.location}`);
+    // if (this.verbose) game_log(`${this.name} Location: ${this.location}`);
 
     if (!this.can_run()) {
         Logger.log("Unable to run mission "+this.name);
         return;
+    }
+
+    // TODO Update to check cache of other players.
+    // Bee farming is on US PVP - Oct 4 2021
+    let myServer = parent.server_region + parent.server_identifier;
+    // if (myServer != this.charObj.server) {
+    if (parent.server_region != "US" || parent.server_identifier != "PVP") {
+        change_server("US","PVP");
     }
 
     // Move if needed

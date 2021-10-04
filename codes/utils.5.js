@@ -22,6 +22,10 @@ function onlineChars() {
 //   };
 // }
 
+function is_same_server() {
+    // The get_characters() object has these values
+    // "EUI",
+}
 
 function start_chars() {
     if (!last_start_char_ts) {

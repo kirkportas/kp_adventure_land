@@ -20,6 +20,7 @@ setInterval(serverLoop, 5*60*1000); // 5 minutes
 track_events();
 
 add_top_button("showPonty","showPonty", showPontyBuyList);
+add_top_button("eventTypes","eventTypes", () => { show_json(get("stats_game_events_dict").actions_custom) });
 
 // Use this to make do any custom or one-off stuff.
 function custom_town_behavior() {
