@@ -226,10 +226,22 @@ function get_compoundables_in_inventory() {
 
 // Note the hpbelt hack
 function inv_has_compoundable_trio() {
-    let raw_inv = get_compoundables_in_inventory()
+    let raw_inv = get_compoundables_in_inventory();
+    show_json(raw_inv);
+    /* 
+    {
+        "dexring": {
+            "0": 5,
+            "1": 4
+        },
+        "strring": {
+            "0": 2
+        }
+    }
+    */
     for (let [itemname, leveldict] of Object.entries(raw_inv)) {
         for (let level of Object.keys(leveldict)) {
-            if (leveldict[level].length >= 3) {
+            if (leveldict[level] >= 3) {
                 return true;
             }
         }

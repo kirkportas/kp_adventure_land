@@ -322,22 +322,22 @@ function franky_farm() {
 	if (heal_party_member()) { return; }
 
 	var target=get_targeted_monster("franky");
-	if(!target || !is_in_range(target))
-	{
+	if(!target || !is_in_range(target)) {
 		target=get_nearest_monster();
-		//target=get_nearest_monster({min_xp:1000,max_att:30,path_check:true});
 		if(target) {
 			change_target(target);
-		}
-		else
-		{
+		} else {
 			set_message("No Monsters");
 			return;
 		}
 	}
+
+	if (distance(character, target) > 20) {
+		move(character.x+(target.x-character.x)/2,
+			 character.y+(target.y-character.y)/2);
+	}
 	
-	if(is_in_range(target))
-	{
+	if(is_in_range(target)) {
 		set_message("Attacking");
 		attack_plus_skills(target);
 	}

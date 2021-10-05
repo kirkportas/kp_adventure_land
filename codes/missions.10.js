@@ -29,7 +29,7 @@ class MissionControl {
         let missions = [];
         missions = missions.concat([FishingMission, MiningMission]);
         missions.push(GoHomeMission);
-        // missions.push(HandleCompoundablesMission);
+        missions.push(HandleCompoundablesMission);
         // missions.push(DepositEverythingMission);
 
         for (let m of missions) {
@@ -50,6 +50,10 @@ class MissionControl {
 
     missionExists(mName) {
         return this.q.filter(m => m.name == mName).length > 0;
+    }
+
+    getCurrentMission() {
+        return this.q[0];
     }
 
     addMission(m) {
@@ -120,7 +124,8 @@ MissionControl.prototype._scan_for_missions = function() {
     /* Item Collection    ****************************************************/
     // todo Perform Gon a timer to ensure mluck uptime
 
-    if (character.esize < 24) {
+    // If not currently handlingcompoundables, deposit everything to the bank
+    if (character.esize < 24 && this.getCurrentMission().name != "HandleCompoundables") {
         this.addMission(new TrashCompoundMission()); 
         this.addMission(new DepositEverythingMission()); 
         // this.addMission(new DepositFarmablesMission()); 
@@ -439,9 +444,9 @@ class HandleCompoundablesMission extends Mission {
         }
 
         // Move if needed
-        if (this.move_to_location()) { return }
+        if (this.move_to_location()) { return; }
 
-        if (this.retrieve()) { return }
+        if (this.retrieve()) { return; }
         this.location_idx = 1;
 
         // wait
@@ -452,10 +457,19 @@ class HandleCompoundablesMission extends Mission {
     }
 
     retrieve() {
-        game_log("this._retrieve_done: "+this._retrieve_done);
-        if (this._retrieve_done == false) return this._retrieve_done;
+        Logger.log("this._retrieve_done: "+this._retrieve_done);
+        if (this._retrieve_done == false) {
+            Logger.log("this._retrieve_done is set: "+this._retrieve_done);
+            return this._retrieve_done;
+        }
         if (!is_in_bank()) { game_log("retrieve() called out of bank - BAD"); }
         let items_to_retrieve = bank_get_compoundables_count();
+        show_json(items_to_retrieve);
+        /* 
+        [{
+            "packname": "items0",
+            "idx": 22             },..]
+        */
         let i = 20;
         for (let packinfo of items_to_retrieve) {
             // limit code calls
@@ -486,7 +500,7 @@ class HandleCompoundablesMission extends Mission {
 
     move_to_location() {
         this.location = this.locations[this.location_idx];
-        super.move_to_location();
+        return super.move_to_location();
     }
 }
 
@@ -548,11 +562,6 @@ class DepositEverythingMission extends Mission {
     }
     this.cancel();
   }
-
-    // move_to_location() {
-    //     this.location = this.locations[this.location_idx];
-    //     super.move_to_location();
-    // }
 }
 
 /*****************************************************************************/

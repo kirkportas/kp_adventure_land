@@ -85,6 +85,11 @@ function addCollectMission() {
 	missionControl.addMission(new CollectItemsMission("Terranger"));
 }
 
+add_top_button("CompoundMission","CompoundMission", function() {
+	let m = new HandleCompoundablesMission();
+	missionControl.addMission(m);
+	// show_json(m.location_idx);
+});
 
 
 function main(){

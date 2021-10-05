@@ -13,8 +13,8 @@ setInterval(mainloop, 1000/5); // Loops every 1/5 seconds.
 setInterval(scan_for_bestiary_updates, 11000);
 setInterval(cache_loop, 5000); 
 
-setInterval(check_franky, 5005); 
-function check_franky() {
+setInterval(check_franky_warr, 5005); 
+function check_franky_warr() {
 	game_log("check_franky");
 	GetServerStatuses(s => { 
 		game_log("GetServerStatuses returned")
@@ -23,9 +23,11 @@ function check_franky() {
 		let engagedEvents = liveEvents.filter(e => 
 			true == e.live
 			&& "PVP" != e.server_identifier
-			&& null != event.target 
-			&& event.eventname == "franky");
+			&& null != e.target 
+			&& e.eventname == "franky");
 
+		var no_franky = true;
+		// show_json(engagedEvents);
 		for(let event of engagedEvents) {	
 			let region = event.server_region;
 			let name = event.server_identifier;
@@ -37,9 +39,10 @@ function check_franky() {
 				parent.window.location.href="/character/"+charname+"/in/"+region+"/"+name+"/";
 				break;
 			} 	
+			no_franky = false; 
 		}
 
-		if (engagedEvents.length == 0) {
+		if (no_franky && engagedEvents.length == 0) {
 			game_log("Switching to BigBowBigHo");
 			let charname = "BigBowBigHo"; 
 			let region = "US";
