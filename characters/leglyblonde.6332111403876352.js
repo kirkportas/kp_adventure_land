@@ -6,6 +6,7 @@
 game_log("Loading ValMerchant char file");
 var attack_mode = true; // Just for use in fleeing.
 load_code("utils_init");
+load_code("val_utils.66")
 
 
 setInterval(function(){
@@ -20,7 +21,6 @@ setInterval(function(){
 	if (is_in_town()) {	
 		sell_all_trash();
 		compound_items();
-		buy_potion();
 		// upgrade common items to a specified level
 		merchant_handle_upgradeables("strscroll");
 	}

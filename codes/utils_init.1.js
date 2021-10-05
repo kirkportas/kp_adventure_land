@@ -42,12 +42,13 @@ const ACTIVE_PARTY = [NameRanger, NamePriest];
 const NameValWarrior = "AlextheGreat";
 const NameValMage = "LadyMary";
 const NameValMerchant = "LeglyBlonde";
-const VALS_TOONS = [NameValWarrior, NameValMage, NameValMerchant];
+const NameValRogue = "WendyWench";
+const VALS_TOONS = [NameValWarrior, NameValMage, NameValMerchant, NameValRogue];
 
 // Val's leader. (Overwrite values for Kirk if Val is using the code)
 if (VALS_TOONS.includes(character.name)) {
 	LEADER = NameValWarrior;
-	SLAVES = [NameValMage, NameValMerchant];
+	SLAVES = [NameValMage, NameValMerchant, NameValRogue];
 	NameMerchant = NameValMerchant;
 }
 
