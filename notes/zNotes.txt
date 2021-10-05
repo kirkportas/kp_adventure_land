@@ -29,6 +29,96 @@ send_item("Terakazam",0,10000);
 send_item("Terrogue",0,10000);;
 
 ***
+==
+
+function findAllCharacters() {
+    
+}
+export function showCoop()
+{
+    const chars = [character, ...findAllCharacters()];
+    const result = [];
+
+    for (let i = 0; i < chars.length; i++) {
+        if (!chars[i].s.coop) {
+            continue;
+        }
+
+        result.push([chars[i].id, chars[i].s.coop.p]);
+    }
+
+    result.sort((a, b) => {
+        if (a[1] > b[1]) {
+            return -1;
+        }
+        if (a[1] < b[1]) {
+            return 1;
+        }
+
+        return 0;
+    });
+
+    let total = 0;
+    for (let i = 0; i < result.length; i++) {
+        total += result[i][1];
+    }
+
+    let myContribution = 0;
+
+    const objectResult = {};
+    for (let i = 0; i < result.length; i++) {
+        objectResult[result[i][0]] = Math.round(result[i][1] / total * 100) / 100;
+        if (getTeamIds().includes(result[i][0])) {
+            myContribution += objectResult[result[i][0]];
+        }
+    }
+
+    show_json(myContribution);
+    show_json(objectResult);
+}
+
+
+==
+Here's some good game goals I've been through this month
+
+1) Get 3 characters running. (in browser/steam or using start_character(name)). Kill mobs for gold/xp until lvl 30+.
+Implement something like a farm(mobname) method. 
+2) Create a merchant character. Code up the ability to upgrade "shop items". E.g. "buy from the store and upgrade to lvl X". The goal is to get all shop items for all 3 characters to level 7, with their appropriate stat upgrades. There is a trick about stat upgrade pricing. 
+2.5) Implement a gui for manual controls. I automated "compound", "upgrade", and "give me all your items".
+3) (all lvl7 gear achieved). Now automate fighting harder monsters, bats then Ghosts. These will give earrings and amulet gear. You'll need to implement healing and tanking. (or kiting or some other basic party tactic). Farm up earrings and amulets.
+4) Implement more merchant code, GUI controls, automatic potion refills, auto-selling, some way to command that other characters give all their items. 
+5) Fix up the codebase to prepare for some "real code". I.e. get linting in place, plan some mission/statetree logic, objective functions for targeting..
+6) iuno let me know if you get ahead :D
+
+
+===
+
+for the angle, you could do something like
+const mobAngle = Math.atan2(character.y-target.y, character.x-target.x);
+const angle_speed = character.speed/r * 0.25; // 0.25 assuming is't a 250 ms loop
+
+x = h + r*Math.cos(mobAngle+angle_speed);
+y = k + r*Math.sin(mobAngle+angle_speed);
+
+==
+
+class TrashCompoundMission {
+  constructor() {
+    let name = "TrashCompound";
+  }
+
+  run() {
+    setTimeout( this.cancel(), 10000 );
+  }
+
+  cancel() {
+    console.log("cancelled");
+  }
+}
+let foo = new TrashCompoundMission();
+foo.run();
+
+===
 
 function runtimetest() {
     let start = Date.now();
@@ -73,6 +163,55 @@ node "C:\\Users\\kirkp\\AppData\\Roaming\\Sublime Text\\Packages\\ESLint\\linter
 
 ===
 
+function bleargh()
+{
+  var b = "";
+  b += "<div style='background-color: black; border: 5px solid gray; padding: 14px; font-size: 24px; display: inline-block; max-width: 640px'>";
+  b += "<div style='padding: 10px; color: #CC863B; text-align: center'>Work in Progress</div>";
+  "ranger rogue warrior mage priest paladin merchant".split(" ").forEach(function(a) {
+    b += "<div>" + a.toTitleCase() + "</div>";
+    parent.object_sort(G.skills).forEach(function(c) {
+      let ident = c[0];
+      c = c[1];
+      c["class"] && c["class"].includes(a) && (b += parent.item_container({
+        skin: c.skin,
+        onclick: bloop_test(ident)
+      }))
+    })
+  });
+  b += "<div>Item Skills</div>";
+  parent.object_sort(G.skills).forEach(function(a) {
+    let ident = a[0];
+    a = a[1];
+    a.slot && (b += parent.item_container({
+      skin: a.skin,
+      onclick: bloop_test(ident)
+    }))
+  });
+  b += "<div>Abilities and Utilities</div>";
+  parent.object_sort(G.skills).forEach(function(a) {
+    let ident = a[0];
+    a = a[1];
+    if ("ability" == a.type || "utility" == a.type) b += parent.item_container({
+      skin: a.skin,
+      onclick: bloop_test(ident)
+    })
+  });
+  b += "</div>";
+  parent.show_modal(b, {
+    wrap: !1,
+    hideinbackground: !0,
+    url: "/docs/guide/all/skills_and_conditions"
+  })
+}
+
+
+function bloop_test(skill)
+{
+  return "show_modal('<div id=\\'al_skill_preview\\' style=\\'width: 480px\\'></div>', {wrap: !1,hideinbackground: !0,});render_skill('#al_skill_preview', '"+skill+"');"
+}
+
+===
 let foo = find_npc("newupgrade");
 show_json(distance(character, foo))
 
@@ -140,6 +279,109 @@ Luck modifiers apply based on the person the monster was targetting when it died
 Gold modifiers apply based on the person who opened the chest. 
 
 Every character in party benefits from the party having a specific looter and specific luck user (usually tank)
+
+
+== FISHING EXAMPLES
+one:
+let STATE = "guard";
+function state_detector() {
+    if(can_use("fishing")) {
+        STATE = "fishing";
+    } else if(can_use("mining")) {
+        STATE = "mining";
+    } else {
+        STATE = "guard";
+    }
+}
+function move_to(location, callback) {
+    if (
+        can_move_to(location.x, location.y) &&
+        distance_to_point(location.x, location.y) > 1 &&
+        character.map == location.map
+    ) {
+        move(location.x, location.y);
+    } else if (
+        !smart.moving &&
+        distance_to_point(location.x, location.y) > 1
+    ) {
+        smart_move(location);
+    }
+    if(character.map == location.map && distance_to_point(location.x, location.y) < 1) {
+        callback?.();
+    }
+}
+function ensure_equipped(item_name) {
+    if(character.slots.mainhand?.name != item_name) {
+        let index = get_index_of_item(item_name);
+        equip(index);
+    }
+} 
+function go_fishing() {
+    if(!character.c.fishing) {
+        use_skill("fishing");
+    }
+}
+function go_mining() {
+    if(!character.c.mining) {
+        use_skill("mining");
+    }
+}
+setInterval(state_detector, 1000);
+const guard_location = { x: -500, y: -1415, map: "desertland" };
+const fishing_location = { x: -1365, y: -15, map: "main" };
+const mining_location = { x: -265, y: -35, map: "tunnel" };
+setInterval(() => {
+    if (!banking) {
+        switch(STATE) {
+            case "guard":
+                ensure_equipped("vstaff");
+                move_to(guard_location);
+                break;
+            case "fishing":
+                ensure_equipped("rod");
+                move_to(fishing_location, go_fishing);
+                break;
+            case "mining":
+                ensure_equipped("pickaxe");
+                move_to(mining_location, go_mining);
+                break;
+        }
+    }
+}, 1000);
+
+TWO: 
+export async function goFishing(bot: Merchant): Promise<void> {
+    if (!bot.canUse("fishing", { ignoreEquipped: true })) return
+    if (!bot.hasItem("rod") && !bot.isEquipped("rod")) return // We don't have a rod
+
+    bot.closeMerchantStand()
+    await bot.smartMove(mainFishingSpot) // Move to fishing sppot
+
+    // Equip fishing rod if we don't have it already equipped
+    const mainhand = bot.slots.mainhand?.name
+    let mainhandSlot: number
+    const offhand = bot.slots.offhand?.name
+    let offhandSlot: number
+    if (!bot.isEquipped("rod")) {
+        const promises: Promise<unknown>[] = []
+        if (offhand) promises.push(bot.unequip("offhand").then((i) => { offhandSlot = i }))
+        mainhandSlot = bot.locateItem("rod", bot.items)
+        promises.push(bot.equip(mainhandSlot))
+        await Promise.all(promises)
+    }
+
+    await bot.fish()
+
+    // Re-equip if we changed weapons
+    const promises: Promise<unknown>[] = []
+    if (bot.slots.mainhand?.name !== mainhand) {
+        if (mainhandSlot !== undefined) promises.push(bot.equip(mainhandSlot, "mainhand"))
+    }
+    if (bot.slots.offhand?.name !== offhand) {
+        if (offhandSlot !== undefined) promises.push(bot.equip(offhandSlot, "offhand"))
+    }
+    await Promise.all(promises)
+}
 
 ==
 LOOT ALL CHESTS 

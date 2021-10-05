@@ -179,6 +179,8 @@ Logger.functionEnter("Loading shared code files");
 	// var init_comms = false;
 	try { load_code("comms"); }    			catch(err) { Logger.log("Error loading comms: "+err); }
 	try { load_code("missions"); }    		catch(err) { Logger.log("Error loading missions: "+err); }  
+	try { load_code("vendor_aldata"); }    	catch(err) { Logger.log("Error loading vendor_aldata: "+err); }  
+	try { load_code("utils_api"); }    		catch(err) { Logger.log("Error loading utils_api: "+err); }  
 Logger.functionExit("Loading shared code files", 0);
 
 load_code("gui_codecost");
