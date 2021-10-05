@@ -50,6 +50,8 @@ function on_party_request(name)
 	}
 	// In a chaotic failure where all party members lose party status,
 	// looping all charnames and requesting could cause a corner case failure. (e.g. 3 parties get formed) 
+	game_log(ALLTOONS.includes(name));
+		game_log(ALLTOONS);
 	if (ALLTOONS.includes(name)) {
 		accept_party_request(name);
 	}
@@ -68,6 +70,9 @@ function on_party_request(name)
  *
   let key = "stats_game_events_dict";
   show_json( get(key) ); 
+
+  let key = "stats_game_events_dict";
+  show_json( get(key).actions ); 
  */
 function track_events() {
 		
@@ -105,6 +110,21 @@ function track_events() {
 				game_log(`data.toString() : ${data.toString()}`);
 			}
 		}
+		// There is a type for "action" event, track all types
+		// e.g. { "actions": {"attack": data, "foo": data}}
+		if (name == "action") {
+			let type = data["type"];
+			let key = "actions_custom";
+			if (!(key in game_event_list)) { game_event_list[key] = {} }
+
+			if (type) {
+				if (!(type in game_event_list[key])) {
+					game_event_list[key][type] = data;
+					should_save = true;
+				}
+			}
+		}
+
 		if (should_save) {
 			set(STATS_GAME_EVENT_DICT_KEY, game_event_list);
 		}

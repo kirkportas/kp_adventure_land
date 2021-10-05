@@ -28,12 +28,12 @@ const NameWarrior = "Terazarrior";
 const NameMage = "Terakazam";
 const NameRogue = "Terrogue";
 const NameRanger2 = "BigBowBigHo";
-const KIRKS_TOONS = [NameRanger, NamePriest, NameWarrior, NameMage, NameRogue, NameRanger2];
 // For console pasting: ["Terazarrior","NoHeals4U","Terranger"]
 
-var LEADER = NameWarrior;
 var NameMerchant = "CurvyMoney";
+var LEADER = NameWarrior;
 var SLAVES = [NameRanger, NameMage, NamePriest, NameRogue];
+const KIRKS_TOONS = [NameMerchant, NameRanger, NamePriest, NameWarrior, NameMage, NameRogue, NameRanger2];
 
 // var SLAVES = [NameRanger, NamePriest];    // **********************
 const ACTIVE_PARTY = [NameRanger, NamePriest];
@@ -91,20 +91,29 @@ const UPGRADEABLE_LEVELS = {
 
 
 	// Weapons
+	"cclaw": 7,
+	"throwingstars": 7,
+	"woodensword": 6,
+	"oozingterror": 6,
+	"t2bow": 6,
 	"pmace": 5,
 	"hbow": 5,
-	"cclaw": 7,
-	"rapier": 5,
-	"woodensword": 6,
-	"t2bow": 6,
-	"throwingstars": 7,
 	"candycanesword": 5,
-	"oozingterror": 5,
-
+	"maceofthedead": 5,
+	"bowofthedead": 5,
+	"staffofthedead": 5,
+	"rapier": 5,
 	"firebow": 5,
 
 	// Christmas set
 	"merry": 5,
+	"xmassweater": 7,
+
+	// Halloween
+	"phelmet": 5,
+
+	"rod": 4,
+	"pickaxe": 4
 
 };
 
@@ -143,9 +152,11 @@ FARMABLE = FARMABLE.concat(["candy0","candy1","pvptoken"]);
 FARMABLE = FARMABLE.concat(["stinger","wbook0"]);
 FARMABLE = FARMABLE.concat(["vitscroll","scroll0","scroll1"]);
 FARMABLE = FARMABLE.concat(["lostearring","rattail"]);
+FARMABLE = FARMABLE.concat(["gemfragment"]);
+
 
 // This won't sell at item.level >=2  (check method sell_all_trash)
-var TRASH = ["stinger","hpamulet","ringsj"];
+var TRASH = ["stinger","hpamulet","ringsj", "hpbelt"];
 // "hpbelt"
 
 // These localstorage vars are used for passing items to the Merchant
@@ -166,7 +177,8 @@ Logger.functionEnter("Loading shared code files");
 	try { load_code("utils_movement"); }    catch(err) { Logger.log("Error loading utils_movement: "+err); } 
 	try { load_code("stats"); }    			catch(err) { Logger.log("Error loading stats: "+err); } 
 	// var init_comms = false;
-	try { load_code("comms"); }    			catch(err) { Logger.log("Error loading comms: "+err); } 
+	try { load_code("comms"); }    			catch(err) { Logger.log("Error loading comms: "+err); }
+	try { load_code("missions"); }    		catch(err) { Logger.log("Error loading missions: "+err); }  
 Logger.functionExit("Loading shared code files", 0);
 
 load_code("gui_codecost");
@@ -231,6 +243,91 @@ if (character.name != NameWarrior) {
 	STATS_BESTIARY_KEY = "test";
 	STATS_BESTIARY = undefined;
 }
+
+
+
+
+/* 
+var filtered = Object.keys(G.items).reduce(function (filtered, key) {
+    if ("compound" in G.items[key]) filtered[key] = G.items[key];
+    return filtered;
+}, {});
+show_json( Object.keys(filtered))
+*/
+
+var ALL_COMPOUNDABLE_ITEMS = new Set([
+    "dexamulet",
+    "armorring",
+    "jacko",
+    "mbelt",
+    "goldbooster",
+    "rednose",
+    "test_orb",
+    "zapper",
+    "t2dexamulet",
+    "dexbelt",
+    "hpbelt",
+    "t2stramulet",
+    "orbofdex",
+    "molesteeth",
+    "lbelt",
+    "darktristone",
+    "ringofluck",
+    "ctristone",
+    "lostearring",
+    "dexring",
+    "rabbitsfoot",
+    "goldring",
+    "strbelt",
+    "charmer",
+    "orbofint",
+    "northstar",
+    "orbofvit",
+    "trigger",
+    "xpbooster",
+    "intbelt",
+    "orbofsc",
+    "ftrinket",
+    "mearring",
+    "solitaire",
+    "cearring",
+    "cdarktristone",
+    "strearring",
+    "wbook0",
+    "wbook1",
+    "t2intamulet",
+    "mpxamulet",
+    "tristone",
+    "coal",
+    "resistancering",
+    "sanguine",
+    "hpamulet",
+    "orbofstr",
+    "ringsj",
+    "talkingskull",
+    "lantern",
+    "luckbooster",
+    "intring",
+    "cring",
+    "dexearring",
+    "intearring",
+    "amuletofm",
+    "santasbelt",
+    "vitring",
+    "vring",
+    "suckerpunch",
+    "snring",
+    "intamulet",
+    "vorb",
+    "exoarm",
+    "mpxbelt",
+    "vitearring",
+    "stramulet",
+    "strring",
+    "dexearringx",
+    "orbg"
+]);
+
 
 
 game_log("Finished load_code( utils_init )");

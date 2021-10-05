@@ -20,6 +20,7 @@ setInterval(serverLoop, 5*60*1000); // 5 minutes
 track_events();
 
 add_top_button("showPonty","showPonty", showPontyBuyList);
+add_top_button("eventTypes","eventTypes", () => { show_json(get("stats_game_events_dict").actions_custom) });
 
 // Use this to make do any custom or one-off stuff.
 function custom_town_behavior() {
@@ -46,7 +47,9 @@ function custom_town_behavior() {
 	// }
 }
 
+
 var servers = [["US","I"],["US","II"],["US","III"],["US","PVP"],["EU","I"],["EU","II"],["EU","PVP"]];
+servers.push(["US","PVP"]); // Todo, doubled up on us pvp for now
 const SERVER_I_KEY = "server_i"; 
 var server_i = get(SERVER_I_KEY) || 0;
 function serverLoop() {
@@ -63,33 +66,34 @@ function serverLoop() {
 }
 
 
-// function collectItems() {
-// 	/* Check if mission should commence */
-// 	// Get other online chars (exclude merchant)
-// 	let onlineChars = get_characters().filter(
-// 		x => x.online != 0 && x.name != character.name
-// 	);
-// 	for (let charObj in onlineChars) {
-// 		let cache_key = "cache_inventory_"+charObj.name;
-// 		let inv = get(cache_key);	
-// 		return inv;
-// 	}
-// }
 
-// function collectItemsMission() {
 
-// }
+let missionControl = new MissionControl();
+missionControl.init(); 
+game_log("missionControl.q: " + missionControl.q);
+missionControl.run_missions();
+// setInterval(missionControl.run_missions.bind(missionControl), 1000);
 
+add_top_button("showMissions","showMissions", showMissions);
+function showMissions() {
+	show_json(missionControl.q);
+}
 
 function main(){
 	start_ts = Date.now();
 	Logger.functionEnter(logFnName);
 
 	try {
-
 		run_shared_executions();
 		loot();
 		use_potion();
+
+
+		//  Unequip to walk faster 
+		if (is_moving(character)) { 
+			unequip("mainhand"); 
+			close_booth();
+		}
 
 		// Todo
 		 // || is_moving(character)   // Dont stop merchant actions if moving
@@ -148,12 +152,17 @@ function main(){
 	}
 };
 
+var buy_potion_ts = Date.now();
 function buy_potions() {
+	if (Date.now() - buy_potion_ts < 3000) { return; }
+	buy_potion_ts = Date.now();
+
 	let mpot0_count = get_item_count_in_inventory("mpot0");
 	let hpot0_count = get_item_count_in_inventory("hpot0");
 	let target = 9999*2; // 2 stacks
-	if (mpot0_count < target) { buy("mpot0", target-mpot0_count); }
-	if (hpot0_count < target) { buy("hpot0", target-hpot0_count); }
+	// Avoid latency issues and overbuying
+	if (mpot0_count < target) { buy("mpot0", Math.max(1,(target-mpot0_count)/3)); }
+	if (hpot0_count < target) { buy("hpot0", Math.max(1,(target-hpot0_count)/3)); }
 }
 
 
@@ -162,7 +171,12 @@ function buy_potions() {
 
 // }
 
+var give_potion_ts = {}; 
 function give_potions(entity) {
+	if (!give_potion_ts[entity]) give_potion_ts[entity] = 0;
+	if (Date.now() - give_potion_ts[entity] < 3000) { return; }
+	give_potion_ts[entity] = Date.now();
+
 	let charObj = entity;
 	let charname = entity.name;
 	let inv_cache_key = "cache_inventory_"+charname;
@@ -171,8 +185,10 @@ function give_potions(entity) {
 		game_log("Error reading inventorycache for "+charname); 
 		return;
 	}
-	if ( (Date.now() - char_inv_cache.ts) > 15000) { 
-		game_log("Error: inventorycache out of date for "+entity.name+" by "+mssince(char_inv_cache.ts/1000)+"s"); 
+	let cache_age_ms = Date.now() - char_inv_cache.ts;
+	if (cache_age_ms > 15000) { 
+
+		game_log("Error: inventorycache out of date for "+entity.name+" by "+(cache_age_ms/1000)+"s"); 
 		return;
 	}
 	if (distance(character, entity) > 300) {
@@ -197,7 +213,7 @@ function give_potions(entity) {
 }
 
 function bank_store_craftables() {
-	for (let itemname of ["gem0", "spidersilk","rattail"]) {
+	for (let itemname of ["gem0", "spidersilk","rattail","bfur","gemfragment"]) {
 		let itemidx = locate_item(itemname);
 		if (itemidx >= 0) {
 			bank_store(itemidx, "items1");
@@ -223,7 +239,10 @@ function check_for_compoundable_trios() {
 	}
 }
 
-// Learn Javascript: https://www.codecademy.com/learn/introduction-to-javascript
-// Write your own CODE: https://github.com/kaansoral/adventureland
-// NOTE: If the tab isn't focused, browsers slow down the game
-// NOTE: Use the performance_trick() function as a workaround
+function open_booth() {
+    parent.socket.emit("merchant",{num:0})
+}
+
+function close_booth() {
+    parent.socket.emit("merchant",{close:1})
+}

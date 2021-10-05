@@ -21,6 +21,7 @@ setInterval(function(){
 		sell_all_trash();
 		compound_items();
 		buy_potion();
+		// upgrade common items to a specified level
 		merchant_handle_upgradeables("strscroll");
 	}
 
