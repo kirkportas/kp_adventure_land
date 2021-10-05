@@ -83,8 +83,8 @@ function party_up() {
         for (let charName of KIRKS_TOONS) {
 
             // Ignore merchant. Ignore if already in party.
-            if (charname == NameMerchant) continue; 
-            if (charname in get_party()) continue;
+            if (charName == NameMerchant) continue; 
+            if (charName in get_party()) continue;
 
             if (charName in parent.entities) {
                 send_party_request(charName);

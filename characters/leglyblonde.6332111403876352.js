@@ -18,8 +18,9 @@ setInterval(function(){
 	if(character.rip) return;
 
 	if (is_in_town()) {	
-		//sell_all_trash();
+		sell_all_trash();
 		compound_items();
+		buy_potion();
 		merchant_handle_upgradeables("strscroll");
 	}
 
