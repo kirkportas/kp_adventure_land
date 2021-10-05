@@ -88,7 +88,6 @@ function addCollectMission() {
 add_top_button("CompoundMission","CompoundMission", function() {
 	let m = new HandleCompoundablesMission();
 	missionControl.addMission(m);
-	// show_json(m.location_idx);
 });
 
 

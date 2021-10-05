@@ -120,6 +120,49 @@ foo.run();
 
 ===
 
+
+==
+Here's some good game goals I've been through this month
+
+1) Get 3 characters running. (in browser/steam or using start_character(name)). Kill mobs for gold/xp until lvl 30+.
+Implement something like a farm(mobname) method. 
+2) Create a merchant character. Code up the ability to upgrade "shop items". E.g. "buy from the store and upgrade to lvl X". The goal is to get all shop items for all 3 characters to level 7, with their appropriate stat upgrades. There is a trick about stat upgrade pricing. 
+2.5) Implement a gui for manual controls. I automated "compound", "upgrade", and "give me all your items".
+3) (all lvl7 gear achieved). Now automate fighting harder monsters, bats then Ghosts. These will give earrings and amulet gear. You'll need to implement healing and tanking. (or kiting or some other basic party tactic). Farm up earrings and amulets.
+4) Implement more merchant code, GUI controls, automatic potion refills, auto-selling, some way to command that other characters give all their items. 
+5) Fix up the codebase to prepare for some "real code". I.e. get linting in place, plan some mission/statetree logic, objective functions for targeting..
+6) iuno let me know if you get ahead :D
+
+
+===
+
+for the angle, you could do something like
+const mobAngle = Math.atan2(character.y-target.y, character.x-target.x);
+const angle_speed = character.speed/r * 0.25; // 0.25 assuming is't a 250 ms loop
+
+x = h + r*Math.cos(mobAngle+angle_speed);
+y = k + r*Math.sin(mobAngle+angle_speed);
+
+==
+
+class TrashCompoundMission {
+  constructor() {
+    let name = "TrashCompound";
+  }
+
+  run() {
+    setTimeout( this.cancel(), 10000 );
+  }
+
+  cancel() {
+    console.log("cancelled");
+  }
+}
+let foo = new TrashCompoundMission();
+foo.run();
+
+===
+
 function runtimetest() {
     let start = Date.now();
     let count = 100 * 1000000; // 100 million

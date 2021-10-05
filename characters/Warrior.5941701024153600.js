@@ -79,7 +79,7 @@ Every 15-20ish hits (sample size ~5)
 The time_ms jumps to ~double from 1175-1225 to ~2350 +/- 100.
 Several times occurs on the *2nd* 'hit' logged after the death of a ghost.
 
-show_json(get("stats_warr_hits_per_time"))
+// show_json(get("stats_warr_hits_per_time"))
 */
 // Init localstorage
 const STATS_HITS_KEY = "stats_warr_hits_per_time";

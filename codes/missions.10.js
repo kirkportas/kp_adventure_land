@@ -29,6 +29,7 @@ class MissionControl {
         let missions = [];
         missions = missions.concat([FishingMission, MiningMission]);
         missions.push(GoHomeMission);
+        missions.push(HandleUpgradeablesMission);
         missions.push(HandleCompoundablesMission);
         // missions.push(DepositEverythingMission);
 
@@ -229,6 +230,7 @@ const MISSION_PRIORITY = {
     'DepositFarmable': 22,
     'collect_items_': 25,
     "HandleCompoundables": 6,
+    "HandleUpgradeables": 6,
     "DepositEverything": 5,   // On boot or to reset. deposit all but a whitelist
 }
 /*****************************************************************************/
@@ -464,12 +466,118 @@ class HandleCompoundablesMission extends Mission {
         }
         if (!is_in_bank()) { game_log("retrieve() called out of bank - BAD"); }
         let items_to_retrieve = bank_get_compoundables_count();
-        show_json(items_to_retrieve);
+        if (items_to_retrieve.length == 0) {
+            this.cancel();
+            return;
+        }
         /* 
         [{
             "packname": "items0",
             "idx": 22             },..]
         */
+        let i = 20;
+        for (let packinfo of items_to_retrieve) {
+            // limit code calls
+            if (i>0) {
+                bank_retrieve(packinfo.packname, packinfo.idx);
+                i--;
+            }
+        }
+        if (i==0 || character.esize == 0 || items_to_retrieve) {
+            this._retrieve_done = false;
+        } else {
+            this._retrieve_done = true;
+        }
+        return this._retrieve_done;
+    }
+
+    deposit() {
+        // Store all farmable items
+        for(let i=0;i<42;i++) {
+            if(character.items[i]) {
+                let name = character.items[i].name;
+                if (this.toDeposit.has(name)) {
+                    bank_store(i);
+                }
+            }
+        }
+    }
+
+    move_to_location() {
+        this.location = this.locations[this.location_idx];
+        return super.move_to_location();
+    }
+}
+
+/*****************************************************************************/
+
+class HandleUpgradeablesMission extends Mission {
+    /* 
+    Go to bank, check for Upgradeables, retrieve them
+    Go to town, wait for upgrades.
+    Deposit remaining items in bank
+    */
+    constructor() {
+        let name = "HandleUpgradeables";
+        let prio = MISSION_PRIORITY[name];
+        super(name, prio); 
+
+        // Todo Consider logic for multi-location missions
+        this.locations = [LOCATION_BANK, LOCATION_TOWN];
+        this.location_idx = 0;
+
+        this.verbose = true;
+        this.toDeposit = new Set(Object.keys(UPGRADEABLE_LEVELS));
+        this.startTimeMs = undefined;
+
+        this.runCount = 10;
+    }
+
+  // Check if fishing rod in mainhand or inventory.
+    can_run() { 
+        return true;
+    }
+
+    run() {
+        if (!this.startTimeMs) { this.startTimeMs = Date.now(); }
+
+        if (this.verbose) Logger.log(`${this.name} Run()`);
+        if (!this.can_run()) {
+            Logger.log("Unable to run mission "+this.name);
+            return;
+        }
+
+        // Move if needed
+        if (this.move_to_location()) { return; }
+        if (this.retrieve()) { return; }
+        this.location_idx = 1;
+        if (this.move_to_location()) { return; }
+
+        // wait
+        if (character.q.upgrade) {
+            this.runCount = 10;
+        } else {
+            this.runCount--;
+        }
+
+        if (this.runCount <= 0) {
+            this.cancel()
+        }
+    }
+
+    retrieve() {
+        Logger.log("this._retrieve_done: "+this._retrieve_done);
+        if (this._retrieve_done == false) {
+            Logger.log("this._retrieve_done is set: "+this._retrieve_done);
+            return this._retrieve_done;
+        }
+        if (!is_in_bank()) { game_log("retrieve() called out of bank - BAD"); }
+        let items_to_retrieve = bank_get_upgradeables();
+        if (items_to_retrieve.length == 0) {
+            this.cancel();
+            return;
+        }
+        /*  [{ "packname": "items0",  "idx": 22 },..] */
         let i = 20;
         for (let packinfo of items_to_retrieve) {
             // limit code calls
@@ -520,7 +628,7 @@ class DepositEverythingMission extends Mission {
     this.verbose = true;
     this.whitelist = new Set(["hpot0","mpot0","stand0","rod","pickaxe"]);
 
-    this.runCount = 0;
+    this.runCount = 10;
   }
 
   // Check if fishing rod in mainhand or inventory.
@@ -541,7 +649,7 @@ class DepositEverythingMission extends Mission {
     // Upgrade/combine for X seconds
     if (this.runCount > 0) {
         if (character.q.compound || character.q.upgrade) {
-            this.runCount++;
+            this.runCount = 10;
         } else {
             this.runCount--;
         }

@@ -227,17 +227,10 @@ function get_compoundables_in_inventory() {
 // Note the hpbelt hack
 function inv_has_compoundable_trio() {
     let raw_inv = get_compoundables_in_inventory();
-    show_json(raw_inv);
     /* 
-    {
-        "dexring": {
-            "0": 5,
-            "1": 4
-        },
-        "strring": {
-            "0": 2
-        }
-    }
+    {   "dexring": { "0": 5,
+                     "1": 4 },
+        "strring": { "0": 2 } }
     */
     for (let [itemname, leveldict] of Object.entries(raw_inv)) {
         for (let level of Object.keys(leveldict)) {
@@ -248,7 +241,6 @@ function inv_has_compoundable_trio() {
     }
     return false;
 }
-
 
 function bank_get_compoundables_count() {
     if (!is_in_bank()) { return [] }
@@ -295,6 +287,30 @@ function bank_get_compoundables_count() {
     }
     // show_json(raw);
     // show_json(items_to_retrieve);
+    return items_to_retrieve;
+}
+
+function bank_get_upgradeables() {
+    if (!is_in_bank()) { return [] }
+    this.verbose = true;
+    if (this.verbose) Logger.log(`bank_get_upgradeables()`);
+
+    // Detailed count with bankpack locations for Bank items
+    let items_to_retrieve = [];
+    for (let [packname,pack] of Object.entries(character.bank)) {
+        if (this.verbose) Logger.log(`Checking pack: ${packname}`);
+        for (var i=0;i<42;i++) {
+            let item = pack[i];
+            if (!item) continue;
+            if (!(item.name in UPGRADEABLE_LEVELS)) continue;
+            if (item_grade(item) >= 2) continue;
+
+            let target_lvl = UPGRADEABLE_LEVELS[item.name];
+            if (item.level < target_lvl) {
+                items_to_retrieve.push({'packname':packname, 'idx': i});
+            }
+        }
+    }
     return items_to_retrieve;
 }
 

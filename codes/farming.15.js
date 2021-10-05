@@ -59,7 +59,6 @@ function attack_plus_skills(target) {
 	// todo half-arsed energize code.
 	// Meant to support Ranger while 3shot farming
 	if (character.ctype == "mage" && character.mp >= 1000) {
-		// show_json(is_in_range(parent.entities["Terranger"], "energize"))
 		let rangerObj = parent.entities[NameRanger];
 		let priestObj = parent.entities[NamePriest];
 
@@ -67,9 +66,6 @@ function attack_plus_skills(target) {
 			let amount = rangerObj.max_mp - rangerObj.mp;
 			use_skill("energize", NameRanger, amount);
 			game_log("energize amount: "+amount);
-			// .then(
-			// 	function(){ game_log("energize resolved")}, 
-			// 	function(){});
 		} 
 		else if (is_in_range(priestObj, "energize")) {
 			let amount = priestObj.max_mp - priestObj.mp;
