@@ -321,7 +321,7 @@ function franky_farm() {
 	if (should_abort()) { return; }
 	if (heal_party_member()) { return; }
 
-	var target=get_targeted_monster();
+	var target=get_targeted_monster("franky");
 	if(!target || !is_in_range(target))
 	{
 		target=get_nearest_monster();

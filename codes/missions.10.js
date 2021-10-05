@@ -148,7 +148,7 @@ MissionControl.prototype._scan_for_missions = function() {
 
     /* Cleanup/Robustness ****************************************************/
     let cycle_time = 10*60*1000; // 10 minutes
-    if (Date.now() - this.last_cycle > cycle_time) {
+    if ((Date.now() - this.last_cycle) > cycle_time) {
         this.addMission(new DepositEverythingMission());
         this.addMission(new HandleCompoundablesMission());
         this.sort();
@@ -197,8 +197,8 @@ class Mission {
     if (character.map != this.location.map) {
         smart_move(this.location);
         return true;
-    } else if (distance(character, this.location) > 3) {
-        if (!is_in_town() && character.map == "main" && this.location.map == "main") {
+    } else if (distance(character, this.location) > 100) {
+        if (!is_in_town() && character.map == "main" && this.location == LOCATION_TOWN) {
             use_skill("use_town");
         } else {
             smart_move(this.location);
@@ -275,6 +275,8 @@ class TrashCompoundMission extends Mission {
 
     this.location = LOCATION_TOWN;
     this.verbose = true;
+
+    this.runCount = 15;
   }
 
   can_run() { 
@@ -290,6 +292,9 @@ class TrashCompoundMission extends Mission {
 
     // Move if needed
     if (this.move_to_location()) { return }
+
+    this.runCount--;
+    if (this.runCount <= 0) { this.cancel(); }
 
     setTimeout( this.cancel, 10000 );
   }
@@ -320,7 +325,7 @@ class CollectItemsMission extends Mission {
     this.location = new Location(500, 1100, "main"); // bees
     // this.update_location();
 
-    this.runCount = 0;
+    this.runCount = 10;
     this.verbose = true;
   }
 
@@ -335,6 +340,12 @@ class CollectItemsMission extends Mission {
 
     if (!this.can_run()) {
         Logger.log("Unable to run mission "+this.name);
+        this.runCount--;
+        if (this.runCount <= 0) {
+            Logger.log("Unable to run mission "+this.name);
+            game_log("Unable to run, cancelling "+this.name);
+            this.cancel();
+        }
         return;
     }
 
@@ -350,12 +361,14 @@ class CollectItemsMission extends Mission {
     this.update_location();
     if (this.move_to_location()) { return }
 
-    // Demand items from everyone
-    give_items_wip();
+    // Demand items from everyone. Dont spam it
+    if (this.runCount >= 7) {
+        give_items_wip();
+    }
 
     // Run for ~10 seconds
-    this.runCount++;
-    if (this.runCount >= 10) {
+    this.runCount--;
+    if (this.runCount <= 0) {
         this.cancel();
     }
     // let char_inv_cache = get("cache_inventory_"+this.charname);
@@ -488,8 +501,12 @@ class DepositEverythingMission extends Mission {
     // Go to town first to auto sell
     this.locations = [LOCATION_TOWN, LOCATION_BANK];
     this.location_idx = 0;
+    this.location = this.locations[0];
+
     this.verbose = true;
     this.whitelist = new Set(["hpot0","mpot0","stand0","rod","pickaxe"]);
+
+    this.runCount = 0;
   }
 
   // Check if fishing rod in mainhand or inventory.
@@ -506,6 +523,17 @@ class DepositEverythingMission extends Mission {
 
     // Move if needed
     if (this.move_to_location()) { return } // Town
+    
+    // Upgrade/combine for X seconds
+    if (this.runCount > 0) {
+        if (character.q.compound || character.q.upgrade) {
+            this.runCount++;
+        } else {
+            this.runCount--;
+        }
+        return;
+    }
+
     this.location_idx = 1;
     if (this.move_to_location()) { return } // Bank
 

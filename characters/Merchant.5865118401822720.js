@@ -48,7 +48,7 @@ function custom_town_behavior() {
 }
 
 
-var servers = [["US","I"],["US","II"],["US","III"],["US","PVP"],["EU","I"],["EU","II"],["EU","PVP"]];
+var servers = [["ASIA","I"],["US","I"],["US","II"],["US","III"],["US","PVP"],["EU","I"],["EU","II"],["EU","PVP"]];
 servers.push(["US","PVP"]); // Todo, doubled up on us pvp for now
 const SERVER_I_KEY = "server_i"; 
 var server_i = get(SERVER_I_KEY) || 0;
@@ -78,6 +78,14 @@ add_top_button("showMissions","showMissions", showMissions);
 function showMissions() {
 	show_json(missionControl.q);
 }
+
+
+add_top_button("collectMissionTerranger","collectMissionTerranger", addCollectMission);
+function addCollectMission() {
+	missionControl.addMission(new CollectItemsMission("Terranger"));
+}
+
+
 
 function main(){
 	start_ts = Date.now();
