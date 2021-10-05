@@ -490,6 +490,11 @@ function pontyPurchase()
                 }
             } 
 
+            let alwaysBuy = ["cryptkey","frozenkey","stonekey","tombkey","bkey","ukey","dkey"];
+            if (alwaysBuy.includes(pontyItem.name)) {
+                buy = true;
+            }
+
             if (buy) {
                 game_log("Buying " + G.items[pontyItem.name].name + " from Ponty!");
                 parent.socket.emit("sbuy", { "rid": pontyItem.rid });

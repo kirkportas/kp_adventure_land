@@ -1,23 +1,18 @@
 /*
 Draft mission overview for merchant.
-
-
 High-level
-
-"GetInventoryOfBank"
-
-"GetBankItemLocsForAllCompoundables"
-- GoToBank
-- ReadAllBankItems
-
 */
-/* 
 
-
-*/
 var STATE_ACTIVE = "active";
 var STATE_DONE = "done";
 
+class Location {
+    constructor(x, y, mapname) {
+        this.x = x;
+        this.y = y;
+        this.map = mapname;
+    }
+}
 
 // let mc = new MissionControl();
 // mc.init()
@@ -34,11 +29,11 @@ class MissionControl {
         let missions = [];
         missions = missions.concat([FishingMission, MiningMission]);
         missions.push(GoHomeMission);
-        missions.push(HandleCompoundablesMission);
+        // missions.push(HandleCompoundablesMission);
         // missions.push(DepositEverythingMission);
 
         for (let m of missions) {
-            this.q.push(new m());
+            this.addMission(new m());
         }
     }
 
@@ -46,6 +41,11 @@ class MissionControl {
         this._scan_for_missions();
         this.intervals.push( setInterval(this._run_missions.bind(this), 1000) );
         this.intervals.push( setInterval(this._scan_for_missions.bind(this), 15000) );
+
+        // Occasional sort for robustness.
+        this.intervals.push( setInterval(this.sort.bind(this), 30000) );
+
+        setTimeout(this.reset.bind(this), 45*60*1000); // 45 minute reset
     }
 
     missionExists(mName) {
@@ -82,11 +82,15 @@ class MissionControl {
     }
     
     // Unused for now
-    // reset() {
-    //  for (interval of this.intervals) {
-    //      clearInterval(interval);
-    //  }
-    // }
+    reset() {
+        this.q = [];
+        for (let interval of this.intervals) {
+            clearInterval(interval);
+        }
+        this.intervals = [];
+        this.init();
+        this.run_missions();
+    }
 }
 
 MissionControl.prototype._run_missions = function() {
@@ -104,15 +108,25 @@ MissionControl.prototype._run_missions = function() {
 }
 
 MissionControl.prototype._scan_for_missions = function() {
-    if (!"fishing" in parent.next_skill) {
+
+    /* Fishing and Mining ****************************************************/
+    if (!("fishing" in parent.next_skill)) {
         this.addMission(new FishingMission());
     }
-    if (!"mining" in parent.next_skill) {
+    if (!("mining" in parent.next_skill)) {
         this.addMission(new MiningMission());
     }
 
-    // todo Perform Go collect items mission on a timer to ensure mluck uptime
-    for (charObj of onlineChars()) {
+    /* Item Collection    ****************************************************/
+    // todo Perform Gon a timer to ensure mluck uptime
+
+    if (character.esize < 24) {
+        this.addMission(new TrashCompoundMission()); 
+        this.addMission(new DepositEverythingMission()); 
+        // this.addMission(new DepositFarmablesMission()); 
+    }
+
+    for (let charObj of onlineChars()) {
         if (charObj.name == character.name) { continue; }
 
         let inv_cache_key = "cache_inventory_"+charObj.name;
@@ -122,22 +136,22 @@ MissionControl.prototype._scan_for_missions = function() {
         }
         // let char_items = char_inv_cache.items;
         let char_esize = char_inv_cache.esize;
-        if (char_esize < 15) { 
+
+        let empty_space_threshold = 15; // High for testing. Lower to ~10/15
+        if (char_esize < empty_space_threshold) { 
             game_log("Adding collectItems mission for "+charObj.name);
             Logger.log("Adding collectItems mission for "+charObj.name);
 
-            if (character.esize < 24) {
-                this.addMission(new TrashCompoundMission()); 
-                this.addMission(new DepositFarmablesMission()); 
-            }
             this.addMission(new CollectItemsMission(charObj.name)); 
         }
     }
 
+    /* Cleanup/Robustness ****************************************************/
     let cycle_time = 10*60*1000; // 10 minutes
     if (Date.now() - this.last_cycle > cycle_time) {
         this.addMission(new DepositEverythingMission());
         this.addMission(new HandleCompoundablesMission());
+        this.sort();
         this.update_last_cycle();
     }
     // todo bank items mission
@@ -148,7 +162,7 @@ MissionControl.prototype._scan_for_missions = function() {
 MissionControl.prototype.cleanup = function() {
     if (this.q.length == 0) { return; } // error Cannot read properties of undefined
     
-    for (m of this.q) {
+    for (let m of this.q) {
         if (m.status == STATE_DONE) {
             let index = this.q.indexOf(m);
             if (index > -1) {
@@ -156,14 +170,6 @@ MissionControl.prototype.cleanup = function() {
               Logger.log("Mission Done: "+m.name);
             }
         }
-    }
-}
-
-class Location {
-    constructor(x, y, mapname) {
-        this.x = x;
-        this.y = y;
-        this.map = mapname;
     }
 }
 
@@ -183,6 +189,11 @@ class Mission {
   // Supports only a single location.
   move_to_location() {
     if (is_moving(character)) return true;
+
+    if (this.location_idx && this.locations) {
+        this.location = this.locations[this.location_idx];
+    }
+
     if (character.map != this.location.map) {
         smart_move(this.location);
         return true;
@@ -280,12 +291,7 @@ class TrashCompoundMission extends Mission {
     // Move if needed
     if (this.move_to_location()) { return }
 
-    setTimeout( this.cancel(), 10000 )
-  }
-
-  // After Runtime or abort
-  cancel() {
-    this.status = STATE_DONE;
+    setTimeout( this.cancel, 10000 );
   }
 }
 
@@ -311,9 +317,10 @@ class CollectItemsMission extends Mission {
 
     // TODO major bug. Calling update_location() doesn't update it and chokes
     // in the parent mission move_to_location() method
-    this.location = new Location(500,1100,"main"); // bees
+    this.location = new Location(500, 1100, "main"); // bees
     // this.update_location();
 
+    this.runCount = 0;
     this.verbose = true;
   }
 
@@ -333,7 +340,7 @@ class CollectItemsMission extends Mission {
 
     // TODO Update to check cache of other players.
     // Bee farming is on US PVP - Oct 4 2021
-    let myServer = parent.server_region + parent.server_identifier;
+    // let myServer = parent.server_region + parent.server_identifier;
     // if (myServer != this.charObj.server) {
     if (parent.server_region != "US" || parent.server_identifier != "PVP") {
         change_server("US","PVP");
@@ -346,14 +353,17 @@ class CollectItemsMission extends Mission {
     // Demand items from everyone
     give_items_wip();
 
-    // todo
-
-    let char_inv_cache = get("cache_inventory_"+this.charname);
-    let char_esize = char_inv_cache.esize;
-    if (char_esize > 28 || character.esize < 5) { 
-        this.cancel()
-        game_log(`Mission Complete ${this.name}`);
+    // Run for ~10 seconds
+    this.runCount++;
+    if (this.runCount >= 10) {
+        this.cancel();
     }
+    // let char_inv_cache = get("cache_inventory_"+this.charname);
+    // let char_esize = char_inv_cache.esize;
+    // if (char_esize > 28 || character.esize < 5) { 
+    //     this.cancel()
+    //     game_log(`Mission Complete ${this.name}`);
+    // }
 
   }
 
@@ -368,19 +378,14 @@ class CollectItemsMission extends Mission {
             this.cancel();
             return;
         }
-        game_log("cached_loc.map: " + cached_loc.map);
+        // game_log("cached_loc.map: " + cached_loc.map);
         this.location = new Location (cached_loc.x, cached_loc.y, cached_loc.map);
     } else if(distance_to_entity(entity) > 250) {
-        game_log("entity.map: " + entity.map);
+        // game_log("entity.map: " + entity.map);
         this.location = new Location(entity.x, entity.y, entity.map);
     }
 
     return;
-  }
-
-  // After Runtime or abort
-  cancel() {
-    this.status = STATE_DONE;
   }
 }
 
@@ -436,7 +441,7 @@ class HandleCompoundablesMission extends Mission {
     retrieve() {
         game_log("this._retrieve_done: "+this._retrieve_done);
         if (this._retrieve_done == false) return this._retrieve_done;
-        if (!is_in_bank) { game_log("retrieve() called out of bank - BAD"); }
+        if (!is_in_bank()) { game_log("retrieve() called out of bank - BAD"); }
         let items_to_retrieve = bank_get_compoundables_count();
         let i = 20;
         for (let packinfo of items_to_retrieve) {
@@ -470,12 +475,6 @@ class HandleCompoundablesMission extends Mission {
         this.location = this.locations[this.location_idx];
         super.move_to_location();
     }
-
-    // After Runtime or abort
-    cancel() {
-        // Teleport and/or smart_move to town.
-        this.status = STATE_DONE;
-    }
 }
 
 /*****************************************************************************/
@@ -486,7 +485,9 @@ class DepositEverythingMission extends Mission {
     let prio = MISSION_PRIORITY[name];
     super(name, prio); // This should be a unique name?
 
-    this.location = LOCATION_BANK;
+    // Go to town first to auto sell
+    this.locations = [LOCATION_TOWN, LOCATION_BANK];
+    this.location_idx = 0;
     this.verbose = true;
     this.whitelist = new Set(["hpot0","mpot0","stand0","rod","pickaxe"]);
   }
@@ -504,7 +505,9 @@ class DepositEverythingMission extends Mission {
     }
 
     // Move if needed
-    if (this.move_to_location()) { return }
+    if (this.move_to_location()) { return } // Town
+    this.location_idx = 1;
+    if (this.move_to_location()) { return } // Bank
 
     // Store almost all items
     for(let i=0;i<42;i++) {
@@ -517,6 +520,11 @@ class DepositEverythingMission extends Mission {
     }
     this.cancel();
   }
+
+    // move_to_location() {
+    //     this.location = this.locations[this.location_idx];
+    //     super.move_to_location();
+    // }
 }
 
 /*****************************************************************************/
@@ -530,6 +538,7 @@ class DepositFarmablesMission extends Mission {
     this.location = LOCATION_BANK;
     this.verbose = true;
 
+    this.runCount = 0;
     this.toDeposit = new Set(FARMABLE.concat(COMPOUNDABLE));
   }
 
@@ -539,6 +548,7 @@ class DepositFarmablesMission extends Mission {
   }
 
   run() {
+    // super.run();
     if (this.verbose) Logger.log(`${this.name} Run()`);
     if (!this.can_run()) {
         Logger.log("Unable to run mission "+this.name);
@@ -560,13 +570,14 @@ class DepositFarmablesMission extends Mission {
 
     if (character.esize > 21) {
         this.cancel();
-    }
-  }
+    } 
 
-  // After Runtime or abort
-  cancel() {
-    // Teleport and/or smart_move to town.
-    this.status = STATE_DONE;
+    // Cancel if stuck. May happen if inv is full of other items.
+    // Rely on a DepositEverything mission to recover.
+    this.runCount++;
+    if (this.runCount > 20) {
+        this.cancel();
+    }
   }
 }
 
