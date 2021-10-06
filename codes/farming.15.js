@@ -248,17 +248,17 @@ function default_get_monster(mon_type) {
 	return target;
 }
 
+		// todo check if online or not
+		// send_cm("Clarity", "magiport");
 var last_magiport_request = Date.now();
 var magiporters = ["Bjaryn","Clarity"];
 function request_magiport_to_boss() {
-	// assume same server
+	// assumes we're on same server
 	if (Date.now() - last_magiport_request > 3000) {
 		Logger.log("Sending magiport request to []");
 		send_cm("Bjarny", "magiport");
-		send_cm("Clarity", "magiport");
+		send_cm("Clarity", "magiport_please_dad");
 		last_magiport_request = Date.now();
-		// todo check if online or not
-		// send_cm("Clarity", "magiport");
 	}
 }
 
@@ -591,10 +591,11 @@ function hween_boss_is_up() {
 
 {"id":27,"server_region":"EU","server_identifier":"PVP","eventname":"mrgreen","live":true,"spawnval":null,"spawn":null,"x":565.6089595752,"y":1042.8845467545423,"map":"spookytown","hp":34730510,"max_hp":36000000,"target":null,"lastupdateval":"2021-10-06T01:01:32.8590062","lastupdate":"2021-10-06T01:01:32.8590062Z"},
 */
-var last_fight_ts = 0;
+var last_fight_ts = 0; //update to Date.now() when you attack a boss.
 function switch_to_event_server(event) {
 	if (Date.now() - last_fight_ts < 2000) return;
-	let is_same_server = event.server_region == parent.server_region && event.server_identifier == parent.server_identifier; 
+	let is_same_server = event.server_region == parent.server_region && 
+					     event.server_identifier == parent.server_identifier; 
 	if (is_same_server) { return }
 
 	// Switch to Warrior if on lowbie ranger
@@ -610,7 +611,19 @@ function switch_to_event_server(event) {
 		parent.window.location.href="/character/"+charname+"/in/"+event.server_region+"/"+event.server_identifier+"/";
 		return;		
 	}
-	change_server(event.server_region, event.server_identifier); // change_server("EU","I") ("ASIA","PVP") or ("US","III")
+
+	// Swap Mage to Rogue for hween bosses for higher dps & loot
+	if (character.name == NameMage) {
+		let charname = NameRogue; 
+		parent.window.location.href="/character/"+charname+"/in/"+event.server_region+"/"+event.server_identifier+"/";
+		return;		
+	}
+	if (character.name == NameRogue && event.eventname == "bee_genocide") {
+		let charname = NameMage; 
+		parent.window.location.href="/character/"+charname+"/in/"+event.server_region+"/"+event.server_identifier+"/";
+		return;		
+	}
+	change_server(event.server_region, event.server_identifier); // ("EU","I") ("ASIA","PVP") or ("US","III")
 }
 
 var last_stop_ms = Date.now();
@@ -658,11 +671,6 @@ function halloween_farm() {
 	if (verbose) Logger.log("engaged_mrgreen_event: "+engaged_mrgreen_event);
 	if (verbose) Logger.log("new_engagement: "+new_engagement);
 
-	// if (is_moving(character)) {
-	// 	if (verbose) Logger.log("Hween farm: is_moving");
-	// 	return;
-	// } 
-
 	// Only begin if >80% health
 	event = engaged_pumpkin_event;
 	if (event) {
@@ -686,8 +694,7 @@ function halloween_farm() {
 		return;
 	}
 
-	// Default to normal farming (bees)
-	// Logger.log("No mrpumpkin / mrgreen, default farming");
+	// Default to normal farming
 	_party_farm();
 }
 
@@ -806,16 +813,9 @@ function _party_farm() {
 
 			// default_farm("rat", ratzone); 
 		} 
-		else if (character.name == NameRogue) {
-			support_leader();
-			// default_farm("bee");	
-			// attack loop testing
-			// change_target(get_best_target());
-			// if (target && !is_in_range(target) && !is_moving(character)) {
-			// 	move_halfway(target);
-			// }
-
-		} 
+		// else if (character.name == NameRogue) {
+		// 	support_leader();
+		// } 
 		else if (character.ctype == "ranger") {
 			// default_farm("mrpumpkin");
 			// support_leader();

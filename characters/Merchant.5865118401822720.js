@@ -245,13 +245,13 @@ function bank_store_craftables() {
 	for (let itemname of ["gem0", "spidersilk","rattail","bfur","gemfragment"]) {
 		let itemidx = locate_item(itemname);
 		if (itemidx >= 0) {
-			bank_store(itemidx, "items1");
+			organized_bank_store(itemidx);
 		}
 	}	
 	for (let itemname of LOW_CRAFT_ITEMS) {
 		let itemidx = locate_item(itemname);
 		if (itemidx >= 0) {
-			bank_store(itemidx, "items1");
+			organized_bank_store(itemidx);
 		}
 	}
 }
@@ -263,7 +263,7 @@ function check_for_compoundable_trios() {
 	for (let itemname of LOW_CRAFT_ITEMS) {
 		let itemidx = locate_item(itemname);
 		if (itemidx >= 0) {
-			bank_store(itemidx, "items1");
+			organized_bank_store(itemidx);
 		}
 	}
 }

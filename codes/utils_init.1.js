@@ -106,6 +106,7 @@ const UPGRADEABLE_LEVELS = {
 	"maceofthedead": 5,
 	"bowofthedead": 5,
 	"staffofthedead": 5,
+	"daggerofthedead": 5,
 	"swordofthedead": 4,
 	"rapier": 5,
 	"firebow": 5,
@@ -115,10 +116,11 @@ const UPGRADEABLE_LEVELS = {
 	"merry": 5,
 	"xmassweater": 7,
 	"xmace": 6,
+	"warmscarf": 5,
 
 	// Halloween
 	"phelmet": 6,
-
+	"gphelmet": 1,
 
 	// shirts
 	"tshirt1": 5,

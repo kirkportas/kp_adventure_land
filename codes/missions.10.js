@@ -146,8 +146,9 @@ MissionControl.prototype._scan_for_missions = function() {
 
         let inv_cache_key = "cache_inventory_"+charObj.name;
         let char_inv_cache = get(inv_cache_key);
-        if (!char_inv_cache) {
+        if (!char_inv_cache || !char_inv_cache.items) {
             Logger.log("Error reading character inv cache for: "+charObj.name);
+            continue;
         }
 
         let candy_count = char_inv_cache.items.filter(item =>
@@ -422,7 +423,7 @@ class CollectItemsMission extends Mission {
 
     if (!this.can_run()) {
         Logger.log("Unable to run mission "+this.name);
-        this.priority--;
+        this.priority++;
         this.runCount--;
         if (this.runCount <= 0) {
             Logger.log("Unable to run mission "+this.name);
@@ -737,7 +738,7 @@ class DepositEverythingMission extends Mission {
     this.verbose = true;
     this.whitelist = new Set(["tracker","hpot0","mpot0","stand0","rod","pickaxe"]);
 
-    this.runCount = 10;
+    this.runCount = 3;
   }
 
   // Check if fishing rod in mainhand or inventory.
@@ -758,7 +759,7 @@ class DepositEverythingMission extends Mission {
     // Upgrade/combine for X seconds
     if (this.runCount > 0) {
         if (character.q.compound || character.q.upgrade) {
-            this.runCount = 10;
+            this.runCount = 3;
         } else {
             this.runCount--;
         }

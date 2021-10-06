@@ -245,7 +245,7 @@ function inv_has_compoundable_trio() {
 }
 /*
 Bank layout
-1       |  items4  |  items5  |  4
+items6  |  items4  |  items5  |  items7
 items2  |  items0  |  items1  |  items3
 
 
@@ -253,22 +253,51 @@ items2  |  items0  |  items1  |  items3
 items2  |  items0   |  items1  |  items3
 */
 var bank_org = {
-    "items0": ["intring","strring","dexring","vitring"],
-    "items4": ["stramulet","dexamulet","intamulet","vitearring","dexearring","intearring","strearring"]
+    // Top row
+    "items6": ["intring","strring","dexring","vitring","ringsj"],
+    "items4": ["stramulet","dexamulet","intamulet","vitearring","dexearring","intearring","strearring"],
+    "items5": [], // Elixirs, consumeables, odd items
+    "items7": [], // Expensive items
+    // Bottom row
+    "items2": [], // Miscellaneous
+    "items0": [],
+    "items1": [], // Materials
+    "items3": [] 
 }
 function organized_bank_store(i) {
     // Only accepts the item index in character.items 
     let item = character.items[i];
     if (!item) return;
 
+    // TOP ROW
+    let expensive_item_threshold = 0.45 * 1000000; // 450k
+    if (calculate_item_value(item,1) > expensive_item_threshold
+        || item.name.includes("key")
+        || ["token","gem"].includes(item.type) ) {
+        bank_store(i, "items7");
+        return;
+    }
+
+    // BOTTOM ROW
+    // Materials
+    if (item.type == "material") {
+        bank_store(i, "items1");
+        return;
+    }
+    if (item.type == "elixir") {
+        bank_store(i, "items5");
+        return;
+    }
+
     // Will insert "stramulet" into pack "items4"
     for (let [packname, itemnames] of Object.entries(bank_org)) {
-        if (bank_org[packname].includes(item.name)) {
+        if (bank_org[packname] && bank_org[packname].includes(item.name)) {
             bank_store(i, packname);
             return;
         }
     }
-    bank_store(i);
+    bank_store(i, "items2");
+    bank_store(i, "items0");
 }
 
 function bank_get_compoundables_count() {
@@ -459,13 +488,14 @@ Example of data[0], e.g. a pontyItem
 }
 
 // Snippet to add a new item:
-    let ITEM_TO_ADD = "gslime";
-    let ITEM_TO_ADD = "vitearring";
-    let ITEM_TO_ADD = "gslime";
-    let ITEM_TO_ADD = "intring";
-    
+    "gslime";
+    "vitearring";
+    "gslime";
+    "intring";
+    swirlipop
+    greenbomb
 
-    let ITEM_TO_ADD = "gslime";
+    let ITEM_TO_ADD = "greenbomb";
     let QUANTITY = 20;
     let PONTY_KEY = "ponty_items_to_buy";
     let ponty_desired = get(PONTY_KEY);
@@ -550,7 +580,7 @@ function pontyPurchase()
                 }
             } 
 
-            let alwaysBuy = ["cryptkey","frozenkey","stonekey","tombkey","bkey","ukey","dkey"];
+            let alwaysBuy = ["cryptkey","frozenkey","stonekey","tombkey","bkey","ukey","dkey","tshirt88","luckyt"];
             if (alwaysBuy.includes(pontyItem.name)) {
                 buy = true;
             }
