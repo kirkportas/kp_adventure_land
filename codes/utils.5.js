@@ -214,7 +214,9 @@ function get_compoundables_in_inventory() {
     let raw_inv = {}
     for (var i=0;i<42;i++) {
         let item = character.items[i];
-        if(item && ALL_COMPOUNDABLE_ITEMS.has(item.name)) {
+        // todo
+        if(item && COMPOUNDABLE.includes(item.name)) {
+        // if(item && ALL_COMPOUNDABLE_ITEMS.has(item.name)) {
             if (this.verbose) Logger.log(`Adding inv item ${item.name} lvl ${item.level}`);
             if (!(item.name in raw_inv)) { raw_inv[item.name] = {}; };
             if (!(item.level in raw_inv[item.name])) { raw_inv[item.name][item.level] = 0; };
@@ -280,7 +282,10 @@ function bank_get_compoundables_count() {
         if (this.verbose) Logger.log(`Checking pack: ${packname}`);
         for (var i=0;i<42;i++) {
             let item = pack[i];
-            if(item && ALL_COMPOUNDABLE_ITEMS.has(item.name)) {
+
+            // todo
+            if(item && COMPOUNDABLE.includes(item.name)) {
+            // if(item && ALL_COMPOUNDABLE_ITEMS.has(item.name)) {
                 if (this.verbose) Logger.log(`Adding bank item ${item.name} lvl ${item.level}`);
                 if (!(item.name in raw)) { raw[item.name] = {} };
                 if (!(item.level in raw[item.name])) { raw[item.name][item.level] = [] };

@@ -657,29 +657,18 @@ function halloween_farm() {
 	if (verbose) Logger.log("engaged_pumpkin_event: "+engaged_pumpkin_event);
 	if (verbose) Logger.log("engaged_mrgreen_event: "+engaged_mrgreen_event);
 	if (verbose) Logger.log("new_engagement: "+new_engagement);
-	// quickhack for "walking to pumpkin"
-	
-	// if (is_moving(character) && new_engagement) {
-	// 	if ((Date.now-last_stop_ms) > 30000) {
-	// 		Logger.log("Stopping character to check for new hween boss");
-	// 		use_skill("stop");
-	// 		last_stop_ms = Date.now();
-	// 	} 
-	// }
-	if (is_moving(character) && new_engagement) {
-		if (verbose) Logger.log("Hween farm: moving, but requesting a magiport");
-		request_magiport_to_boss();
-	} 
-	if (is_moving(character)) {
-		if (verbose) Logger.log("Hween farm: is_moving");
-		return;
-	} 
+
+	// if (is_moving(character)) {
+	// 	if (verbose) Logger.log("Hween farm: is_moving");
+	// 	return;
+	// } 
 
 	// Only begin if >80% health
 	event = engaged_pumpkin_event;
 	if (event) {
 		let zone = new Zone({"x":event.x, "y":event.y, "map":event.map, "maxRadius":400, "name":"mrpumpkin"});
 		switch_to_event_server(event);
+		request_magiport_to_boss();
 		mrpumpkinfarm(zone);
 		Logger.log("Moving to new mrpumpkin");
 		last_fight_ts = Date.now();
@@ -690,6 +679,7 @@ function halloween_farm() {
 	if (event) {
 		let zone = new Zone({"x":event.x, "y":event.y, "map":event.map, "maxRadius":400, "name":"mrgreen"});
 		switch_to_event_server(event);
+		request_magiport_to_boss();
 		mrgreenfarm(zone);
 		Logger.log("Moving to new mrgreen");
 		last_fight_ts = Date.now();

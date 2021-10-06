@@ -149,7 +149,7 @@ COMPOUNDABLE=COMPOUNDABLE.concat([
 	"vitring","dexring","intring","strring", 					// Rings
 	"orbg","jacko",												// Orbs
 	 															// Weapons
-	"lbelt", "hpbelt"											// asd
+	"lbelt", "hpbelt","strbelt","dexbelt","intbelt"				// Belts
 ]); 
 
 // const COMPOUNDABLE_LEVELS = {

@@ -11,7 +11,11 @@ function mainloop(){
 	loot(); 
 
 	// smart_move({"x":-24,"y":32,"map":"level2w"})
-	if (attack_mode && !is_moving(character)) {
+
+	// Todo think through the logic ofhandling !is_moving
+	// Stopping for ismoving here paused all farm logic, and thus blocked magiport requests
+	// if (attack_mode && !is_moving(character)) {
+	if (attack_mode) {
 		try {
 			party_farm();
 		} catch(err) {
