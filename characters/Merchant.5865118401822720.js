@@ -90,12 +90,12 @@ function showMissions() {
 }
 
 
-add_top_button("collectMissionTerranger","collectMissionTerranger", addCollectMission);
+add_top_button("M-C-Terranger","M-C-Terranger", addCollectMission);
 function addCollectMission() {
 	missionControl.addMission(new CollectItemsMission("Terranger"));
 }
 
-add_top_button("CompoundMission","CompoundMission", function() {
+add_top_button("M-Compound","M-Compound", function() {
 	let m = new HandleCompoundablesMission();
 	missionControl.addMission(m);
 });
@@ -202,6 +202,9 @@ function give_potions(entity) {
 	if (!give_potion_ts[entity]) give_potion_ts[entity] = 0;
 	if (Date.now() - give_potion_ts[entity] < 3000) { return; }
 	give_potion_ts[entity] = Date.now();
+
+	// let hpot = "hpot0";
+	// let mpot = "mpot1";
 
 	let charObj = entity;
 	let charname = entity.name;

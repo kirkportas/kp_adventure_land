@@ -104,15 +104,14 @@ show_json(get("bank-"+character.name))
 //   };
 // }
 
-// function trading() {
-// 	game_log("TRADING ts: "+Date.now());
-// 	return debounce(trading, 500);
-// }
-
 // Todo this has a bug in it. It will send all the gold because 
 // Server latency is >200ms.
 
 
+function hack_warr_send_to_mage(inv_idx) {
+	if (character.name != "Terazarrior") return;
+	send_item(NameMage, inv_idx);
+}
 
 var trading_last_ts = Date.now();
 var trading_whitelist = ["mpot0","hpot0","mpot1","hpot1", "tracker"];
@@ -122,75 +121,37 @@ function trading() {
 	if (!should_run) { return; }
 	trading_last_ts = Date.now();
 
-	if (character.name == NameMerchant || !get_player(NameMerchant)) {
-		return;
-	} else {
-		game_log("trading() merchant close ");
-		try {
-			for(let i=0;i<42;i++) {
-				let item = character.items[i];
-                if(item) {
-					if (!trading_whitelist.includes(item.name)) {
-						game_log("Sending item: "+ item.name);
-						give_all_of_single_item(item.name);
-					}
-                }
-            }
+	let hack_warr_active = character.name == "Terazarrior" && get_player("Terakazam");
+	if (character.name == NameMerchant) return;
+	
+	// Don't return if current is warrior, and mage is nearby
+	if (!get_player(NameMerchant) && !hack_warr_active) return;
 
-			if (character.gold > 100000) {
-				game_log("character.gold: "+character.gold);
-				send_gold(NameMerchant, character.gold - 90000);
-			}
-		} catch(err) {
-			Logger.log("Err in trading");
-			Logger.log(err);
+	try {
+		for(let i=0;i<42;i++) {
+			let item = character.items[i];
+            if(item) {
+				if (!trading_whitelist.includes(item.name)) {
+					game_log("Sending item: "+ item.name);
+					give_all_of_single_item(item.name);
+
+					// todo HALLOWEEN FARMING HACK
+					// Warrior never returns to town. 
+					// Too dangerous for merchant to visit.
+					hack_warr_send_to_mage(i);
+				}
+            }
+        }
+
+		if (character.gold > 100000) {
+			game_log("character.gold: "+character.gold);
+			send_gold(NameMerchant, character.gold - 90000);
 		}
+	} catch(err) {
+		Logger.log("Err in trading");
+		Logger.log(err);
 	}
 }
-
-
-// Only run once per 2 seconds
-// var trading_last_ts = Date.now();
-// function trading() {
-// 	var should_run = (Date.now() - trading_last_ts) > 1000;
-// 	if (!should_run) { return; }
-// 	trading_last_ts = Date.now();
-
-// 	if (character.name == NameMerchant) {
-// 		return;
-// 	} else {
-// 		if (!get_player(NameMerchant)) {  
-// 			// Logger.log("Merchant not in range ("+NameMerchant+")");
-// 			return; 
-// 		}
-// 		
-//      var key = "give_items_"+character.name;
-// 		var items_to_send = get(key);
-// 		
-// 		try {
-// 			for (itemname of items_to_send) {
-
-// 				var item_idx = locate_item(itemname);
-// 				give_all_of_single_item(itemname);
-// 				if (item_idx==-1) {
-// 					items_to_send.splice(items_to_send.indexOf(itemname), 1);
-// 					set("give_items_"+character.name, items_to_send);
-// 					game_log("removing item from sendlist: "+ itemname);
-// 				} else {
-
-// 					game_log("Sending item: "+ itemname);
-// 					give_all_of_single_item(itemname);
-// 				}
-// 				if (character.gold > 100000) {
-// 					game_log("character.gold: "+character.gold);
-// 					send_gold(NameMerchant,character.gold - 90000);
-// 				}
-// 			}
-// 		} catch(err) {
-// 			set(key, [])
-// 		}
-// 	}
-// }
 
 Logger.functionExit("Loading shared_executions", Date.now()-start_ts);
 game_log("Finished load_code( shared_executions )");

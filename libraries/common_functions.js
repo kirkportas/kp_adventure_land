@@ -633,6 +633,7 @@ function can_transport(entity)
 
 function can_walk(entity)
 {
+	if(entity.s && entity.s.dash) return false;
 	if(is_game && entity.me && transporting && ssince(transporting)<8 && !entity.c.town) return false;
 	if(is_code && entity.me && parent.transporting && ssince(parent.transporting)<8 && !entity.c.town) return false;
 	return !is_disabled(entity);
@@ -1465,6 +1466,11 @@ function stop_logic(monster)
 		monster.moving=monster.amoving||false;
 		monster.vx=monster.vy=0; // added these 2 lines, as the character can walk outside when setTimeout ticks at 1000ms's [26/07/16]
 		// if(monster.me) console.log(monster.real_x+","+monster.real_y);
+		if(monster.s && monster.s.dash)
+		{
+			delete monster.s.dash;
+			if(is_server) resend(monster,"u+cid");
+		}
 		if(monster.name_tag) stop_name_tag(monster);
 		if(monster.me)
 		{

@@ -88,13 +88,7 @@ const UPGRADEABLE_LEVELS = {
 	// Misc
 	"slimestaff": 7,
 	// "stinger": 5,     // Maybe trash
-	
-	// Rugged
-	"pants1": 7,       //RuggedPants
-	"coat1": 7,
-	"shoes1": 7,
-	"helmet1": 7,
-	"gloves1": 7,
+
 
 	// Heavy (starts at Rare)
 	// "hpants": 3,
@@ -103,7 +97,6 @@ const UPGRADEABLE_LEVELS = {
 
 	// Weapons
 	"cclaw": 7,
-	"throwingstars": 7,
 	"woodensword": 6,
 	"oozingterror": 6,
 	"t2bow": 6,
@@ -113,8 +106,10 @@ const UPGRADEABLE_LEVELS = {
 	"maceofthedead": 5,
 	"bowofthedead": 5,
 	"staffofthedead": 5,
+	"swordofthedead": 4,
 	"rapier": 5,
 	"firebow": 5,
+	"harbringer": 5,
 
 	// Christmas set
 	"merry": 5,
@@ -122,7 +117,7 @@ const UPGRADEABLE_LEVELS = {
 	"xmace": 6,
 
 	// Halloween
-	"phelmet": 5,
+	"phelmet": 6,
 
 
 	// shirts
@@ -136,7 +131,14 @@ const UPGRADEABLE_LEVELS = {
 	"rod": 4,
 	"pickaxe": 4
 
-
+	// Trashed items
+	// "throwingstars": 7,
+	// Rugged
+	// "pants1": 7,       //RuggedPants
+	// "coat1": 7,
+	// "shoes1": 7,
+	// "helmet1": 7,
+	// "gloves1": 7,
 
 };
 
@@ -181,6 +183,7 @@ FARMABLE = FARMABLE.concat(["gemfragment"]);
 // This won't sell at item.level >=2  (check method sell_all_trash)
 var TRASH = ["stinger","hpamulet","ringsj", "hpbelt"];
 TRASH = TRASH.concat(["gloves1","coat1","helmet1","shoes1","pants1"]);
+TRASH = TRASH.concat(["throwingstars"]);
 // "hpbelt"
 
 // These localstorage vars are used for passing items to the Merchant
@@ -281,78 +284,78 @@ var filtered = Object.keys(G.items).reduce(function (filtered, key) {
 show_json( Object.keys(filtered))
 */
 
-var ALL_COMPOUNDABLE_ITEMS = new Set([
-    "dexamulet",
-    "armorring",
-    "jacko",
-    "mbelt",
-    "goldbooster",
-    "rednose",
-    "test_orb",
-    "zapper",
-    "t2dexamulet",
-    "dexbelt",
-    "hpbelt",
-    "t2stramulet",
-    "orbofdex",
-    "molesteeth",
-    "lbelt",
-    "darktristone",
-    "ringofluck",
-    "ctristone",
-    "lostearring",
-    "dexring",
-    "rabbitsfoot",
-    "goldring",
-    "strbelt",
-    "charmer",
-    "orbofint",
-    "northstar",
-    "orbofvit",
-    "trigger",
-    "xpbooster",
-    "intbelt",
-    "orbofsc",
-    "ftrinket",
-    "mearring",
-    "solitaire",
-    "cearring",
-    "cdarktristone",
-    "strearring",
-    "wbook0",
-    "wbook1",
-    "t2intamulet",
-    "mpxamulet",
-    "tristone",
-    "coal",
-    "resistancering",
-    "sanguine",
-    "hpamulet",
-    "orbofstr",
-    "ringsj",
-    "talkingskull",
-    "lantern",
-    "luckbooster",
-    "intring",
-    "cring",
-    "dexearring",
-    "intearring",
-    "amuletofm",
-    "santasbelt",
-    "vitring",
-    "vring",
-    "suckerpunch",
-    "snring",
-    "intamulet",
-    "vorb",
-    "exoarm",
-    "mpxbelt",
-    "vitearring",
-    "stramulet",
-    "strring",
-    "dexearringx",
-    "orbg"
-]);
+// var ALL_COMPOUNDABLE_ITEMS = new Set([
+//     "dexamulet",
+//     "armorring",
+//     "jacko",
+//     "mbelt",
+//     "goldbooster",
+//     "rednose",
+//     "test_orb",
+//     "zapper",
+//     "t2dexamulet",
+//     "dexbelt",
+//     "hpbelt",
+//     "t2stramulet",
+//     "orbofdex",
+//     "molesteeth",
+//     "lbelt",
+//     "darktristone",
+//     "ringofluck",
+//     "ctristone",
+//     "lostearring",
+//     "dexring",
+//     "rabbitsfoot",
+//     "goldring",
+//     "strbelt",
+//     "charmer",
+//     "orbofint",
+//     "northstar",
+//     "orbofvit",
+//     "trigger",
+//     "xpbooster",
+//     "intbelt",
+//     "orbofsc",
+//     "ftrinket",
+//     "mearring",
+//     "solitaire",
+//     "cearring",
+//     "cdarktristone",
+//     "strearring",
+//     "wbook0",
+//     "wbook1",
+//     "t2intamulet",
+//     "mpxamulet",
+//     "tristone",
+//     "coal",
+//     "resistancering",
+//     "sanguine",
+//     "hpamulet",
+//     "orbofstr",
+//     "ringsj",
+//     "talkingskull",
+//     "lantern",
+//     "luckbooster",
+//     "intring",
+//     "cring",
+//     "dexearring",
+//     "intearring",
+//     "amuletofm",
+//     "santasbelt",
+//     "vitring",
+//     "vring",
+//     "suckerpunch",
+//     "snring",
+//     "intamulet",
+//     "vorb",
+//     "exoarm",
+//     "mpxbelt",
+//     "vitearring",
+//     "stramulet",
+//     "strring",
+//     "dexearringx",
+//     "orbg"
+// ]);
 
 
 var ALDATA_EVENTS_LIVE_KEY = "cache_aldata_live_events";

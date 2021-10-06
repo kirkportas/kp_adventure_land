@@ -110,6 +110,9 @@ MissionControl.prototype._run_missions = function() {
         this._run_missions();
     } else {
         top_mission.run();
+        if (top_mission.status == STATE_DONE) {
+            this._run_missions();
+        }
         // this.cleanup();
     }
 }

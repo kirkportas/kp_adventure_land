@@ -276,6 +276,7 @@ for (let mob_obj of mons_with_buff) {
     delete mob_obj.achievements;
 }
 show_json(mons_with_buff);
+show_json(mon_names_with_cbuff);
 
 
 ==

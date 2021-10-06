@@ -639,7 +639,7 @@ function halloween_farm() {
 	} 
 
 	let event;
-	let hp_threshold = 0.8;
+	let hp_threshold = 0.7; // lowered to 70%
 	let engaged = get(ALDATA_EVENTS_ENGAGED_KEY);
 	// let priority = "mrpumpkin";
 
