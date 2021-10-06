@@ -460,7 +460,7 @@ Example of data[0], e.g. a pontyItem
     let ITEM_TO_ADD = "intring";
     
 
-    let ITEM_TO_ADD = "tshirt4";
+    let ITEM_TO_ADD = "gslime";
     let QUANTITY = 20;
     let PONTY_KEY = "ponty_items_to_buy";
     let ponty_desired = get(PONTY_KEY);

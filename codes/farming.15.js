@@ -248,10 +248,41 @@ function default_get_monster(mon_type) {
 	return target;
 }
 
+var last_magiport_request = Date.now();
+var magiporters = ["Bjaryn","Clarity"];
+function request_magiport_to_boss() {
+	// assume same server
+	if (Date.now() - last_magiport_request > 3000) {
+		Logger.log("Sending magiport request to []");
+		send_cm("Bjarny", "magiport");
+		send_cm("Clarity", "magiport");
+		last_magiport_request = Date.now();
+		// todo check if online or not
+		// send_cm("Clarity", "magiport");
+	}
+}
+
+// For certain zones, accept magiports to join the battle
+var magiport_zones = ["mrgreen","mrpumpkin"];
 var farm_last_hit_ts = Date.now();
 function move_to_zone(zone) {
-	// Intended to handle respawn, and manual actions 
+	// no debug for rangers
+	let verbose = character.ctype != "ranger";
 
+	let out_of_range = distance(character, zone) > 400;
+	if (verbose) Logger.log("Move_to_zone()");
+	// Intended to handle respawn, and manual actions 
+	if (verbose) Logger.log(`zone: ${zone}`);
+	if (verbose) Logger.log("magiport zone? "+magiport_zones.includes(zone.name));
+	if (verbose) Logger.log("out_of_range? "+out_of_range);
+	if (verbose) Logger.log("now-last_magiport_request "+(Date.now() - last_magiport_request));
+	if (zone.name && magiport_zones.includes(zone.name)) {
+		// assume same server
+		if (out_of_range) {
+			if (verbose) Logger.log("Auto-requesting boss magiport");
+			request_magiport_to_boss();
+		}
+	}
 	if (is_moving(character)) return true;
 	let distance_to_zone = distance(character, zone);
 	// game_log(`distance_to_zone: ${distance_to_zone}`);
@@ -265,12 +296,11 @@ function move_to_zone(zone) {
 
 	if (zone) {
 		// x,y, maxdistance
-		let out_of_range = distance(character, zone) > zone.maxRadius;
 		let is_bad_state = Date.now() - farm_last_hit_ts > 5000;
 		if (out_of_range) {
 			// todo can get stuck on corners
 			// Logger.log("FarmZone return out_of_range: " + zone.toString());
-			if (distance(character, zone) < 200) {
+			if (distance(character, zone) < 100) {
 				move(zone.x, zone.y);
 				return true;
 			}
@@ -520,16 +550,17 @@ class Zone{
         this.y = params.y;
         this.map = params.map;
         this.maxRadius = params.maxRadius;
+        this.name = params.name;
     }
 
     toString() {
-    	return `(x,y): (${this.x},${this.y}), "${this.map}", maxRadius ${this.maxRadius}`;
+    	return `name: "${this.name}", (${this.x},${this.y}), "${this.map}", maxRadius ${this.maxRadius}`;
     }
 }
-var ratzone = new Zone({"x":0, "y":0, "map":"mansion", "maxRadius":210});
-var beezone = new Zone({"x":490, "y":1070, "map":"main", "maxRadius":30});
-var mrpumpkinzone = new Zone({"x":25, "y":400, "map":"halloween", "maxRadius":400});
-var mrgreenzone = new Zone({"x":50, "y":600, "map":"spookytown", "maxRadius":400});
+var ratzone = new Zone({"x":0, "y":0, "map":"mansion", "maxRadius":210, "name":"rats"});
+var beezone = new Zone({"x":490, "y":1070, "map":"main", "maxRadius":30, "name":"bees"});
+var mrpumpkinzone = new Zone({"x":25, "y":400, "map":"halloween", "maxRadius":400, "name":"mrpumpkin"});
+var mrgreenzone = new Zone({"x":50, "y":600, "map":"spookytown", "maxRadius":400, "name":"mrgreen"});
 
 /*
 mrpumpkin
@@ -582,8 +613,10 @@ function switch_to_event_server(event) {
 	change_server(event.server_region, event.server_identifier); // change_server("EU","I") ("ASIA","PVP") or ("US","III")
 }
 
+var last_stop_ms = Date.now();
 function halloween_farm() {
-	Logger.log("halloween_farm");
+	let verbose = character.ctype != "ranger";
+	if (verbose) Logger.log("halloween_farm");
 	// run away if bosses are spawned on PVP while returning to normal farm
 
 	// Continue if already fighting
@@ -593,7 +626,7 @@ function halloween_farm() {
 			return;
 		}
 		mrpumpkinfarm();
-		Logger.log("Engaged against mrpumpkin");
+		if (verbose) Logger.log("Engaged against mrpumpkin");
 		return;
 	} else if (get_nearest_monster({"type":"mrgreen"})) {
 		if (parent.server_identifier == "PVP") {
@@ -601,27 +634,51 @@ function halloween_farm() {
 			return;
 		}
 		mrgreenfarm();
-		Logger.log("Engaged against mrgreen");
+		if (verbose) Logger.log("Engaged against mrgreen");
 		return;
 	} 
-	// quickhack for "walking to pumpkin"
-	if (is_moving(character)) {
-		Logger.log("Hween farm: is_moving");
-		return;
-	} 
-
-	let engaged = get(ALDATA_EVENTS_ENGAGED_KEY);
-	let priority = "mrpumpkin";
 
 	let event;
-	let hp_threshold = 0.8; // 0.8l
-	// Only begin if >80% health
-	event = engaged.filter(e => 
+	let hp_threshold = 0.8;
+	let engaged = get(ALDATA_EVENTS_ENGAGED_KEY);
+	// let priority = "mrpumpkin";
+
+	// Todo refactor to method
+	let engaged_pumpkin_event = engaged.filter(e => 
 		e.eventname == "mrpumpkin"
 		&& e.hp/e.max_hp > hp_threshold
 		&& e.hp/e.max_hp < e.max_hp*0.97)[0];
+	let engaged_mrgreen_event = engaged.filter(e => 
+		e.eventname == "mrgreen"
+		&& e.hp/e.max_hp > hp_threshold
+		&& e.hp/e.max_hp < e.max_hp*0.97)[0];
+
+	let new_engagement = engaged_pumpkin_event || engaged_mrgreen_event;
+	if (verbose) Logger.log("engaged_pumpkin_event: "+engaged_pumpkin_event);
+	if (verbose) Logger.log("engaged_mrgreen_event: "+engaged_mrgreen_event);
+	if (verbose) Logger.log("new_engagement: "+new_engagement);
+	// quickhack for "walking to pumpkin"
+	
+	// if (is_moving(character) && new_engagement) {
+	// 	if ((Date.now-last_stop_ms) > 30000) {
+	// 		Logger.log("Stopping character to check for new hween boss");
+	// 		use_skill("stop");
+	// 		last_stop_ms = Date.now();
+	// 	} 
+	// }
+	if (is_moving(character) && new_engagement) {
+		if (verbose) Logger.log("Hween farm: moving, but requesting a magiport");
+		request_magiport_to_boss();
+	} 
+	if (is_moving(character)) {
+		if (verbose) Logger.log("Hween farm: is_moving");
+		return;
+	} 
+
+	// Only begin if >80% health
+	event = engaged_pumpkin_event;
 	if (event) {
-		let zone = new Zone({"x":event.x, "y":event.y, "map":event.map, "maxRadius":400});
+		let zone = new Zone({"x":event.x, "y":event.y, "map":event.map, "maxRadius":400, "name":"mrpumpkin"});
 		switch_to_event_server(event);
 		mrpumpkinfarm(zone);
 		Logger.log("Moving to new mrpumpkin");
@@ -629,12 +686,9 @@ function halloween_farm() {
 		return;
 	}
 
-
-	event = engaged.filter(e => 
-		e.eventname == "mrgreen"
-		&& e.hp/e.max_hp > hp_threshold)[0];
+	event = engaged_mrgreen_event;
 	if (event) {
-		let zone = new Zone({"x":event.x, "y":event.y, "map":event.map, "maxRadius":400});
+		let zone = new Zone({"x":event.x, "y":event.y, "map":event.map, "maxRadius":400, "name":"mrgreen"});
 		switch_to_event_server(event);
 		mrgreenfarm(zone);
 		Logger.log("Moving to new mrgreen");
@@ -643,7 +697,7 @@ function halloween_farm() {
 	}
 
 	// Default to normal farming (bees)
-	Logger.log("No mrpumpkin / mrgreen, default farming");
+	// Logger.log("No mrpumpkin / mrgreen, default farming");
 	_party_farm();
 }
 

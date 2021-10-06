@@ -1,6 +1,8 @@
 zNotes
 
-
+for (let i=0; i<9; i++) {
+    send_item("leviiM",i)
+}
 
 cd "/c/Users/kirkp/AppData/Roaming/Adventure Land/autosync4984500319158272/adventureland"
 
@@ -262,6 +264,21 @@ let foo = find_npc("newupgrade");
 show_json(distance(character, foo))
 
 ==
+let mons_with_buff = [];
+let mon_names_with_cbuff = []
+for (let [_mob_id, mob_obj] of Object.entries(G.monsters)) {
+    if ("cbuff" in mob_obj) {
+        mons_with_buff.push(mob_obj);
+    }
+}
+for (let mob_obj of mons_with_buff) {
+    mon_names_with_cbuff.push(mob_obj.name);
+    delete mob_obj.achievements;
+}
+show_json(mons_with_buff);
+
+
+==
 let items_with_speed = [];
 for (let [itemname, item_obj] of Object.entries(G.items)) {
     if ("speed" in item_obj) {
@@ -296,6 +313,8 @@ spawn[2] is direction set when spawning at this place (i.e. when moving through 
 */
 
 ===
+
+
 let items_with_speed = [];
 for (let [itemname, item_obj] of Object.entries(G.items)) {
     if ("speed" in item_obj && item_obj["speed"] > 0) {
@@ -307,15 +326,25 @@ for (let [itemname, item_obj] of Object.entries(G.items)) {
             small_item[itemtype] = [];
         }
         
-        let attrs = ["name", "speed"];
+        let attrs = ["name", "speed", "type", "id"];
         for (let attr of attrs) {
-            small_item[attr] = item_obj[attr];
+            if (attr in item_obj) {
+                small_item[attr] = item_obj[attr];
+            }
         }
 
         items_with_speed.push(small_item);
     }
 }
-show_json(items_with_speed);
+//show_json(items_with_speed);
+
+let by_type = {};
+for (let item of items_with_speed) {
+    if (!(item.type in by_type)) by_type[item.type] = [];
+    by_type[item.type].push( item );
+    delete item.type;
+}
+show_json(by_type);
 
 ==
 

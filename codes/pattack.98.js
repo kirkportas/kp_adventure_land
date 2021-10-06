@@ -1,6 +1,5 @@
 //settings
-var DEBUGLOG=true;
-// if (character.name != NameRanger) DEBUGLOG = false;
+var DEBUGLOG=false;
 
 const reset=false;
 const safeCoefficient = 2; // recommended value: 1-2.5 - should be higher for low std, and lower for high std. low std= <15, high std >15

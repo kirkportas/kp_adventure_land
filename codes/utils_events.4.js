@@ -41,22 +41,31 @@
 	}
 */
 
+function on_magiport(name) // called by the mage's name in PVE servers, in PVP servers magiport either succeeds or fails without consent
+{	
+	let whitelist = ["Bjarny","Clarity"];
+	if (whitelist.includes(name)) {
+		game_log("Accepted magiport from "+name);
+		accept_magiport(name);
+		send_gold(name,1000);
+	}
+	game_log("Rejected magiport from "+name);
+}
 
 // called by the inviter's name - request = someone requesting to join your existing party
 function on_party_request(name) 
 {
-	if (["MageS"].includes(name)) {
+	if (["MageS","FatWombat"].includes(name)) {
 		accept_party_request(name);
 	}
-	// In a chaotic failure where all party members lose party status,
-	// looping all charnames and requesting could cause a corner case failure. (e.g. 3 parties get formed) 
-	game_log(ALLTOONS.includes(name));
-		game_log(ALLTOONS);
 	if (ALLTOONS.includes(name)) {
 		accept_party_request(name);
 	}
 
 	/* Debug
+	// In a chaotic failure where all party members lose party status,
+	// looping all charnames and requesting could cause a corner case failure. (e.g. 3 parties get formed) 
+	
 		game_log("Received party request from: "+name);
 		game_log("ALLTOONS: "+ALLTOONS);
 		game_log("ALLTOONS.includes(name): "+ALLTOONS.includes(name));

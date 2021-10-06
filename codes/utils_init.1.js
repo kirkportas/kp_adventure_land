@@ -7,6 +7,14 @@ Logger._.init();
 Logger.ACTIVE=true;
 game_log("LOGGER INACTIVE");
 
+//todo Move to GUI
+add_top_button("magiportBoss","magiportBoss",  function () {
+	// assume same server
+	Logger.log("Manually Sending magiport request to []");
+	send_cm("Bjarny", "magiport");
+	send_cm("Clarity", "magiport");
+});
+
 
 Logger.functionEnter("Loading utils_init");
 
@@ -139,7 +147,7 @@ COMPOUNDABLE=COMPOUNDABLE.concat([
 	"vitamulet","stramulet","intamulet","dexamulet",			// Amulets
 	"vitearring","strearring","intearring","dexearring", 		// Earrings
 	"vitring","dexring","intring","strring", 					// Rings
-	"orbg", 													// Orbs
+	"orbg","jacko",												// Orbs
 	 															// Weapons
 	"lbelt", "hpbelt"											// asd
 ]); 

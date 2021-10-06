@@ -1,0 +1,229 @@
+
+
+
+let items_with_speed = [];
+for (let [itemname, item_obj] of Object.entries(G.items)) {
+    if ("speed" in item_obj && item_obj["speed"] > 0) {
+        let small_item = {};
+
+        let itemtype = item_obj["type"];
+
+        if (!itemtype in small_item) {
+            small_item[itemtype] = [];
+        }
+        
+        let attrs = ["name", "speed", "type", "id"];
+        for (let attr of attrs) {
+            if (attr in item_obj) {
+                small_item[attr] = item_obj[attr];
+            }
+        }
+
+        items_with_speed.push(small_item);
+    }
+}
+//show_json(items_with_speed);
+
+let by_type = {};
+for (let item of items_with_speed) {
+    if (!(item.type in by_type)) by_type[item.type] = [];
+    by_type[item.type].push( item );
+	delete item.type;
+}
+show_json(by_type);
+
+
+/**********************************************/
+
+{
+	"shoes": [
+		{
+			"name": "Snow Boots",
+			"speed": 6,
+			"id": "snowboots"
+		},
+		{
+			"name": "Vampiric Boots",
+			"speed": 7,
+			"id": "vboots"
+		},
+		{
+			"name": "Heavy Boots",
+			"speed": 7,
+			"id": "hboots"
+		},
+		{
+			"name": "Shoes of the Hunter Mage",
+			"speed": 6,
+			"id": "mmshoes"
+		},
+		{
+			"name": "Winged Boots",
+			"speed": 8,
+			"id": "wingedboots"
+		},
+		{
+			"name": "Boots of the Hunter Merchant",
+			"speed": 7,
+			"id": "mcboots"
+		},
+		{
+			"name": "Xmas Shoes",
+			"speed": 6,
+			"id": "xmasshoes"
+		},
+		{
+			"name": "Boots of the Hunter Rogue",
+			"speed": 6,
+			"id": "mrboots"
+		},
+		{
+			"name": "Shoes",
+			"speed": 5,
+			"id": "shoes"
+		},
+		{
+			"name": "Rugged Shoes",
+			"speed": 6,
+			"id": "shoes1"
+		},
+		{
+			"name": "Darkforge Boots",
+			"speed": 8,
+			"id": "xboots"
+		},
+		{
+			"name": "Fluffy Slippers",
+			"speed": 6,
+			"id": "eslippers"
+		},
+		{
+			"name": "Shoes of the Hunter Priest",
+			"speed": 6,
+			"id": "mpshoes"
+		},
+		{
+			"name": "Wanderer's Shoes",
+			"speed": 5,
+			"id": "wshoes"
+		},
+		{
+			"name": "Boots of the Hunter Ranger",
+			"speed": 6,
+			"id": "mrnboots"
+		},
+		{
+			"name": "Boots of the Hunter Warrior",
+			"speed": 7,
+			"id": "mwboots"
+		}
+	],
+	"belt": [
+		{
+			"name": "Well-Crafted Belt",
+			"speed": 1,
+			"id": "mbelt"
+		},
+		{
+			"name": "Belt",
+			"speed": 1,
+			"id": "lbelt"
+		}
+	],
+	"weapon": [
+		{
+			"name": "Vampiric Sword",
+			"speed": 1,
+			"id": "vsword"
+		},
+		{
+			"name": "Heartwood",
+			"speed": 4,
+			"id": "heartwood"
+		},
+		{
+			"name": "Vampiric Staff",
+			"speed": 8,
+			"id": "vstaff"
+		},
+		{
+			"name": "Pink Wand",
+			"speed": 2,
+			"id": "pinkie"
+		}
+	],
+	"elixir": [
+		{
+			"name": "Green Bomb",
+			"speed": 30,
+			"id": "greenbomb"
+		},
+		{
+			"name": "Bunny Energy Drink",
+			"speed": 12,
+			"id": "bunnyelixir"
+		},
+		{
+			"name": "Espresso",
+			"speed": 24,
+			"id": "espresso"
+		}
+	],
+	"shield": [
+		{
+			"name": "Shield X",
+			"speed": 5,
+			"id": "xshield"
+		}
+	],
+	"pants": [
+		{
+			"name": "Franky Pants",
+			"speed": 1,
+			"id": "frankypants"
+		},
+		{
+			"name": "Wanderer's Breeches",
+			"speed": 1,
+			"id": "wbreeches"
+		},
+		{
+			"name": "Pants of the Fallen Master",
+			"speed": 3,
+			"id": "fallen"
+		}
+	],
+	"orb": [
+		{
+			"name": "Trinket of Faith",
+			"speed": 0.5,
+			"id": "ftrinket"
+		}
+	],
+	"cape": [
+		{
+			"name": "Angel Wings",
+			"speed": 1,
+			"id": "angelwings"
+		}
+	],
+	"chest": [
+		{
+			"name": "T-Shirt",
+			"speed": 3,
+			"id": "tshirt4"
+		},
+		{
+			"name": "T-Shirt",
+			"speed": 3,
+			"id": "tshirt88"
+		}
+	],
+	"earring": [
+		{
+			"name": "Enchanted Earring",
+			"speed": 1,
+			"id": "dexearringx"
+		}
+	]
+}

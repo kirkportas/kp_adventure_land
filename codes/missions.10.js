@@ -419,7 +419,7 @@ class CollectItemsMission extends Mission {
 
     if (!this.can_run()) {
         Logger.log("Unable to run mission "+this.name);
-        this.prio--;
+        this.priority--;
         this.runCount--;
         if (this.runCount <= 0) {
             Logger.log("Unable to run mission "+this.name);
@@ -732,7 +732,7 @@ class DepositEverythingMission extends Mission {
     this.location = this.locations[0];
 
     this.verbose = true;
-    this.whitelist = new Set(["hpot0","mpot0","stand0","rod","pickaxe"]);
+    this.whitelist = new Set(["tracker","hpot0","mpot0","stand0","rod","pickaxe"]);
 
     this.runCount = 10;
   }
