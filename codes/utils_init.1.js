@@ -28,12 +28,14 @@ const NameWarrior = "Terazarrior";
 const NameMage = "Terakazam";
 const NameRogue = "Terrogue";
 const NameRanger2 = "BigBowBigHo";
+const NamePally = "DeusestVult";
 // For console pasting: ["Terazarrior","NoHeals4U","Terranger"]
 
 var NameMerchant = "CurvyMoney";
 var LEADER = NameWarrior;
 var SLAVES = [NameRanger, NameMage, NamePriest, NameRogue];
-const KIRKS_TOONS = [NameMerchant, NameRanger, NamePriest, NameWarrior, NameMage, NameRogue, NameRanger2];
+const KIRKS_TOONS = [NameMerchant, NameRanger, NamePriest, NameWarrior, 
+					 NameMage, NameRogue, NameRanger2, NamePally];
 
 // var SLAVES = [NameRanger, NamePriest];    // **********************
 const ACTIVE_PARTY = [NameRanger, NamePriest];
@@ -109,12 +111,24 @@ const UPGRADEABLE_LEVELS = {
 	// Christmas set
 	"merry": 5,
 	"xmassweater": 7,
+	"xmace": 6,
 
 	// Halloween
 	"phelmet": 5,
 
+
+	// shirts
+	"tshirt1": 5,
+	"tshirt2": 5,
+	"tshirt3": 5,
+	"tshirt4": 5,
+	"tshirt5": 5,
+	"tshirt6": 5,
+
 	"rod": 4,
 	"pickaxe": 4
+
+
 
 };
 
@@ -158,6 +172,7 @@ FARMABLE = FARMABLE.concat(["gemfragment"]);
 
 // This won't sell at item.level >=2  (check method sell_all_trash)
 var TRASH = ["stinger","hpamulet","ringsj", "hpbelt"];
+TRASH = TRASH.concat(["gloves1","coat1","helmet1","shoes1","pants1"]);
 // "hpbelt"
 
 // These localstorage vars are used for passing items to the Merchant
@@ -332,5 +347,7 @@ var ALL_COMPOUNDABLE_ITEMS = new Set([
 ]);
 
 
+var ALDATA_EVENTS_LIVE_KEY = "cache_aldata_live_events";
+var ALDATA_EVENTS_ENGAGED_KEY = "cache_aldata_engaged_events";
 
 game_log("Finished load_code( utils_init )");

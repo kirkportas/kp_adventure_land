@@ -29,6 +29,9 @@ send_item("Terakazam",0,10000);
 send_item("Terrogue",0,10000);;
 
 ***
+
+
+        last_fight_ts = Date.now();
 ==
 
 function findAllCharacters() {

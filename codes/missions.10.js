@@ -21,6 +21,8 @@ class MissionControl {
         this.q = []; // queue
         this.intervals = [];
 
+        this.esize_alert = 8;
+
         this.update_last_cycle();
     }
 
@@ -126,10 +128,14 @@ MissionControl.prototype._scan_for_missions = function() {
     // todo Perform Gon a timer to ensure mluck uptime
 
     // If not currently handlingcompoundables, deposit everything to the bank
-    if (character.esize < 24 && this.getCurrentMission().name != "HandleCompoundables") {
+    if (character.esize <= this.esize_alert && this.getCurrentMission().name != "HandleCompoundables") {
         this.addMission(new TrashCompoundMission()); 
         this.addMission(new DepositEverythingMission()); 
         // this.addMission(new DepositFarmablesMission()); 
+    }
+
+    if (locate_item("candy0") >0 || locate_item("candy1") >0) {
+        this.addMission(new ExchangeMission());
     }
 
     for (let charObj of onlineChars()) {
@@ -140,15 +146,30 @@ MissionControl.prototype._scan_for_missions = function() {
         if (!char_inv_cache) {
             Logger.log("Error reading character inv cache for: "+charObj.name);
         }
-        // let char_items = char_inv_cache.items;
-        let char_esize = char_inv_cache.esize;
 
+        let candy_count = char_inv_cache.items.filter(item =>
+            item && item.name.includes("candy")
+        ).length;
+        if (candy_count > 0) {
+            this.addMission(new CollectItemsMission(charObj.name)); 
+        }
+
+        let char_esize = char_inv_cache.esize;
         let empty_space_threshold = 15; // High for testing. Lower to ~10/15
         if (char_esize < empty_space_threshold) { 
             game_log("Adding collectItems mission for "+charObj.name);
             Logger.log("Adding collectItems mission for "+charObj.name);
 
             this.addMission(new CollectItemsMission(charObj.name)); 
+        }
+    }
+
+    let holding_pvp_item = false;
+    for(let i=0;i<42;i++) {
+        let item = character.items[i];
+        if(item && "v" in item) {
+            item_stored = holding_pvp_item = true;
+            this.addMission(new ClearPVPItemsMission());
         }
     }
 
@@ -189,6 +210,7 @@ class Mission {
     // A mission should abort after a given time.
     this.maxRunTimeMs = 5*60*1000; // 5 minutes
 
+    this.esize_alert = 8; // Must match MissionControl
     this.verbose = true; // Memory.verbose.claim ? true : false;
   }
 
@@ -223,12 +245,14 @@ class Mission {
 }
 
 const MISSION_PRIORITY = {
+    "ClearPVPItems": 3,
     'GoHome': 900,
     "Mining": 15,
     "Fishing": 15,
     'TrashCompound': 20,
     'DepositFarmable': 22,
     'collect_items_': 25,
+    "Exchange": 16,
     "HandleCompoundables": 6,
     "HandleUpgradeables": 6,
     "DepositEverything": 5,   // On boot or to reset. deposit all but a whitelist
@@ -308,6 +332,51 @@ class TrashCompoundMission extends Mission {
 }
 
 /*****************************************************************************/
+
+class ExchangeMission extends Mission {
+  constructor() {
+    let name = "Exchange";
+    let prio = MISSION_PRIORITY[name];
+    super(name, prio);
+
+    this.location = new Location(-25, -400, "main");
+    this.verbose = true;
+
+    this.runCount = 5;
+  }
+
+  can_run() { 
+    return true;
+  }
+
+  run() {
+    if (this.verbose) Logger.log(`${this.name} Run()`);
+    if (!this.can_run()) {
+        Logger.log("Unable to run mission "+this.name);
+        return;
+    }
+
+    // Move if needed
+    if (this.move_to_location()) { return; }
+
+    if (character.q.exchange) { return; }
+
+    let exchangeables = ["candy1","candy0","gem0"];
+    for (let itemname of exchangeables) {
+        let idx = locate_item(itemname);
+        if (idx >= 0) {
+            exchange(idx);
+            return;
+        }
+    }
+
+    this.runCount--;
+    if (this.runCount <= 0) { this.cancel(); }
+
+  }
+}
+
+/*****************************************************************************/
 /*
 show_json( 
     distance(
@@ -325,12 +394,12 @@ class CollectItemsMission extends Mission {
     super(name, prio);
 
     this.charname = charname;
-    this.charObj = onlineChars().filter(x=>x.name == charname);
+    this.charObj = onlineChars().filter(x=>x.name == charname)[0];
 
     // TODO major bug. Calling update_location() doesn't update it and chokes
     // in the parent mission move_to_location() method
-    this.location = new Location(500, 1100, "main"); // bees
-    // this.update_location();
+    // this.location = new Location(500, 1100, "main"); // bees
+    this.update_location();
 
     this.runCount = 10;
     this.verbose = true;
@@ -338,7 +407,10 @@ class CollectItemsMission extends Mission {
 
   // Only run a collect mission if we have free bag space
   can_run() { 
-    return character.esize > 21;
+    // Don't leave the main map
+    let can = character.esize > this.esize_alert-1;
+    can = can && this.location && this.location.map == "main";
+    return can;
   }
 
   run() {
@@ -347,6 +419,7 @@ class CollectItemsMission extends Mission {
 
     if (!this.can_run()) {
         Logger.log("Unable to run mission "+this.name);
+        this.prio--;
         this.runCount--;
         if (this.runCount <= 0) {
             Logger.log("Unable to run mission "+this.name);
@@ -355,7 +428,12 @@ class CollectItemsMission extends Mission {
         }
         return;
     }
-
+    // todo hack for server hopping
+    if (this.charObj.server && this.charObj.server != "USPVP") {
+        this.cancel();
+        Logger.log("cancelling mission, server not USPVP");
+        Logger.log(this.charObj.server);
+    }
     // TODO Update to check cache of other players.
     // Bee farming is on US PVP - Oct 4 2021
     // let myServer = parent.server_region + parent.server_identifier;
@@ -376,6 +454,7 @@ class CollectItemsMission extends Mission {
     // Run for ~10 seconds
     this.runCount--;
     if (this.runCount <= 0) {
+        Logger.log("cancelling mission, this.runCount <= 0");
         this.cancel();
     }
     // let char_inv_cache = get("cache_inventory_"+this.charname);
@@ -491,18 +570,6 @@ class HandleCompoundablesMission extends Mission {
         return this._retrieve_done;
     }
 
-    deposit() {
-        // Store all farmable items
-        for(let i=0;i<42;i++) {
-            if(character.items[i]) {
-                let name = character.items[i].name;
-                if (this.toDeposit.has(name)) {
-                    bank_store(i);
-                }
-            }
-        }
-    }
-
     move_to_location() {
         this.location = this.locations[this.location_idx];
         return super.move_to_location();
@@ -546,6 +613,9 @@ class HandleUpgradeablesMission extends Mission {
             Logger.log("Unable to run mission "+this.name);
             return;
         }
+        
+        // Avoid moving if currently upgrading
+        if (character.q.compound || character.q.upgrade || character.q.exchange) return;
 
         // Move if needed
         if (this.move_to_location()) { return; }
@@ -600,7 +670,7 @@ class HandleUpgradeablesMission extends Mission {
             if(character.items[i]) {
                 let name = character.items[i].name;
                 if (this.toDeposit.has(name)) {
-                    bank_store(i);
+                    organized_bank_store(i);
                 }
             }
         }
@@ -610,6 +680,42 @@ class HandleUpgradeablesMission extends Mission {
         this.location = this.locations[this.location_idx];
         return super.move_to_location();
     }
+}
+
+/*****************************************************************************/
+
+class ClearPVPItemsMission extends Mission {
+  constructor() {
+    let name = "ClearPVPItems";
+    let prio = MISSION_PRIORITY[name];
+    super(name, prio); 
+
+    this.location = LOCATION_BANK;
+    this.verbose = true;
+    this.runCount = 10;
+  }
+
+  can_run() { 
+    return true;
+  }
+
+  run() {
+    if (this.verbose) Logger.log(`${this.name} Run()`);
+
+    if (this.move_to_location()) { return }  // Bank    
+    if (this.runCount <= 0) { this.cancel(); }
+
+    // Store almost all items
+    let item_stored = false;
+    for(let i=0;i<42;i++) {
+        let item = character.items[i];
+        if(item && "v" in item) {
+            organized_bank_store(i);
+            item_stored = true;
+        }
+    }
+    if (!item_stored) this.cancel();
+  }
 }
 
 /*****************************************************************************/
@@ -663,8 +769,10 @@ class DepositEverythingMission extends Mission {
     for(let i=0;i<42;i++) {
         if(character.items[i]) {
             let name = character.items[i].name;
-            if (!this.whitelist.has(name) && !name.includes("scroll")) {
-                bank_store(i);
+            if (!this.whitelist.has(name) 
+                && !name.includes("scroll")
+                && !name.includes("candy")) {
+              organized_bank_store(i);
             }
         }
     }
@@ -708,7 +816,7 @@ class DepositFarmablesMission extends Mission {
         if(character.items[i]) {
             let name = character.items[i].name;
             if (this.toDeposit.has(name)) {
-                bank_store(i);
+                organized_bank_store(i);
             }
         }
     }

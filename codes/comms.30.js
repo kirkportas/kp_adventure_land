@@ -25,7 +25,13 @@ function on_cm(name,data)
 
 	if(!ALLTOONS.includes(name) && name != "kouin") // Make sure to check who the CM came from
 	{
-		game_log("Unauthorized CM from "+name);
+		game_log("Begin Unauthorized CM from "+name);
+		for (var [k, v] of Object.entries(data)) {
+			game_log(`{ ${k}: ${v} }`);
+			cmlog_i++;
+			if (cmlog_i > 200) break;
+		}
+		game_log("End Unauthorized CM from "+name);
 		return;
 	}
 	game_log("CM from "+name);

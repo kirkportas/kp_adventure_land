@@ -54,6 +54,11 @@ function attack_plus_skills(target) {
 			// game_log("mp_ratio: "+mp_ratio);
 			// game_log("target.hp: "+target.hp);
 		}
+
+
+		if (target.hp > 10000 && character.mp > 500) {
+			use_skill("supershot", target);
+		} 
 	}
 
 	// todo half-arsed energize code.
@@ -61,6 +66,11 @@ function attack_plus_skills(target) {
 	if (character.ctype == "mage" && character.mp >= 1000) {
 		let rangerObj = parent.entities[NameRanger];
 		let priestObj = parent.entities[NamePriest];
+
+		// meant for targeting bosses
+		if (target.hp > 1000000) {
+			use_skill("burst", target);
+		}
 
 		if (is_in_range(rangerObj, "energize")) {
 			let amount = rangerObj.max_mp - rangerObj.mp;
@@ -153,21 +163,6 @@ function attack_pvp_enemies() {
 	}
 	return false;
 }
-// WIP method - todo refactor
-function three_shot_farm() {
-	let pvp = attack_pvp_enemies();
-	if (pvp) return;
-
-	// Note any async function is a promise.
-	// Note any return type of Promises is "truthy"
-
-	if (fire_3_shot() == true) {
-		Logger("fire_3_shot true");
-	} else {
-		// game_log("fire_3_shot false");
-		stationary_farm();
-	}
-}
 
 function get_mobs_attacking_me() {
 	// Rely on party method to avoid doublechecking all entities
@@ -253,8 +248,80 @@ function default_get_monster(mon_type) {
 	return target;
 }
 
+var farm_last_hit_ts = Date.now();
+function move_to_zone(zone) {
+	// Intended to handle respawn, and manual actions 
+
+	if (is_moving(character)) return true;
+	let distance_to_zone = distance(character, zone);
+	// game_log(`distance_to_zone: ${distance_to_zone}`);
+	// game_log(`maxRadius: ${zone.maxRadius}`);
+
+	if (zone && zone.map != character.map) {
+		// Logger.log("FarmZone return - changing maps: " + zone.toString());
+		smart_move(zone);
+		return true;
+	}
+
+	if (zone) {
+		// x,y, maxdistance
+		let out_of_range = distance(character, zone) > zone.maxRadius;
+		let is_bad_state = Date.now() - farm_last_hit_ts > 5000;
+		if (out_of_range) {
+			// todo can get stuck on corners
+			// Logger.log("FarmZone return out_of_range: " + zone.toString());
+			if (distance(character, zone) < 200) {
+				move(zone.x, zone.y);
+				return true;
+			}
+			smart_move(zone);
+			return true;
+		}
+		// if (is_bad_state) {
+		// 	// todo can get stuck on corners
+		// 	game_log("FarmZone return is_bad_state: " + zone.toString());
+		// 	smart_move(zone);
+		// 	return true;
+		// }
+	}
+
+	// Avoid stacking up on the zone coords
+	if (character.x == zone.x && character.y == zone.y) {
+		jitter_move(15);
+	}
+	return false;
+}
+
+// todo refactor to just separate from each other
+function jitter_move(maxJitter) {
+	game_log("Jitter move!");
+	let minJitter = 15;
+	var plusOrMinus1 = Math.random() < 0.5 ? -1 : 1;
+	var plusOrMinus2 = Math.random() < 0.5 ? -1 : 1;
+	move(character.x + plusOrMinus1*(Math.random(maxJitter)+minJitter),
+		 character.y + plusOrMinus2*(Math.random(maxJitter)+minJitter));
+}
+
+// WIP method - todo refactor
+function three_shot_farm(zone) {
+	let pvp = attack_pvp_enemies();
+	if (pvp) return;
+
+	if (zone && move_to_zone(zone)) return; 
+
+	// Note any async function is a promise.
+	// Note any return type of Promises is "truthy"
+
+	if (fire_3_shot() == true) {
+		Logger("fire_3_shot true");
+		farm_last_hit_ts = Date.now();
+	} else {
+		// game_log("fire_3_shot false");
+		stationary_farm();
+	}
+}
+
 //to do  t.getTime is not a frunction error on mssince. 
-var default_farm_last_hit_ts = Date.now();
 function default_farm(mon_type, zone) {
 	if (should_abort()) { 
 		game_log("ABORTING DEFAULT FARM()");
@@ -264,30 +331,8 @@ function default_farm(mon_type, zone) {
 	}
 	// For priest, attempt to heal and skip attack if a heal occurs.
 	if (heal_party_member()) { return; }
+	if (zone && move_to_zone(zone)) return; 
 
-
-	// Intended to handle respawn, and manual actions 
-	if (zone && zone.map != character.map) {
-		smart_move(zone);
-		return;
-	}
-
-	if (zone) {
-		// x,y, maxdistance
-		let out_of_range = distance(character, zone) > zone.maxRadius;
-		let is_bad_state = Date.now() - default_farm_last_hit_ts > 5000;
-		if (is_bad_state && out_of_range) {
-			// todo can get stuck on corners
-			move(zone);
-			game_log("Returning to zone");
-			return;
-		}
-	}
-
-
-	// if (mon_type) {
-	// 	kpmove(mon_type);
-	// }
 	// Set plurals to single. e.g. "crabs" -> "crab"
 	if (mon_type in name_map) {
 		mon_type = name_map[mon_type];
@@ -308,7 +353,7 @@ function default_farm(mon_type, zone) {
 	}
 	else if(is_in_range(target))
 	{
-		default_farm_last_hit_ts = Date.now();
+		farm_last_hit_ts = Date.now();
 		attack_plus_skills(target);
 	}
 }
@@ -339,11 +384,13 @@ function franky_farm() {
 	}
 }
 
-function stationary_farm() {
+function stationary_farm(zone) {
 	if (should_abort()) { return; }
 	if (heal_party_member()) { return; }
 	let pvp = attack_pvp_enemies();
 	if (pvp) return;
+
+	if (zone && move_to_zone(zone)) return; 
 
 	var target=get_targeted_monster();
 	if(!target || !is_in_range(target))
@@ -364,6 +411,7 @@ function stationary_farm() {
 	{
 		set_message("Attacking");
 		attack_plus_skills(target);
+		farm_last_hit_ts = Date.now()
 	}
 }
 
@@ -464,18 +512,222 @@ function support_leader() {
 		// Leader has no target
 	}
 }
+
+
+class Zone{
+    constructor(params) {
+        this.x = params.x;
+        this.y = params.y;
+        this.map = params.map;
+        this.maxRadius = params.maxRadius;
+    }
+
+    toString() {
+    	return `(x,y): (${this.x},${this.y}), "${this.map}", maxRadius ${this.maxRadius}`;
+    }
+}
+var ratzone = new Zone({"x":0, "y":0, "map":"mansion", "maxRadius":210});
+var beezone = new Zone({"x":490, "y":1070, "map":"main", "maxRadius":30});
+var mrpumpkinzone = new Zone({"x":25, "y":400, "map":"halloween", "maxRadius":400});
+var mrgreenzone = new Zone({"x":50, "y":600, "map":"spookytown", "maxRadius":400});
+
 /*
-maps:
-"main", "cave"
+mrpumpkin
+25,414,304
+halloween -501,780
+mrgreen
+34,730,510
+spookytown 565,1042
 */
+
+function hween_boss_is_up() {
+	let engaged = get(ALDATA_EVENTS_ENGAGED_KEY);
+	if (engaged.length == 0) return; 
+}
+/*
+{"id":26,
+"server_region":"EU",
+"server_identifier":"PVP",
+"eventname":"mrpumpkin",
+"live":true,"spawnval":null,"spawn":null,
+"x":-501.5687512446685,"y":780.6662185227406,
+"map":"halloween",
+"hp":25414304,
+"max_hp":36000000,"target":null,
+"lastupdateval":"2021-10-06T01:01:32.8122485",
+"lastupdate":"2021-10-06T01:01:32.8122485Z"},
+
+
+{"id":27,"server_region":"EU","server_identifier":"PVP","eventname":"mrgreen","live":true,"spawnval":null,"spawn":null,"x":565.6089595752,"y":1042.8845467545423,"map":"spookytown","hp":34730510,"max_hp":36000000,"target":null,"lastupdateval":"2021-10-06T01:01:32.8590062","lastupdate":"2021-10-06T01:01:32.8590062Z"},
+*/
+var last_fight_ts = 0;
+function switch_to_event_server(event) {
+	if (Date.now() - last_fight_ts < 2000) return;
+	let is_same_server = event.server_region == parent.server_region && event.server_identifier == parent.server_identifier; 
+	if (is_same_server) { return }
+
+	// Switch to Warrior if on lowbie ranger
+	if (character.name == NameRanger2) {
+		let charname = "Terazarrior"; 
+		parent.window.location.href="/character/"+charname+"/in/"+event.server_region+"/"+event.server_identifier+"/";
+		return;		
+	}
+
+	// Switch to 2nd Ranger if farming bees
+	if (character.name == NameWarrior && event.eventname == "bee_genocide") {
+		let charname = "BigBowBigHo"; 
+		parent.window.location.href="/character/"+charname+"/in/"+event.server_region+"/"+event.server_identifier+"/";
+		return;		
+	}
+	change_server(event.server_region, event.server_identifier); // change_server("EU","I") ("ASIA","PVP") or ("US","III")
+}
+
+function halloween_farm() {
+	Logger.log("halloween_farm");
+	// run away if bosses are spawned on PVP while returning to normal farm
+
+	// Continue if already fighting
+	if (get_nearest_monster({"type":"mrpumpkin"})) {
+		if (parent.server_identifier == "PVP") {
+			_party_farm();
+			return;
+		}
+		mrpumpkinfarm();
+		Logger.log("Engaged against mrpumpkin");
+		return;
+	} else if (get_nearest_monster({"type":"mrgreen"})) {
+		if (parent.server_identifier == "PVP") {
+			_party_farm();
+			return;
+		}
+		mrgreenfarm();
+		Logger.log("Engaged against mrgreen");
+		return;
+	} 
+	// quickhack for "walking to pumpkin"
+	if (is_moving(character)) {
+		Logger.log("Hween farm: is_moving");
+		return;
+	} 
+
+	let engaged = get(ALDATA_EVENTS_ENGAGED_KEY);
+	let priority = "mrpumpkin";
+
+	let event;
+	let hp_threshold = 0.8; // 0.8l
+	// Only begin if >80% health
+	event = engaged.filter(e => 
+		e.eventname == "mrpumpkin"
+		&& e.hp/e.max_hp > hp_threshold
+		&& e.hp/e.max_hp < e.max_hp*0.97)[0];
+	if (event) {
+		let zone = new Zone({"x":event.x, "y":event.y, "map":event.map, "maxRadius":400});
+		switch_to_event_server(event);
+		mrpumpkinfarm(zone);
+		Logger.log("Moving to new mrpumpkin");
+		last_fight_ts = Date.now();
+		return;
+	}
+
+
+	event = engaged.filter(e => 
+		e.eventname == "mrgreen"
+		&& e.hp/e.max_hp > hp_threshold)[0];
+	if (event) {
+		let zone = new Zone({"x":event.x, "y":event.y, "map":event.map, "maxRadius":400});
+		switch_to_event_server(event);
+		mrgreenfarm(zone);
+		Logger.log("Moving to new mrgreen");
+		last_fight_ts = Date.now();
+		return;
+	}
+
+	// Default to normal farming (bees)
+	Logger.log("No mrpumpkin / mrgreen, default farming");
+	_party_farm();
+}
+
+// todo refactor/extract basic farming target and attack logic
+function mrpumpkinfarm(zone) {
+	last_fight_ts = Date.now();
+	let mtype = "mrpumpkin";
+	if (heal_party_member()) { return; }
+	if (zone && move_to_zone(zone)) return; 
+
+	var target=get_targeted_monster();
+	if(!target || !is_in_range(target)) {
+		target=get_nearest_monster({"type":mtype});
+		if(target) {
+			change_target(target);
+		} else {
+			set_message("No Monsters");
+			return;
+		}
+	}
+	
+	if(is_in_range(target)) {
+		set_message("Attacking");
+		attack_plus_skills(target);
+		farm_last_hit_ts = Date.now();
+	} else {
+		move(character.x+(target.x-character.x)/2,
+			 character.y+(target.y-character.y)/2);
+	}
+}
+
+function mrgreenfarm(zone) {
+	last_fight_ts = Date.now();
+	let mtype = "mrgreen";
+	if (heal_party_member()) { return; }
+	if (zone && move_to_zone(zone)) return; 
+
+	var target=get_targeted_monster();
+	if(!target || !is_in_range(target)) {
+		target=get_nearest_monster({type:mtype});
+		if(target) {
+			change_target(target);
+		} else {
+			set_message("No Monsters");
+			return;
+		}
+	}
+	
+	if(is_in_range(target)) {
+		set_message("Attacking");
+		attack_plus_skills(target);
+		farm_last_hit_ts = Date.now();
+	} else {
+		move(character.x+(target.x-character.x)/2,
+			 character.y+(target.y-character.y)/2);
+	}
+}
 
 var FARMING_DEBUG = false;
 // if (character.name == NameRanger) { FARMING_DEBUG = true; }
 
-var RARE_MOB_TYPES = ["cutebee","greenjr","goldenbat","phoenix","squigtoad"];
+// function hween_boss_is_engaged() {
+
+// }
+var RARE_MOB_TYPES = ["cutebee","greenjr","goldenbat","phoenix","squigtoad",
+	"mrpumpkin","mrgreen"];
+
+// Called by all fighter characters
 function party_farm() {
+	if (character.name == NameRanger) {
+		_party_farm()
+	} else {
+		halloween_farm();
+	}
+	// _party_farm();
+}
+
+var party_event = {"server_region":'US',"server_identifier":'PVP', "eventname": "bee_genocide"};
+function _party_farm() {
 	FARMING_DEBUG && game_log("party_farm");
 	if (should_abort()) { return; }
+
+	// Switch back to bee server
+	switch_to_event_server(party_event);
 
 	var stop_for_rares = false;  // Ignore any rare monsters while farming
 	// kpmove("bees");
@@ -505,13 +757,14 @@ function party_farm() {
 		// transport("main",4)
 
 		if (character.name == LEADER) {
-			// default_farm("spider"); 
+			// default_farm("mrpumpkin");
+			default_farm(); 
 
-			let ratzone = {"x":0, "y":0, "map":"mansion", "maxRadius":210};
-			default_farm("rat", ratzone); 
+			// default_farm("rat", ratzone); 
 		} 
 		else if (character.name == NameRogue) {
-			default_farm("bee");	
+			support_leader();
+			// default_farm("bee");	
 			// attack loop testing
 			// change_target(get_best_target());
 			// if (target && !is_in_range(target) && !is_moving(character)) {
@@ -520,14 +773,19 @@ function party_farm() {
 
 		} 
 		else if (character.ctype == "ranger") {
-			three_shot_farm();
+			// default_farm("mrpumpkin");
+			// support_leader();
+			// default_farm("bee", beezone); 
+			three_shot_farm(beezone);
 
 		} else if (SLAVES.includes(character.name)) {
-			stationary_farm();
-			// default_farm("croc");	
+			stationary_farm(beezone);
+			// default_farm("bee", beezone); // This seemed bugged
+			// default_farm("mrpumpkin"); 
 			// support_leader();
 		}
 	}
 }
+
 
 game_log("Finished load_code( farming )");

@@ -4,6 +4,7 @@ load_code("utils_init", function(){ game_log("Error loading utils_init"); });
 
 var attack_mode = true; // Just for use in fleeing.
 setInterval(main, 1000/2); 
+setInterval(scareLoop, 1000/3); 
 pontyPurchase();
 joinGiveAways();
 
@@ -21,6 +22,15 @@ track_events();
 
 add_top_button("showPonty","showPonty", showPontyBuyList);
 add_top_button("eventTypes","eventTypes", () => { show_json(get("stats_game_events_dict").actions_custom) });
+
+
+function scareLoop() {
+	let nearest_mon = get_nearest_monster();
+	if (!nearest_mon) return;
+	if (distance(character, nearest_mon) < 50) {
+		use_skill("scare");
+	}
+}
 
 // Use this to make do any custom or one-off stuff.
 function custom_town_behavior() {
@@ -103,7 +113,9 @@ function main(){
 
 		//  Unequip to walk faster 
 		if (is_moving(character)) { 
-			unequip("mainhand"); 
+			if (character.slots["mainhand"] != null) {
+				unequip("mainhand"); 	
+			}
 			close_booth();
 		}
 
@@ -131,6 +143,8 @@ function main(){
 		if (is_in_bank()) {
 			bank_store_craftables()
 		}
+
+		// smart_move( G.npcs["exchange"].id )
 
 		// Cast Mluck if not cast, or <58 minutes remaining
 		for (let charObj of onlineChars()) {

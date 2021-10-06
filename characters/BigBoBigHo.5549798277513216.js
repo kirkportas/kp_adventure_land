@@ -14,7 +14,7 @@ setInterval(cache_loop, 5000);
 // Todo this is a quick hack
 // Terazarrior is hardcoded to franky_farm and parked at franky.
 
-setInterval(check_franky_bow, 5005); 
+// setInterval(check_franky_bow, 5005); 
 function check_franky_bow() {
 	Logger.log("check_franky_bow");
 	GetServerStatuses(s => { 

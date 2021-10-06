@@ -22,10 +22,10 @@ function onlineChars() {
 //   };
 // }
 
-function is_same_server() {
-    // The get_characters() object has these values
-    // "EUI",
-}
+// function is_same_server() {
+//     // The get_characters() object has these values
+//     // "EUI",
+// }
 
 function start_chars() {
     if (!last_start_char_ts) {
@@ -241,6 +241,33 @@ function inv_has_compoundable_trio() {
     }
     return false;
 }
+/*
+Bank layout
+1       |  items4  |  items5  |  4
+items2  |  items0  |  items1  |  items3
+
+
+1       |  amu/ring  |  items5  |  4
+items2  |  items0   |  items1  |  items3
+*/
+var bank_org = {
+    "items0": ["intring","strring","dexring","vitring"],
+    "items4": ["stramulet","dexamulet","intamulet","vitearring","dexearring","intearring","strearring"]
+}
+function organized_bank_store(i) {
+    // Only accepts the item index in character.items 
+    let item = character.items[i];
+    if (!item) return;
+
+    // Will insert "stramulet" into pack "items4"
+    for (let [packname, itemnames] of Object.entries(bank_org)) {
+        if (bank_org[packname].includes(item.name)) {
+            bank_store(i, packname);
+            return;
+        }
+    }
+    bank_store(i);
+}
 
 function bank_get_compoundables_count() {
     if (!is_in_bank()) { return [] }
@@ -371,10 +398,10 @@ function sell_all_trash(){
 //  return character.items[idx].q
 // }
 
-function give_all_of_single_item(item) {
+function give_all_of_single_item(itemname) {
     // number_of_items = get_item_quantity(item);
-    let item_idxs = locate_items(item);
-    for (idx of item_idxs) {
+    let item_idxs = locate_items(itemname);
+    for (let idx of item_idxs) {
         let item = character.items[idx];
         let quantity = item.q ? item.q : 1;
         send_item(NameMerchant, idx, quantity);
@@ -433,7 +460,7 @@ Example of data[0], e.g. a pontyItem
     let ITEM_TO_ADD = "intring";
     
 
-    let ITEM_TO_ADD = "bfur";
+    let ITEM_TO_ADD = "tshirt4";
     let QUANTITY = 20;
     let PONTY_KEY = "ponty_items_to_buy";
     let ponty_desired = get(PONTY_KEY);

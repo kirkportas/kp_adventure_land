@@ -13,15 +13,7 @@ function mainloop(){
 	// smart_move({"x":-24,"y":32,"map":"level2w"})
 	if (attack_mode && !is_moving(character)) {
 		try {
-			// default_farm();	
-			// default_farm("crabs");
-			// stationary_farm();
-			if (character.name != NameWarrior) {
-				party_farm();
-			} else {
-				// default_farm();
-				franky_farm();
-			}
+			party_farm();
 		} catch(err) {
 			game_log("Error in mainloop for: "+character.name);
 			game_log(err);
@@ -56,6 +48,24 @@ function attackloop() {
 function cache_loop() {
 	cache_inventory();
 	cache_location();
+	cache_aldata_events();
+}
+
+/* This is intended to allow other game code to not need 
+  async logic to check server/boss status */
+function cache_aldata_events() {
+	GetServerStatuses(s => { 
+		game_log("GetServerStatuses returned");
+
+		let liveEvents = s.filter(e => true == e.live );
+		set(ALDATA_EVENTS_LIVE_KEY, liveEvents);
+
+		let engagedEvents = liveEvents.filter(e => 
+			true == e.live
+			&& "PVP" != e.server_identifier
+			&& null != e.target );
+		set(ALDATA_EVENTS_ENGAGED_KEY, engagedEvents);
+	});
 }
 
 function cache_location() {

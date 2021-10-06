@@ -217,7 +217,10 @@ function get_upgraded_nonbase_item(itemname, target_lvl, stat_type) {
 			var is_statupgradeable = "stat" in G.items[itemname];
 			var is_statupgraded = "stat_type" in item;
 
-			if (item_grade(item) == 0 && is_statupgradeable && !is_statupgraded) {
+			let next_level_ups_grade = G.items[item.name].grades[item_grade(item)+1] > item.level+1
+			
+			if (item_grade(item) == 0 && is_statupgradeable && !is_statupgraded
+				&& next_level_ups_grade) {
 				// Apply stat scroll
 				set_message("StatUpgrade");
 				Logger.log("Nonbase Stat upgrade at level: "+item.level);
