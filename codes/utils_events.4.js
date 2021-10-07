@@ -145,7 +145,6 @@ function cache_bank() {
 	if (!is_in_bank()) return;
 }
 
-game_log("Finished load_code( utils_events )");
 
 
 /**
@@ -176,6 +175,10 @@ function wrap_method(methodname, before, after) {
 		return foo.call(this, arguments);
 	};
 }
+
+
+
+
 // wrapping in js
 // https://trackjs.com/blog/how-to-wrap-javascript-functions/
 /*
@@ -213,3 +216,7 @@ game_log( footest );
 
 
 */
+
+
+
+game_log("Finished load_code( utils_events )");
