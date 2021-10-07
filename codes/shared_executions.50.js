@@ -1,16 +1,28 @@
 Logger.functionEnter("Loading shared_executions");
 
+var deathCount = 0;
+var deathCheckMs = 0;
 function run_shared_executions() {
 	party_up();
 
 	if (character.rip) {
-		// Don't respawn on a PVP server.
-		// If dead, party was probably attacked and killed.
-		if (!is_pvp()) {
-			Logger.log("respawning");
+		// Avoid spamming deathCount++
+		if ((Date.now() - deathCheckMs) < 30000) return;
+		deathCount++;
+		deathCheckMs = Date.now();
+
+		// Don't respawn after some large number of deaths.
+		// Something is clearly broken, or the char is being farmed in PVP.
+		if (deathCount < 10) {
 			parent.socket.emit("respawn");
 		}
-		// Todo reset action 
+
+		// Don't respawn on a PVP server.
+		// if (!is_pvp()) {
+		// 	Logger.log("respawning");
+		// 	parent.socket.emit("respawn");
+		// }
+		return;
 	}
 
 	// Abort whatever's happening and retreat

@@ -102,7 +102,6 @@ function get_in_range_mobs(mtype, skill_name) {
 	return mobs;
 }
 
-//
 var last_undefined = Date.now();
 async function fire_3_shot(mtype) {
 	
@@ -720,11 +719,13 @@ function mrpumpkinfarm(zone) {
 		attack_plus_skills(target);
 		farm_last_hit_ts = Date.now();
 	} else {
-		if (distance(character, target) < 100) {
-			move(character.x+(target.x-character.x)/2,
-				 character.y+(target.y-character.y)/2);
-		} else {
-			smart_move(target);
+		if (!is_moving(character)) {
+			if (distance(character, target) < 200) {
+				move(character.x+(target.x-character.x)/2,
+					 character.y+(target.y-character.y)/2);
+			} else {
+				smart_move(target);
+			}
 		}
 	}
 }
@@ -751,14 +752,14 @@ function mrgreenfarm(zone) {
 		attack_plus_skills(target);
 		farm_last_hit_ts = Date.now();
 	} else {
-
-		if (distance(character, target) < 100) {
-			move(character.x+(target.x-character.x)/2,
-				 character.y+(target.y-character.y)/2);
-		} else {
-			smart_move(target);
+		if (!is_moving(character)) {
+			if (distance(character, target) < 100) {
+				move(character.x+(target.x-character.x)/2,
+					 character.y+(target.y-character.y)/2);
+			} else {
+				smart_move(target);
+			}
 		}
-
 	}
 }
 
@@ -778,7 +779,6 @@ function party_farm() {
 	} else {
 		halloween_farm();
 	}
-	// _party_farm();
 }
 
 var party_event = {"server_region":'US',"server_identifier":'PVP', "eventname": "bee_genocide"};

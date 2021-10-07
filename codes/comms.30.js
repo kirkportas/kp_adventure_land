@@ -6,8 +6,8 @@
 // 	init_comms = true;
 // 	game_log("Comms initted");
 // }
-// var name = character.name;
 
+// loopme(comms, 1000/4); // Loops every 1/4 seconds.
 function comms() {
 	if (name == NameRanger) {
 		set(count, {"msg":"setByRanger","Date.now":Date.now()})
@@ -15,22 +15,14 @@ function comms() {
 		count++;
 	} 
 }
-// loopme(comms, 1000/4); // Loops every 1/4 seconds.
 
-
+/* Currently this just prints the CM. No actions taken */
 function on_cm(name,data)
 {
-	// var is_slave = SLAVES.includes(character.name);
-	// var is_leader = LEADER == character.name;
-
 	if(!ALLTOONS.includes(name) && name != "kouin") // Make sure to check who the CM came from
 	{
 		game_log("Begin Unauthorized CM from "+name);
-		for (var [k, v] of Object.entries(data)) {
-			game_log(`{ ${k}: ${v} }`);
-			cmlog_i++;
-			if (cmlog_i > 200) break;
-		}
+		print_cm_data(data);
 		game_log("End Unauthorized CM from "+name);
 		return;
 	}
@@ -42,8 +34,24 @@ function on_cm(name,data)
 		for (var [k, v] of Object.entries(data)) {
 			game_log(`{ ${k}: ${v} }`);
 			cmlog_i++;
-			if (cmlog_i > 200) break;
+			if (cmlog_i > 100) break;
 		}
 	}
 }
+
+// Todo check if stringify/parse is needed here.
+function print_cm_data(data) {
+	// Data can be a {} or a string
+	let cmlog_i = 0;
+	if (data.constructor == Object) {
+		for (var [k, v] of Object.entries(data)) {
+			game_log(`{ ${k}: ${v} }`);
+			cmlog_i++;
+			if (cmlog_i > 100) break;
+		}
+	} else {
+		game_log(`data: ${data}`);
+	}
+}
+
 game_log("Finished load_code( comms )");

@@ -68,7 +68,6 @@ const ALLTOONS = KIRKS_TOONS.concat(VALS_TOONS);
 // Misc constants
 const PONTY_KEY = "ponty_items_to_buy";
 
-
 // Configure upgrade/compound actions
 const max_level_upgrade = 3; // Only used for a GUI function (intended for lowlevel)
 const UPGRADEABLE_LEVELS = {
@@ -87,13 +86,10 @@ const UPGRADEABLE_LEVELS = {
 
 	// Misc
 	"slimestaff": 7,
-	// "stinger": 5,     // Maybe trash
-
 
 	// Heavy (starts at Rare)
 	// "hpants": 3,
 	// "hgloves": 3,
-
 
 	// Weapons
 	"cclaw": 7,
@@ -133,7 +129,7 @@ const UPGRADEABLE_LEVELS = {
 	"rod": 4,
 	"pickaxe": 4
 
-	// Trashed items
+	/* Trashed items */
 	// "throwingstars": 7,
 	// Rugged
 	// "pants1": 7,       //RuggedPants
@@ -141,6 +137,8 @@ const UPGRADEABLE_LEVELS = {
 	// "shoes1": 7,
 	// "helmet1": 7,
 	// "gloves1": 7,
+
+	// "stinger": 5,     // Maybe trash
 
 };
 
@@ -180,14 +178,12 @@ FARMABLE = FARMABLE.concat(["wbook0"]);
 FARMABLE = FARMABLE.concat(["vitscroll","scroll0","scroll1"]);
 FARMABLE = FARMABLE.concat(["lostearring","rattail"]);
 FARMABLE = FARMABLE.concat(["gemfragment"]);
-// stinger, vitamulet
 
 
 // This won't sell at item.level >=2  (check method sell_all_trash)
 var TRASH = ["stinger","hpamulet","ringsj", "hpbelt"];
 TRASH = TRASH.concat(["gloves1","coat1","helmet1","shoes1","pants1"]);
 TRASH = TRASH.concat(["throwingstars"]);
-// "hpbelt"
 
 // These localstorage vars are used for passing items to the Merchant
 set("give_items_"+NameWarrior, []);
@@ -206,8 +202,8 @@ Logger.functionEnter("Loading shared code files");
 	try { load_code("utils_events"); } 	    catch(err) { Logger.log("Error loading utils_events: "+err); }
 	try { load_code("utils_movement"); }    catch(err) { Logger.log("Error loading utils_movement: "+err); } 
 	try { load_code("stats"); }    			catch(err) { Logger.log("Error loading stats: "+err); } 
-	// var init_comms = false;
 	try { load_code("comms"); }    			catch(err) { Logger.log("Error loading comms: "+err); }
+	try { load_code("missions_control"); }  catch(err) { Logger.log("Error loading missions_control: "+err); }  
 	try { load_code("missions"); }    		catch(err) { Logger.log("Error loading missions: "+err); }  
 Logger.functionExit("Loading shared code files", 0);
 

@@ -271,9 +271,11 @@ function organized_bank_store(i) {
 
     // TOP ROW
     let expensive_item_threshold = 0.45 * 1000000; // 450k
+    let special_items = ["talkingskull"];
     if (calculate_item_value(item,1) > expensive_item_threshold
         || item.name.includes("key")
-        || ["token","gem"].includes(item.type) ) {
+        || ["token","gem"].includes(item.type) 
+        || special_items.includes(item.name)) {
             bank_store(i, "items7");
             return;
     }
