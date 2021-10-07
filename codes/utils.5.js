@@ -274,8 +274,8 @@ function organized_bank_store(i) {
     if (calculate_item_value(item,1) > expensive_item_threshold
         || item.name.includes("key")
         || ["token","gem"].includes(item.type) ) {
-        bank_store(i, "items7");
-        return;
+            bank_store(i, "items7");
+            return;
     }
 
     // BOTTOM ROW

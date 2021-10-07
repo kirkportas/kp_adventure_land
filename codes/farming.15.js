@@ -279,7 +279,6 @@ function move_to_zone(zone) {
 	if (zone.name && magiport_zones.includes(zone.name)) {
 		// assume same server
 		if (out_of_range) {
-			if (verbose) Logger.log("Auto-requesting boss magiport");
 			request_magiport_to_boss();
 		}
 	}
@@ -300,7 +299,7 @@ function move_to_zone(zone) {
 		if (out_of_range) {
 			// todo can get stuck on corners
 			// Logger.log("FarmZone return out_of_range: " + zone.toString());
-			if (distance(character, zone) < 100) {
+			if (distance(character, zone) < 80) {
 				move(zone.x, zone.y);
 				return true;
 			}
@@ -559,8 +558,8 @@ class Zone{
 }
 var ratzone = new Zone({"x":0, "y":0, "map":"mansion", "maxRadius":210, "name":"rats"});
 var beezone = new Zone({"x":490, "y":1070, "map":"main", "maxRadius":30, "name":"bees"});
-var mrpumpkinzone = new Zone({"x":25, "y":400, "map":"halloween", "maxRadius":400, "name":"mrpumpkin"});
-var mrgreenzone = new Zone({"x":50, "y":600, "map":"spookytown", "maxRadius":400, "name":"mrgreen"});
+var mrpumpkinzone = new Zone({"x":25, "y":400, "map":"halloween", "maxRadius":200, "name":"mrpumpkin"});
+var mrgreenzone = new Zone({"x":50, "y":600, "map":"spookytown", "maxRadius":200, "name":"mrgreen"});
 
 /*
 mrpumpkin
@@ -674,7 +673,7 @@ function halloween_farm() {
 	// Only begin if >80% health
 	event = engaged_pumpkin_event;
 	if (event) {
-		let zone = new Zone({"x":event.x, "y":event.y, "map":event.map, "maxRadius":400, "name":"mrpumpkin"});
+		let zone = new Zone({"x":event.x, "y":event.y, "map":event.map, "maxRadius":200, "name":"mrpumpkin"});
 		switch_to_event_server(event);
 		request_magiport_to_boss();
 		mrpumpkinfarm(zone);
@@ -685,7 +684,7 @@ function halloween_farm() {
 
 	event = engaged_mrgreen_event;
 	if (event) {
-		let zone = new Zone({"x":event.x, "y":event.y, "map":event.map, "maxRadius":400, "name":"mrgreen"});
+		let zone = new Zone({"x":event.x, "y":event.y, "map":event.map, "maxRadius":200, "name":"mrgreen"});
 		switch_to_event_server(event);
 		request_magiport_to_boss();
 		mrgreenfarm(zone);
@@ -721,8 +720,12 @@ function mrpumpkinfarm(zone) {
 		attack_plus_skills(target);
 		farm_last_hit_ts = Date.now();
 	} else {
-		move(character.x+(target.x-character.x)/2,
-			 character.y+(target.y-character.y)/2);
+		if (distance(character, target) < 100) {
+			move(character.x+(target.x-character.x)/2,
+				 character.y+(target.y-character.y)/2);
+		} else {
+			smart_move(target);
+		}
 	}
 }
 
@@ -748,8 +751,14 @@ function mrgreenfarm(zone) {
 		attack_plus_skills(target);
 		farm_last_hit_ts = Date.now();
 	} else {
-		move(character.x+(target.x-character.x)/2,
-			 character.y+(target.y-character.y)/2);
+
+		if (distance(character, target) < 100) {
+			move(character.x+(target.x-character.x)/2,
+				 character.y+(target.y-character.y)/2);
+		} else {
+			smart_move(target);
+		}
+
 	}
 }
 

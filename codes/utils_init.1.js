@@ -174,12 +174,13 @@ var LOW_CRAFT_ITEMS = ["gslime","crabclaw","beewings","seashell","bwing","snakeo
 var FARMABLE = ["gem0", "leather", "bfur", "cscale", "feather0", "ascale", "spidersilk"];
 FARMABLE = FARMABLE.concat(LOW_CRAFT_ITEMS);
 FARMABLE = FARMABLE.concat(["vitearring","strearring","dexearring","intearring"]);
-FARMABLE = FARMABLE.concat(["vitamulet","stramulet","dexamulet","intamulet"]);
+FARMABLE = FARMABLE.concat(["stramulet","dexamulet","intamulet"]);
 FARMABLE = FARMABLE.concat(["candy0","candy1","pvptoken"]);
-FARMABLE = FARMABLE.concat(["stinger","wbook0"]);
+FARMABLE = FARMABLE.concat(["wbook0"]);
 FARMABLE = FARMABLE.concat(["vitscroll","scroll0","scroll1"]);
 FARMABLE = FARMABLE.concat(["lostearring","rattail"]);
 FARMABLE = FARMABLE.concat(["gemfragment"]);
+// stinger, vitamulet
 
 
 // This won't sell at item.level >=2  (check method sell_all_trash)

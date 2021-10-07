@@ -345,8 +345,6 @@ class ExchangeMission extends Mission {
 
     this.location = new Location(-25, -400, "main");
     this.verbose = true;
-
-    this.runCount = 5;
   }
 
   can_run() { 
@@ -373,9 +371,7 @@ class ExchangeMission extends Mission {
             return;
         }
     }
-
-    this.runCount--;
-    if (this.runCount <= 0) { this.cancel(); }
+    this.cancel();
 
   }
 }

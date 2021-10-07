@@ -242,7 +242,7 @@ function give_potions(entity) {
 }
 
 function bank_store_craftables() {
-	for (let itemname of ["gem0", "spidersilk","rattail","bfur","gemfragment"]) {
+	for (let itemname of ["spidersilk","rattail","bfur","gemfragment"]) {
 		let itemidx = locate_item(itemname);
 		if (itemidx >= 0) {
 			organized_bank_store(itemidx);
