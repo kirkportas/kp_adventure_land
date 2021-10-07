@@ -183,12 +183,21 @@ function buy_potions() {
 	if (Date.now() - buy_potion_ts < 3000) { return; }
 	buy_potion_ts = Date.now();
 
-	let mpot0_count = get_item_count_in_inventory("mpot0");
-	let hpot0_count = get_item_count_in_inventory("hpot0");
-	let target = 9999*2; // 2 stacks
-	// Avoid latency issues and overbuying
-	if (mpot0_count < target) { buy("mpot0", Math.max(1,(target-mpot0_count)/3)); }
-	if (hpot0_count < target) { buy("hpot0", Math.max(1,(target-hpot0_count)/3)); }
+	// Use higher level potions for Kirk's characters
+	let mpot = "mpot0"; // 20g,  300 mana
+	let hpot = "mpot0"; // 20g,  200 hp
+	if (KIRKS_TOONS.includes(character.name)) {
+		mpot = "mpot1"; // 100g, 500 mana
+		hpot = "mpot1"; // 100g, 300 hp
+	}
+
+	let mpot_count = get_item_count_in_inventory(mpot);
+	let hpot_count = get_item_count_in_inventory(hpot);
+	let target = 1*9999; // # of stacks
+
+	// Buy in halves to avoid latency issues that cause overbuying
+	if (mpot_count < target) { buy(mpot, Math.max(1,(target-mpot_count)/2)); }
+	if (hpot_count < target) { buy(hpot, Math.max(1,(target-hpot_count)/2)); }
 }
 
 
@@ -230,15 +239,26 @@ function give_potions(entity) {
 	// Fill them up to a full stack of 9999 potions
 	let mpot0_count = get_item_count_in_inventory_array(char_inv_cache.items, "mpot0");
 	if (mpot0_count < 9999) { 
-		send_item(charname, locate_item("mpot0"), 9999-mpot0_count); 
+		send_item(charname, locate_item("mpot0"), 2*9999-mpot0_count); 
 		// game_log(`Sent ${9999-mpot0_count} mpot0's to ${charname}`);
 	}
 
 	let hpot0_count = get_item_count_in_inventory_array(char_inv_cache.items, "hpot0");
 	if (hpot0_count < 9999) { 
-		send_item(charname, locate_item("hpot0"), 9999-hpot0_count); 
+		send_item(charname, locate_item("hpot0"), 2*9999-hpot0_count); 
 		// game_log(`Sent ${9999-mpot0_count} hpot0's to ${charname}`);
 	}
+
+	// Transition logic. Remove after level 0 potions are used up. Todo
+	if (mpot0_count==0) {
+		let mpot1_count = get_item_count_in_inventory_array(char_inv_cache.items, "mpot1");
+		send_item(charname, locate_item("mpot1"), 9999-mpot1_count); 
+	}
+	if (hpot0_count==0) {
+		let hpot1_count = get_item_count_in_inventory_array(char_inv_cache.items, "hpot1");
+		send_item(charname, locate_item("hpot1"), 9999-hpot1_count); 
+	}
+
 }
 
 function bank_store_craftables() {
