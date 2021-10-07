@@ -172,10 +172,12 @@ MissionControl.prototype._scan_for_missions = function() {
     // todo Perform Gon a timer to ensure mluck uptime
 
     // If not currently handlingcompoundables, deposit everything to the bank
-    if (character.esize <= this.esize_alert && this.getCurrentMission().name != "HandleCompoundables") {
-        this.addMission(new TrashCompoundMission()); 
-        this.addMission(new DepositEverythingMission()); 
-        // this.addMission(new DepositFarmablesMission()); 
+    if (character.esize <= this.esize_alert 
+        && this.getCurrentMission().name != "HandleCompoundables"
+        && this.getCurrentMission().name != "HandleUpgradeables") {
+            this.addMission(new TrashCompoundMission()); 
+            this.addMission(new DepositEverythingMission()); 
+            // this.addMission(new DepositFarmablesMission()); 
     }
 
     if (locate_item("candy0") >0 || locate_item("candy1") >0) {
@@ -262,8 +264,7 @@ class Mission {
   // Supports only a single location.
   move_to_location() {
     if (is_moving(character)) return true;
-
-    if (this.location_idx && this.locations) {
+    if (this.location_idx != undefined && this.locations != undefined) {
         this.location = this.locations[this.location_idx];
     }
 

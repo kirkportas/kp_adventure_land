@@ -269,6 +269,15 @@ function organized_bank_store(i) {
     let item = character.items[i];
     if (!item) return;
 
+    // Will insert "stramulet" into pack "items4"
+    // Note that expensive items go into hardcoded pack if hardcoded
+    for (let [packname, itemnames] of Object.entries(bank_org)) {
+        if (bank_org[packname] && bank_org[packname].includes(item.name)) {
+            bank_store(i, packname);
+            return;
+        }
+    }
+
     // TOP ROW
     let expensive_item_threshold = 0.45 * 1000000; // 450k
     let special_items = ["talkingskull"];
@@ -291,13 +300,6 @@ function organized_bank_store(i) {
         return;
     }
 
-    // Will insert "stramulet" into pack "items4"
-    for (let [packname, itemnames] of Object.entries(bank_org)) {
-        if (bank_org[packname] && bank_org[packname].includes(item.name)) {
-            bank_store(i, packname);
-            return;
-        }
-    }
     bank_store(i, "items2");
     bank_store(i, "items0");
 }
@@ -350,6 +352,27 @@ function bank_get_compoundables_count() {
     }
     // show_json(raw);
     // show_json(items_to_retrieve);
+    return items_to_retrieve;
+}
+
+function bank_get_trash() {
+    if (!is_in_bank()) { return [] }
+    this.verbose = true;
+    if (this.verbose) Logger.log(`bank_get_trash()`);
+
+    // Detailed count with bankpack locations for Bank items
+    let items_to_retrieve = [];
+    for (let [packname,pack] of Object.entries(character.bank)) {
+        if (this.verbose) Logger.log(`Checking pack: ${packname}`);
+        for (var i=0;i<42;i++) {
+            let item = pack[i];
+            if (!item) continue;
+            if (!(item.name in TRASH)) continue;
+            if (item_grade(item) >= 1) continue;
+
+            items_to_retrieve.push({'packname':packname, 'idx': i});
+        }
+    }
     return items_to_retrieve;
 }
 

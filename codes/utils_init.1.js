@@ -184,6 +184,7 @@ FARMABLE = FARMABLE.concat(["gemfragment"]);
 var TRASH = ["stinger","hpamulet","ringsj", "hpbelt"];
 TRASH = TRASH.concat(["gloves1","coat1","helmet1","shoes1","pants1"]);
 TRASH = TRASH.concat(["throwingstars"]);
+TRASH = TRASH.concat(["phelmet","gphelmet"]);   // expensive
 
 // These localstorage vars are used for passing items to the Merchant
 set("give_items_"+NameWarrior, []);

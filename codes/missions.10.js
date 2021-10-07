@@ -36,38 +36,76 @@ class GoHomeMission extends Mission {
 
 /*****************************************************************************/
 
-// Go to town location, wait 10 seconds to sell and compound
+// Go to town location, clear trash from bank
 class TrashCompoundMission extends Mission {
-  constructor() {
-    let name = "TrashCompound";
-    let prio = MISSION_PRIORITY[name];
-    super(name, prio);
+    constructor() {
+        let name = "TrashCompound";
+        let prio = MISSION_PRIORITY[name];
+        super(name, prio);
+        
+        this.locations = [LOCATION_TOWN, LOCATION_BANK];
+        this.location_idx = 0;
+        this.location = this.locations[this.location_idx];
+        this.verbose = true;
 
-    this.location = LOCATION_TOWN;
-    this.verbose = true;
-
-    this.runCount = 15;
-  }
-
-  can_run() { 
-    return true;
-  }
-
-  run() {
-    if (this.verbose) Logger.log(`${this.name} Run()`);
-    if (!this.can_run()) {
-        Logger.log("Unable to run mission "+this.name);
-        return;
+        this.runCount = 15;
     }
 
-    // Move if needed
-    if (this.move_to_location()) { return }
+    can_run() { 
+        return true;
+    }
 
-    this.runCount--;
-    if (this.runCount <= 0) { this.cancel(); }
+    run() {
+        if (this.verbose) Logger.log(`${this.name} Run()`);
+        if (!this.can_run()) {
+            Logger.log("Unable to run mission "+this.name);
+            return;
+        }
 
-    setTimeout( this.cancel, 10000 );
-  }
+        // Move if needed
+        if (this.move_to_location()) { return } // Town
+        if (character.q.compound || character.q.upgrade) { return; }
+        this.location_idx = 1;
+        if (this.move_to_location()) { return } // Bank
+        if (this.retrieve()) { return; }
+        this.location_idx = 0;
+        if (this.move_to_location()) { return } // Town
+
+        this.runCount--;
+        if (this.runCount <= 0) { this.cancel(); }
+
+        setTimeout( this.cancel, 10000 );
+    }
+
+    retrieve() {
+        Logger.log("this._retrieve_done: "+this._retrieve_done);
+        if (this._retrieve_done == false) {
+            Logger.log("this._retrieve_done is set: "+this._retrieve_done);
+            return this._retrieve_done;
+        }
+        if (!is_in_bank()) { game_log("retrieve() called out of bank - BAD"); }
+        let items_to_retrieve = bank_get_trash();
+        if (items_to_retrieve.length == 0) {
+            this.cancel();
+            return;
+        }
+        /*  [{ "packname": "items0",  "idx": 22 },..] */
+        let i = 20;
+        for (let packinfo of items_to_retrieve) {
+            // limit code calls
+            if (i>0) {
+                bank_retrieve(packinfo.packname, packinfo.idx);
+                i--;
+            }
+        }
+        if (i==0 || character.esize == 0 || items_to_retrieve) {
+            this._retrieve_done = false;
+        } else {
+            this._retrieve_done = true;
+        }
+        return this._retrieve_done;
+    }
+
 }
 
 /*****************************************************************************/
@@ -150,7 +188,11 @@ class CollectItemsMission extends Mission {
 
   run() {
     if (this.verbose) Logger.log(`${this.name} Run()`);
-    // if (this.verbose) game_log(`${this.name} Location: ${this.location}`);
+
+    if (this.runCount <= 0) {
+        Logger.log("cancelling mission, this.runCount <= 0");
+        this.cancel();
+    }
 
     if (!this.can_run()) {
         Logger.log("Unable to run mission "+this.name);
@@ -161,6 +203,8 @@ class CollectItemsMission extends Mission {
             game_log("Unable to run, cancelling "+this.name);
             this.cancel();
         }
+
+        this.cancel(); // todo. Just cancel until server swapping is available for this mission
         return;
     }
     // todo hack for server hopping
@@ -188,10 +232,7 @@ class CollectItemsMission extends Mission {
 
     // Run for ~10 seconds
     this.runCount--;
-    if (this.runCount <= 0) {
-        Logger.log("cancelling mission, this.runCount <= 0");
-        this.cancel();
-    }
+
     // let char_inv_cache = get("cache_inventory_"+this.charname);
     // let char_esize = char_inv_cache.esize;
     // if (char_esize > 28 || character.esize < 5) { 
@@ -425,7 +466,11 @@ class ClearPVPItemsMission extends Mission {
     let prio = MISSION_PRIORITY[name];
     super(name, prio); 
 
-    this.location = LOCATION_BANK;
+    // Go to town first to auto sell
+    this.locations = [LOCATION_TOWN, LOCATION_BANK];
+    this.location_idx = 0;
+    this.location = this.locations[0];
+
     this.verbose = true;
     this.runCount = 10;
   }
@@ -437,8 +482,10 @@ class ClearPVPItemsMission extends Mission {
   run() {
     if (this.verbose) Logger.log(`${this.name} Run()`);
 
-    if (this.move_to_location()) { return }  // Bank    
     if (this.runCount <= 0) { this.cancel(); }
+    if (this.move_to_location()) { return }  // Town to sell Trash 
+    this.location_idx = 1;
+    if (this.move_to_location()) { return } // Bank
 
     // Store almost all items
     let item_stored = false;
@@ -450,6 +497,7 @@ class ClearPVPItemsMission extends Mission {
         }
     }
     if (!item_stored) this.cancel();
+    this.runCount--;
   }
 }
 

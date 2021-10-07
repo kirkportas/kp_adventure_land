@@ -269,13 +269,12 @@ function move_to_zone(zone) {
 	let verbose = character.ctype != "ranger";
 
 	let out_of_range = distance(character, zone) > 400;
+	let should_magiport = magiport_zones.includes(zone.name);
 	if (verbose) Logger.log("Move_to_zone()");
 	// Intended to handle respawn, and manual actions 
-	if (verbose) Logger.log(`zone: ${zone}`);
-	if (verbose) Logger.log("magiport zone? "+magiport_zones.includes(zone.name));
-	if (verbose) Logger.log("out_of_range? "+out_of_range);
-	if (verbose) Logger.log("now-last_magiport_request "+(Date.now() - last_magiport_request));
-	if (zone.name && magiport_zones.includes(zone.name)) {
+	if (verbose) Logger.log(`zone: ${zone},  magiport?: ${should_magiport}, outOfRange?: ${out_of_range}`);
+	if (verbose) Logger.log("since_last_magiport "+(Date.now() - last_magiport_request));
+	if (zone.name && should_magiport) {
 		// assume same server
 		if (out_of_range) {
 			request_magiport_to_boss();
