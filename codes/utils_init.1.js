@@ -149,7 +149,7 @@ COMPOUNDABLE=COMPOUNDABLE.concat([
 	"vitamulet","stramulet","intamulet","dexamulet",			// Amulets
 	"vitearring","strearring","intearring","dexearring", 		// Earrings
 	"vitring","dexring","intring","strring", 					// Rings
-	"orbg","jacko",												// Orbs
+	"orbg","jacko","talkingskull",								// Orbs
 	 															// Weapons
 	"lbelt", "hpbelt","strbelt","dexbelt","intbelt"				// Belts
 ]); 

@@ -288,15 +288,16 @@ function organized_bank_store(i) {
     }
 
     // TOP ROW
-    let expensive_item_threshold = 0.45 * 1000000; // 450k
-    let special_items = ["talkingskull"];
-    if (calculate_item_value(item,1) > expensive_item_threshold
-        || item.name.includes("key")
-        || ["token","gem"].includes(item.type) 
-        || special_items.includes(item.name)) {
-            bank_store(i, "items7");
-            return;
-    }
+    // Disable 
+    // let expensive_item_threshold = 0.45 * 1000000; // 450k
+    // let special_items = ["talkingskull"];
+    // if (calculate_item_value(item,1) > expensive_item_threshold
+    //     || item.name.includes("key")
+    //     || ["token","gem"].includes(item.type) 
+    //     || special_items.includes(item.name)) {
+    //         bank_store(i, "items7");
+    //         return;
+    // }
 
     // BOTTOM ROW
     // Materials
@@ -311,6 +312,9 @@ function organized_bank_store(i) {
 
     bank_store(i, "items2");
     bank_store(i, "items0");
+    
+    // Safety catch, deposit to any open pack
+    bank_store(i);
 }
 
 function bank_get_compoundables_count() {
