@@ -1,5 +1,13 @@
 zNotes
 
+Pumpkin kill:
+Rogue XP: 2613190  - 3813206   => 1200016 XP  with +100% cbuff
+Warr XP : 81865647 - 82295232  => 429585  XP  with +50% cbuff
+    1.2M/2    = 600k XP for rogue
+    430k/1.5 = 287k XP for warr
+
+    3813206 - 4855106  => 1041900 => 1004k 
+    82295232 -82575679 => 280447  => 280k
 Total candies: 20 and 51 on 2 toons. 11:55pm
 
 cd "/c/Users/kirkp/AppData/Roaming/Adventure Land/autosync4984500319158272/adventureland"
@@ -29,6 +37,46 @@ send_item("Terakazam",0,10000);
 send_item("Terrogue",0,10000);;
 
 ***
+
+==
+
+Restart every minute from Draack
+
+const C = {} // Local CODE container! One key per namespace / imported file.
+
+async function init() {
+    C.import = await import('http://localhost:8888/import.js')
+    await C.import.modules('main', 'party', 'util', 'merchant')    
+    
+    for (namespace in C) {
+        for (name of Object.keys(C[namespace])) {
+            full_name = `C.${namespace}.${name}`
+            if (name in this) log('Not unpacking clashing name: ' + full_name)
+            else eval(`${name} = ${full_name}`)
+        }
+    }
+    
+    log('CODE ready!')
+}
+
+init()
+
+setTimeout(parent.start_runner, 60_000)
+
+==
+character.on('stacked', data => {
+    log(data);
+});
+
+
+https://thewebdev.info/2021/02/27/how-to-simulate-a-keypress-event-programmatically-with-javascript/
+parent.window.dispatchEvent(new KeyboardEvent('keydown', {
+  keyCode: 220,
+  which: 220,
+  shiftKey: false,
+  ctrlKey: false,
+  metaKey: false
+}));
 
 
 

@@ -515,7 +515,8 @@ class DepositEverythingMission extends Mission {
     this.location = this.locations[0];
 
     this.verbose = true;
-    this.whitelist = new Set(["tracker","hpot0","mpot0","stand0","rod","pickaxe"]);
+    this.whitelist = new Set(["tracker","hpot0","mpot0","hpot1","mpot1","elixirluck",
+        "stand0","rod","pickaxe"]);
 
     this.runCount = 3;
   }

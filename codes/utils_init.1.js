@@ -76,7 +76,7 @@ const UPGRADEABLE_LEVELS = {
 	"wgloves": 7,
 	"wbreeches": 7,
 	"wshoes": 7,
-	"wattire": 5,
+	"wattire": 3,
 	"wshield": 7,
 
 	"cape": 7,
@@ -100,10 +100,10 @@ const UPGRADEABLE_LEVELS = {
 	"hbow": 5,
 	"candycanesword": 5,
 	"maceofthedead": 5,
-	"bowofthedead": 5,
-	"staffofthedead": 5,
-	"daggerofthedead": 5,
-	"swordofthedead": 4,
+	"bowofthedead": 6,
+	"staffofthedead": 6,
+	"daggerofthedead": 6,
+	"swordofthedead": 5,
 	"rapier": 5,
 	"firebow": 5,
 	"harbringer": 5,
@@ -172,12 +172,14 @@ var LOW_CRAFT_ITEMS = ["gslime","crabclaw","beewings","seashell","bwing","snakeo
 var FARMABLE = ["gem0", "leather", "bfur", "cscale", "feather0", "ascale", "spidersilk"];
 FARMABLE = FARMABLE.concat(LOW_CRAFT_ITEMS);
 FARMABLE = FARMABLE.concat(["vitearring","strearring","dexearring","intearring"]);
-FARMABLE = FARMABLE.concat(["stramulet","dexamulet","intamulet"]);
+FARMABLE = FARMABLE.concat(["dexamulet","intamulet"]);
 FARMABLE = FARMABLE.concat(["candy0","candy1","pvptoken"]);
 FARMABLE = FARMABLE.concat(["wbook0"]);
 FARMABLE = FARMABLE.concat(["vitscroll","scroll0","scroll1"]);
 FARMABLE = FARMABLE.concat(["lostearring","rattail"]);
 FARMABLE = FARMABLE.concat(["gemfragment"]);
+// Previously in Farmable:
+// stramulet
 
 
 // This won't sell at item.level >=2  (check method sell_all_trash)
@@ -185,6 +187,7 @@ var TRASH = ["stinger","hpamulet","ringsj", "hpbelt"];
 TRASH = TRASH.concat(["gloves1","coat1","helmet1","shoes1","pants1"]);
 TRASH = TRASH.concat(["throwingstars"]);
 TRASH = TRASH.concat(["phelmet","gphelmet"]);   // expensive
+TRASH = TRASH.concat(["stramulet","vitamulet"]); 
 
 // These localstorage vars are used for passing items to the Merchant
 set("give_items_"+NameWarrior, []);

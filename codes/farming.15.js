@@ -593,7 +593,13 @@ function switch_to_event_server(event) {
 	if (Date.now() - last_fight_ts < 2000) return;
 	let is_same_server = event.server_region == parent.server_region && 
 					     event.server_identifier == parent.server_identifier; 
-	if (is_same_server) { return }
+	
+	if (is_same_server) { 
+		Logger.log("is_same_server");
+		Logger.log("event: "+JSON.stringify(event));
+		return;
+	}
+
 
 	// Switch to Warrior if on lowbie ranger
 	if (character.name == NameRanger2) {
@@ -629,8 +635,14 @@ function halloween_farm() {
 	if (verbose) Logger.log("halloween_farm");
 	// run away if bosses are spawned on PVP while returning to normal farm
 
+	// Check for engaged events before checking get_nearest_mon
+	// The chars may log in on top of an unengaged boss,
+	// they should not initiate if boss is not engaged.
 	// Continue if already fighting
-	if (get_nearest_monster({"type":"mrpumpkin"})) {
+
+	let target_mrpumpkin = get_nearest_monster({"type":"mrpumpkin"});
+	let target_mrgreen = get_nearest_monster({"type":"mrgreen"});
+	if (target_mrpumpkin && "target" in target_mrpumpkin) {
 		if (parent.server_identifier == "PVP") {
 			_party_farm();
 			return;
@@ -638,7 +650,7 @@ function halloween_farm() {
 		mrpumpkinfarm();
 		if (verbose) Logger.log("Engaged against mrpumpkin");
 		return;
-	} else if (get_nearest_monster({"type":"mrgreen"})) {
+	} else if (target_mrgreen && "target" in target_mrgreen) {
 		if (parent.server_identifier == "PVP") {
 			_party_farm();
 			return;
@@ -648,24 +660,25 @@ function halloween_farm() {
 		return;
 	} 
 
-	let event;
-	let hp_threshold = 0.7; // lowered to 70%
 	let engaged = get(ALDATA_EVENTS_ENGAGED_KEY);
-	// let priority = "mrpumpkin";
+	let hp_threshold = 0.7; // lowered to 70%
 
 	// Todo refactor to method
+	// Use 5% hp check to avoid getting stuck after a kill
+	// Don't engage until it has taken 1% damage.
 	let engaged_pumpkin_event = engaged.filter(e => 
 		e.eventname == "mrpumpkin"
 		&& e.hp/e.max_hp > hp_threshold
-		&& e.hp/e.max_hp < e.max_hp*0.97)[0];
+		&& e.hp/e.max_hp < 0.99)[0];
 	let engaged_mrgreen_event = engaged.filter(e => 
 		e.eventname == "mrgreen"
 		&& e.hp/e.max_hp > hp_threshold
-		&& e.hp/e.max_hp < e.max_hp*0.97)[0];
+		&& e.hp/e.max_hp < 0.99)[0];
 
+	let event;
 	let new_engagement = engaged_pumpkin_event || engaged_mrgreen_event;
-	if (verbose) Logger.log("engaged_pumpkin_event: "+engaged_pumpkin_event);
-	if (verbose) Logger.log("engaged_mrgreen_event: "+engaged_mrgreen_event);
+	if (verbose) Logger.log("engaged_pumpkin_event: "+JSON.stringify(engaged_pumpkin_event));
+	if (verbose) Logger.log("engaged_mrgreen_event: "+JSON.stringify(engaged_mrgreen_event));
 	if (verbose) Logger.log("new_engagement: "+new_engagement);
 
 	// Only begin if >80% health

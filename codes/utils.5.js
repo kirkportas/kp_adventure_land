@@ -425,12 +425,19 @@ for (pack of Object.keys(itemlocs)) {
 */
 function sell_all_trash(){
     character.items.forEach((item, index) => {
-        if (item
-            && TRASH.includes(item.name)
-            && item_grade(item) < 2
+        if (item == null || item==undefined) { return; }
+        if (!TRASH.includes(item.name)) return;
+        if (item_grade(item) < 2
             && item.level < 2) {
             log(`Merchant is unloading trash ${item.name}`);
             item.q ? sell(index, item.q) : sell(index, item);
+        } 
+
+        let rare_sells = ["gphelmet"];
+        if (rare_sells.includes(item.name)
+            && item.level == 0) {
+                log(`Merchant is selling RARE trash ${item.name}`);
+                sell(index, item);
         }
     });
 }
@@ -530,7 +537,7 @@ Example of data[0], e.g. a pontyItem
 
     let PONTY_KEY = "ponty_items_to_buy";
     let ponty_desired = get(PONTY_KEY);
-    delete ponty_desired[ITEM_TO_ADD];
+    delete ponty_desired["stramulet"];
     set(PONTY_KEY, ponty_desired);
     show_json(get(PONTY_KEY));
 
@@ -547,14 +554,14 @@ function showGiveItems() {
 }
 /* Debugcode 
     if (debug && pontyItem.name.includes("earring")) {
-                game_log(pontyItem.name);
-                game_log(itemsToBuy[pontyItem.name]);
-                game_log(pontyItem.name in itemsToBuy);
-                game_log(itemsToBuy[pontyItem.name] > 0);
-            }
-                    if (debug) game_log(2);
-                    if (debug) game_log((pontyItem.q ?? 1));
-                    if (debug) game_log(itemsToBuy[pontyItem.name] - (pontyItem.q ?? 1));
+        game_log(pontyItem.name);
+        game_log(itemsToBuy[pontyItem.name]);
+        game_log(pontyItem.name in itemsToBuy);
+        game_log(itemsToBuy[pontyItem.name] > 0);
+    }
+    if (debug) game_log(2);
+    if (debug) game_log((pontyItem.q ?? 1));
+    if (debug) game_log(itemsToBuy[pontyItem.name] - (pontyItem.q ?? 1));
 
 */
 function pontyPurchase()

@@ -130,6 +130,7 @@ function main(){
 			sell_all_trash();
 			compound_items();
 			buy_potions();
+			buy_scrolls();
 
 
 			// Upgrade "common" items to a specified level (e.g. 7)
@@ -201,6 +202,30 @@ function buy_potions() {
 }
 
 
+var buy_scrolls_ts = Date.now();
+function buy_scrolls() {
+	if (Date.now() - buy_scrolls_ts < 3000) { return; }
+	buy_scrolls_ts = Date.now();
+
+	let scroll_stock = {
+		'scroll0': 100,
+		'scroll1': 100,
+		// 'scroll2': 0,
+		'cscroll0': 100,
+		'cscroll1': 100,
+		// 'cscroll2': 0
+	}
+
+	for (let [itemname, target] of Object.entries(scroll_stock)) {
+		let inv_count = get_item_count_in_inventory(itemname);
+
+		// Buy in halves to avoid latency issues that cause overbuying
+		if (inv_count < target) { 
+			buy(itemname, Math.max(1,(target-inv_count)/2)); 
+		}
+	}
+}
+
 // function give_item(charname, itemname, count) {
 // 	// assumes in range and item present.
 
@@ -250,11 +275,11 @@ function give_potions(entity) {
 	}
 
 	// Transition logic. Remove after level 0 potions are used up. Todo
-	if (mpot0_count==0) {
+	if (mpot0_count<1000) {
 		let mpot1_count = get_item_count_in_inventory_array(char_inv_cache.items, "mpot1");
 		send_item(charname, locate_item("mpot1"), 9999-mpot1_count); 
 	}
-	if (hpot0_count==0) {
+	if (hpot0_count<1000) {
 		let hpot1_count = get_item_count_in_inventory_array(char_inv_cache.items, "hpot1");
 		send_item(charname, locate_item("hpot1"), 9999-hpot1_count); 
 	}

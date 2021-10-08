@@ -5,12 +5,12 @@ function merchant_handle_upgradeables(scrolltype) {
 
 	Logger.functionEnter("handle UPGRADEABLE_LEVELS");
 	let did_upgrade = false;
-	for (var [item, maxlvl] of Object.entries(UPGRADEABLE_LEVELS)) {
+	for (var [itemname, maxlvl] of Object.entries(UPGRADEABLE_LEVELS)) {
 		// no dex for ranger items
 		// if (["wgloves","wcap"].includes(item)) {
 		// 	scrolltype = "intscroll";
 		// }
-		did_upgrade = upgrade_all_item(item, maxlvl, scrolltype); // "dexscroll" intscroll strscroll
+		did_upgrade = upgrade_all_item(itemname, maxlvl, scrolltype); // "dexscroll" intscroll strscroll
 		if (did_upgrade) {
 			Logger.log("did_upgrade = true");
 			break;
@@ -70,11 +70,11 @@ function compound_items(){
 // Will upgrade all whitelisted items to their maxlvl - defined in utils_init 
 function upgrade_items(){
 	if (character.q.upgrade) { return; }
-	for (item of UPGRADEABLE) {
+	for (let item of UPGRADEABLE) {
 		let lvl = 0;
 		for (; lvl < max_level_upgrade; lvl++) {
 			var scroll_idx = locate_item("scroll0");
-			if (scroll_idx < 0) {
+			if (character.items[scroll_idx].q < 0) {
 				buy("scroll0",5);
 			}
 			var item_idxs = locate_items_of_level(item, lvl);
@@ -248,9 +248,9 @@ function upgrade_all_item(itemname, target_lvl, stat_type) {
 		return false;
 	} else {
 		var item = character.items[upgradeable_item_idx];
-		if (item.level >= target_lvl) {
-			return false;
-		}
+		if (item.level >= target_lvl) return false;
+		if (item_grade(item) >=2) return false;
+		
 		Logger.log(`Item (${itemname}) level (${item.level})`);
 
 		var is_statupgradeable = "stat" in G.items[itemname];
