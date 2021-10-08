@@ -250,7 +250,6 @@ function give_potions(entity) {
 	}
 	let cache_age_ms = Date.now() - char_inv_cache.ts;
 	if (cache_age_ms > 15000) { 
-
 		game_log("Error: inventorycache out of date for "+entity.name+" by "+(cache_age_ms/1000)+"s"); 
 		return;
 	}
@@ -261,28 +260,37 @@ function give_potions(entity) {
 	// Todo Check if merchant has potions in inventory.
 	// Todo this will oversend. because it does not update the cached inv count
 
-	// Fill them up to a full stack of 9999 potions
-	let mpot0_count = get_item_count_in_inventory_array(char_inv_cache.items, "mpot0");
-	if (mpot0_count < 9999) { 
-		send_item(charname, locate_item("mpot0"), 2*9999-mpot0_count); 
-		// game_log(`Sent ${9999-mpot0_count} mpot0's to ${charname}`);
+	let potions = ["mpot0","hpot0","mpot1","hpot1"];
+	for (let potionname of potions) {
+		// send_item(name, -1) will treat the -1 as index 0
+		let count = get_item_count_in_inventory_array(char_inv_cache.items, potionname);
+		if (count < 9999 && locate_item(potionname) >= 0) { 
+			send_item(charname, locate_item(potionname), 2*9999-count); 
+			// game_log(`Sent ${9999-mpot0_count} mpot0's to ${charname}`);
+		}
 	}
+	// // Fill them up to a full stack of 9999 potions
+	// let mpot0_count = get_item_count_in_inventory_array(char_inv_cache.items, "mpot0");
+	// if (mpot0_count < 9999 && locate_item("mpot0") >= -) { 
+	// 	send_item(charname, locate_item("mpot0"), 2*9999-mpot0_count); 
+	// 	// game_log(`Sent ${9999-mpot0_count} mpot0's to ${charname}`);
+	// }
 
-	let hpot0_count = get_item_count_in_inventory_array(char_inv_cache.items, "hpot0");
-	if (hpot0_count < 9999) { 
-		send_item(charname, locate_item("hpot0"), 2*9999-hpot0_count); 
-		// game_log(`Sent ${9999-mpot0_count} hpot0's to ${charname}`);
-	}
+	// let hpot0_count = get_item_count_in_inventory_array(char_inv_cache.items, "hpot0");
+	// if (hpot0_count < 9999) { 
+	// 	send_item(charname, locate_item("hpot0"), 2*9999-hpot0_count); 
+	// 	// game_log(`Sent ${9999-mpot0_count} hpot0's to ${charname}`);
+	// }
 
-	// Transition logic. Remove after level 0 potions are used up. Todo
-	if (mpot0_count<1000) {
-		let mpot1_count = get_item_count_in_inventory_array(char_inv_cache.items, "mpot1");
-		send_item(charname, locate_item("mpot1"), 9999-mpot1_count); 
-	}
-	if (hpot0_count<1000) {
-		let hpot1_count = get_item_count_in_inventory_array(char_inv_cache.items, "hpot1");
-		send_item(charname, locate_item("hpot1"), 9999-hpot1_count); 
-	}
+	// // Transition logic. Remove after level 0 potions are used up. Todo
+	// if (mpot0_count<1000) {
+	// 	let mpot1_count = get_item_count_in_inventory_array(char_inv_cache.items, "mpot1");
+	// 	send_item(charname, locate_item("mpot1"), 9999-mpot1_count); 
+	// }
+	// if (hpot0_count<1000) {
+	// 	let hpot1_count = get_item_count_in_inventory_array(char_inv_cache.items, "hpot1");
+	// 	send_item(charname, locate_item("hpot1"), 9999-hpot1_count); 
+	// }
 
 }
 

@@ -626,7 +626,10 @@ function switch_to_event_server(event) {
 		parent.window.location.href="/character/"+charname+"/in/"+event.server_region+"/"+event.server_identifier+"/";
 		return;		
 	}
+	Logger.log("end of switch_to_event_server, calling change_server()");
 	change_server(event.server_region, event.server_identifier); // ("EU","I") ("ASIA","PVP") or ("US","III")
+	let charname = character.name;
+	parent.window.location.href="/character/"+charname+"/in/"+event.server_region+"/"+event.server_identifier+"/";
 }
 
 var last_stop_ms = Date.now();
@@ -642,7 +645,8 @@ function halloween_farm() {
 
 	let target_mrpumpkin = get_nearest_monster({"type":"mrpumpkin"});
 	let target_mrgreen = get_nearest_monster({"type":"mrgreen"});
-	if (target_mrpumpkin && "target" in target_mrpumpkin) {
+	// if (target_mrpumpkin && "target" in target_mrpumpkin) {
+	if (target_mrpumpkin) {
 		if (parent.server_identifier == "PVP") {
 			_party_farm();
 			return;
@@ -650,7 +654,8 @@ function halloween_farm() {
 		mrpumpkinfarm();
 		if (verbose) Logger.log("Engaged against mrpumpkin");
 		return;
-	} else if (target_mrgreen && "target" in target_mrgreen) {
+	// } else if (target_mrgreen && "target" in target_mrgreen) {
+	} else if (target_mrgreen) {
 		if (parent.server_identifier == "PVP") {
 			_party_farm();
 			return;
@@ -661,7 +666,7 @@ function halloween_farm() {
 	} 
 
 	let engaged = get(ALDATA_EVENTS_ENGAGED_KEY);
-	let hp_threshold = 0.7; // lowered to 70%
+	let hp_threshold = 0.65; // lowered to 70%
 
 	// Todo refactor to method
 	// Use 5% hp check to avoid getting stuck after a kill

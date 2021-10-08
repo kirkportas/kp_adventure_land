@@ -71,7 +71,7 @@ class MissionControl {
         let missions = [];
         missions = missions.concat([FishingMission, MiningMission]);
         missions.push(GoHomeMission);
-        missions.push(HandleUpgradeablesMission);
+        // missions.push(HandleUpgradeablesMission);
         missions.push(HandleCompoundablesMission);
         // missions.push(DepositEverythingMission);
 
@@ -194,15 +194,15 @@ MissionControl.prototype._scan_for_missions = function() {
             continue;
         }
 
-        let candy_count = char_inv_cache.items.filter(item =>
-            item && item.name.includes("candy")
-        ).length;
-        if (candy_count > 0) {
-            this.addMission(new CollectItemsMission(charObj.name)); 
-        }
+        // let candy_count = char_inv_cache.items.filter(item =>
+        //     item && item.name.includes("candy")
+        // ).length;
+        // if (candy_count > 0) {
+        //     this.addMission(new CollectItemsMission(charObj.name)); 
+        // }
 
         let char_esize = char_inv_cache.esize;
-        let empty_space_threshold = 15; // High for testing. Lower to ~10/15
+        let empty_space_threshold = 28; // High for testing. Lower to ~10/15
         if (char_esize < empty_space_threshold) { 
             game_log("Adding collectItems mission for "+charObj.name);
             Logger.log("Adding collectItems mission for "+charObj.name);
@@ -211,10 +211,11 @@ MissionControl.prototype._scan_for_missions = function() {
         }
     }
 
+    let skipped_items = ["beewings"];
     let holding_pvp_item = false;
     for(let i=0;i<42;i++) {
         let item = character.items[i];
-        if(item && "v" in item) {
+        if(item && "v" in item && !skipped_items.includes(item.name)) {
             item_stored = holding_pvp_item = true;
             this.addMission(new ClearPVPItemsMission());
         }

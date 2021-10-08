@@ -169,9 +169,6 @@ class CollectItemsMission extends Mission {
     this.charname = charname;
     this.charObj = onlineChars().filter(x=>x.name == charname)[0];
 
-    // TODO major bug. Calling update_location() doesn't update it and chokes
-    // in the parent mission move_to_location() method
-    // this.location = new Location(500, 1100, "main"); // bees
     this.update_location();
 
     this.runCount = 10;
@@ -182,8 +179,17 @@ class CollectItemsMission extends Mission {
   can_run() { 
     // Don't leave the main map
     let can = character.esize > this.esize_alert-1;
-    can = can && this.location && this.location.map == "main";
+    // can = can && this.location && this.location.map == "main";
     return can;
+  }
+
+  move_to_location() {
+    if (["Terazarrior","Terrogue"].includes(this.charname)) {
+        if (!get_nearest_monster("mrgreen") && !get_nearest_monster("mrpumpking")) {
+            request_magiport_to_boss();
+        }
+    }
+    super.move_to_location();
   }
 
   run() {
@@ -208,18 +214,30 @@ class CollectItemsMission extends Mission {
         return;
     }
     // todo hack for server hopping
-    if (this.charObj.server && this.charObj.server != "USPVP") {
-        this.cancel();
-        Logger.log("cancelling mission, server not USPVP");
-        Logger.log(this.charObj.server);
+
+    if (!is_same_server_as_charObj(this.charObj)) {
+        let name, region;
+        if (this.charObj.server == "ASIAI") {
+            change_server("ASIA","I");
+        } else {
+            name = this.charObj.server.slice(0,2);
+            region = this.charObj.server.slice(2,999);
+            change_server(name,region);
+        }
     }
+
+    // if (this.charObj.server && this.charObj.server != "USPVP") {
+    //     this.cancel();
+    //     Logger.log("cancelling mission, server not USPVP");
+    //     Logger.log(this.charObj.server);
+    // }
+
     // TODO Update to check cache of other players.
     // Bee farming is on US PVP - Oct 4 2021
     // let myServer = parent.server_region + parent.server_identifier;
-    // if (myServer != this.charObj.server) {
-    if (parent.server_region != "US" || parent.server_identifier != "PVP") {
-        change_server("US","PVP");
-    }
+    // if (parent.server_region != "US" || parent.server_identifier != "PVP") {
+    //     change_server("US","PVP");
+    // }
 
     // Move if needed
     this.update_location();

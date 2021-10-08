@@ -188,6 +188,7 @@ TRASH = TRASH.concat(["gloves1","coat1","helmet1","shoes1","pants1"]);
 TRASH = TRASH.concat(["throwingstars"]);
 TRASH = TRASH.concat(["phelmet","gphelmet"]);   // expensive
 TRASH = TRASH.concat(["stramulet","vitamulet"]); 
+TRASH = TRASH.concat(["maceofthedead","staffofthedead","swordofthedead"]); 
 
 // These localstorage vars are used for passing items to the Merchant
 set("give_items_"+NameWarrior, []);

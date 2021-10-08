@@ -7,6 +7,15 @@ function onlineChars() {
     );
 }
 
+
+function is_same_server_as_charObj(charObj) {
+    // charObj.server => "EUII","ASIAI","USPVP"
+    let my_server = parent.server_region + parent.server_identifier;
+    let their_server = charObj.server;
+    return my_server == their_server;
+}
+
+
 // function debounce(func, wait, immediate) {
 //   var timeout;
 //   return function() {
