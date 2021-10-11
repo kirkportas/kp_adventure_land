@@ -38,6 +38,12 @@ send_item("Terrogue",0,10000);;
 
 ***
 
+
+==
+character.map == "jail"
+
+-79,-152
+parent.socket.emit("leave")
 ==
 
 Restart every minute from Draack

@@ -27,6 +27,7 @@
  * i.e. 1 is higher priority than 20   */
 const MISSION_PRIORITY = {
     "ClearPVPItems": 3,       // If holding a PVP flagged item, deposit it to clear PVP flag.
+    "Dismantle": 4,
     "DepositEverything": 5,   // On boot or to reset. deposit all but a whitelist
     "HandleCompoundables": 6, // Get compoundable items from the bank and compound
     "HandleUpgradeables": 6,  // Get upgradeable items from the bank and upgrade
@@ -49,8 +50,9 @@ class Location {
 
 /*****************************************************************************/
 
-var LOCATION_TOWN = new Location(-207, -108, "main")
-var LOCATION_BANK = new Location(0, -176, "bank")
+var LOCATION_TOWN = new Location(-207, -108, "main");
+var LOCATION_BANK = new Location(0, -176, "bank");
+var LOCATION_DISMANTLE = new Location(0, 540, "main");
 var STATE_ACTIVE = "active";
 var STATE_DONE = "done";
 
@@ -72,7 +74,7 @@ class MissionControl {
         missions = missions.concat([FishingMission, MiningMission]);
         missions.push(GoHomeMission);
         // missions.push(HandleUpgradeablesMission);
-        missions.push(HandleCompoundablesMission);
+        // missions.push(HandleCompoundablesMission);
         // missions.push(DepositEverythingMission);
 
         for (let m of missions) {
@@ -180,10 +182,6 @@ MissionControl.prototype._scan_for_missions = function() {
             // this.addMission(new DepositFarmablesMission()); 
     }
 
-    if (locate_item("candy0") >0 || locate_item("candy1") >0) {
-        this.addMission(new ExchangeMission());
-    }
-
     for (let charObj of onlineChars()) {
         if (charObj.name == character.name) { continue; }
 
@@ -211,27 +209,46 @@ MissionControl.prototype._scan_for_missions = function() {
         }
     }
 
-    let skipped_items = ["beewings"];
-    let holding_pvp_item = false;
+    // Scan for missions based on items currently held in inventory
+    let pvpflag_skipped_items = ["beewings"];
+    var holding_pvp_item = false;
+    var holding_dismantle_item = false;
+
     for(let i=0;i<42;i++) {
         let item = character.items[i];
-        if(item && "v" in item && !skipped_items.includes(item.name)) {
-            item_stored = holding_pvp_item = true;
-            this.addMission(new ClearPVPItemsMission());
+        if (!item || !item.name) continue;
+
+        // PVP Flag Mission
+        if("v" in item && !pvpflag_skipped_items.includes(item.name)) {
+            holding_pvp_item = true;
         }
+
+        // Dismantle Mission
+        if (this.getCurrentMission().name != "Exchange"
+            && DISMANTLE_ITEMS.includes(item.name)
+            && item.level == 0) {
+                holding_dismantle_item = true;
+        }
+
+        // Exchange mission
+        if (EXCHANGEABLES.includes(item.name)) {
+            this.addMission(new ExchangeMission());
+        }
+
     }
+
+    if (holding_pvp_item) this.addMission(new ClearPVPItemsMission());
+    if (holding_dismantle_item) this.addMission(new DismantleMission());
 
     /* Cleanup/Robustness ****************************************************/
     let cycle_time = 10*60*1000; // 10 minutes
     if ((Date.now() - this.last_cycle) > cycle_time) {
         this.addMission(new DepositEverythingMission());
         this.addMission(new HandleCompoundablesMission());
+        this.addMission(new HandleUpgradeablesMission());
         this.sort();
         this.update_last_cycle();
     }
-    // todo bank items mission
-
-    // todo scan bank and upgrade/compount mission
 }
 
 MissionControl.prototype.cleanup = function() {

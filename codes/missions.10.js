@@ -136,7 +136,7 @@ class ExchangeMission extends Mission {
 
     if (character.q.exchange) { return; }
 
-    let exchangeables = ["candy1","candy0","gem0"];
+    let exchangeables = ["candy1","candy0","gem0","mysterybox","armorbox"];
     for (let itemname of exchangeables) {
         let idx = locate_item(itemname);
         if (idx >= 0) {
@@ -150,6 +150,56 @@ class ExchangeMission extends Mission {
 }
 
 /*****************************************************************************/
+
+// Intended for dismantling "ofthedead" items to get mummybones
+class DismantleMission extends Mission {
+  constructor() {
+    let name = "Dismantle";
+    let prio = MISSION_PRIORITY[name];
+    super(name, prio);
+
+    this.location = LOCATION_DISMANTLE;
+    this.verbose = true;
+  }
+
+  can_run() { 
+    return true;
+  }
+
+  run() {
+    if (this.verbose) Logger.log(`${this.name} Run()`);
+    if (!this.can_run()) {
+        Logger.log("Unable to run mission "+this.name);
+        return;
+    }
+
+    // Move if needed
+    if (this.move_to_location()) { return; }
+
+    // Keep daggers of the dead
+    var have_items = false;
+    for (let itemname of DISMANTLE_ITEMS) {
+        idxs = locate_items(itemname);
+        for (let idx of idxs) {
+            let item = character.items[idx];
+
+            // Only dismantle level 0 items
+            if (item.level > 0) continue;
+
+            have_items = true;
+            if (idx >= 0) {
+                dismantle(idx);
+                return;
+            }   
+        }
+    }
+
+    if (!have_items) this.cancel();
+  }
+}
+
+/*****************************************************************************/
+
 /*
 show_json( 
     distance(

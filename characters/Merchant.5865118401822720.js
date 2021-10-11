@@ -111,9 +111,11 @@ function main(){
 		use_potion();
 
 
-		//  Unequip to walk faster 
+		// Unequip to walk faster 
+		// vstaff has a net +4 speed
 		if (is_moving(character)) { 
-			if (character.slots["mainhand"] != null) {
+			if (character.slots["mainhand"] != null
+				&& character.slots["mainhand"].name != "vstaff") {
 				unequip("mainhand"); 	
 			}
 			close_booth();

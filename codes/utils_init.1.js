@@ -68,6 +68,8 @@ const ALLTOONS = KIRKS_TOONS.concat(VALS_TOONS);
 // Misc constants
 const PONTY_KEY = "ponty_items_to_buy";
 
+const EXCHANGEABLES = ["candy1","candy0","gem0","mysterybox","armorbox"];
+
 // Configure upgrade/compound actions
 const max_level_upgrade = 3; // Only used for a GUI function (intended for lowlevel)
 const UPGRADEABLE_LEVELS = {
@@ -99,11 +101,11 @@ const UPGRADEABLE_LEVELS = {
 	"pmace": 5,
 	"hbow": 5,
 	"candycanesword": 5,
-	"maceofthedead": 5,
-	"bowofthedead": 6,
-	"staffofthedead": 6,
+	// "maceofthedead": 5,
+	// "bowofthedead": 6,
+	// "staffofthedead": 6,
 	"daggerofthedead": 6,
-	"swordofthedead": 5,
+	// "swordofthedead": 5,
 	"rapier": 5,
 	"firebow": 5,
 	"harbringer": 5,
@@ -166,6 +168,8 @@ for (itemname of shop_items) {
 	UPGRADEABLE_LEVELS[itemname] = 7;
 } 
 
+const DISMANTLE_ITEMS = ["staffofthedead","maceofthedead","swordofthedead","bowofthedead"];
+    
 const UPGRADEABLE = Object.keys(UPGRADEABLE_LEVELS);
 
 var LOW_CRAFT_ITEMS = ["gslime","crabclaw","beewings","seashell","bwing","snakeoil","snakefang","spores","whiteegg"];
@@ -188,7 +192,7 @@ TRASH = TRASH.concat(["gloves1","coat1","helmet1","shoes1","pants1"]);
 TRASH = TRASH.concat(["throwingstars"]);
 TRASH = TRASH.concat(["phelmet","gphelmet"]);   // expensive
 TRASH = TRASH.concat(["stramulet","vitamulet"]); 
-TRASH = TRASH.concat(["maceofthedead","staffofthedead","swordofthedead"]); 
+// TRASH = TRASH.concat(["maceofthedead","staffofthedead","swordofthedead"]); 
 
 // These localstorage vars are used for passing items to the Merchant
 set("give_items_"+NameWarrior, []);

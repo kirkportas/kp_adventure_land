@@ -786,8 +786,11 @@ var FARMING_DEBUG = false;
 // function hween_boss_is_engaged() {
 
 // }
-var RARE_MOB_TYPES = ["cutebee","greenjr","goldenbat","phoenix","squigtoad",
+var RARE_MOB_TYPES = ["greenjr","goldenbat","phoenix","squigtoad",
 	"mrpumpkin","mrgreen"];
+
+// Disable cutebee while beefarming. Kouin will kill for it
+// RARE_MOB_TYPES.push("cutebee");
 
 // Called by all fighter characters
 function party_farm() {
