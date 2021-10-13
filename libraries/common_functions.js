@@ -489,8 +489,11 @@ function resolve_deferred(name,data)
 	if(!deferreds[name] || !deferreds[name].length) return console.error("Weird resolve_deferred issue: "+name),console.log("If you emit socket events manually, ignore this message");
 	current_deferred=deferreds[name].shift();
 	if(!deferreds[name].length)	delete deferreds[name];
-	if(deferreds[name] && deferreds[name].length && deferreds[name][deferreds[name].length-1].start) push_ping(mssince(deferreds[name][deferreds[name].length-1].start)); // if there's a promise bug, this covers the .ping outbreak issue
-	else if(current_deferred.start) push_ping(mssince(current_deferred.start));
+	if(0) // bad idea to start with, regular pings to the server is a better idea [08/10/21]
+	{
+		if(deferreds[name] && deferreds[name].length && deferreds[name][deferreds[name].length-1].start) push_ping(mssince(deferreds[name][deferreds[name].length-1].start)); // if there's a promise bug, this covers the .ping outbreak issue
+		else if(current_deferred.start) push_ping(mssince(current_deferred.start));
+	}
 	try{
 		current_deferred.resolve(data);
 	}catch(e){
