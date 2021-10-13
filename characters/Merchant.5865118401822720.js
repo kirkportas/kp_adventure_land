@@ -34,27 +34,7 @@ function scareLoop() {
 
 // Use this to make do any custom or one-off stuff.
 function custom_town_behavior() {
-
 	// 1) Early-game: Get some/all shop items to lvl 9
-	// if (character.gold > 1000000 && !did_upgrade) {
-	// 	// level_x_shop_upgrades(8);
-	// }
-
-	// 2) 
-	// var base_armor_list = ["helmet","shoes","gloves","pants","coat"];
-	// if (!did_upgrade) {
-	// 	Logger.functionEnter("Warrior base items");
-	// 	for (item of ["blade","wshield"].concat(base_armor_list)) {
-	// 		// send_item("Terranger", locate_item(item), 1);
-	// 		// var did_upgrade = upgrade_all_item(item, 9, "dexscroll"); // intscroll strscroll dexscroll
-	// 		did_upgrade = get_upgraded_base_item(item, 7, "strscroll"); 
-	// 		if (did_upgrade) {
-	// 			Logger.log("did_upgrade = true");
-	// 			break;
-	// 		}
-	// 	}
-	// 	Logger.functionExit("Warrior base items", 0);
-	// }
 }
 
 
@@ -99,6 +79,10 @@ add_top_button("M-Compound","M-Compound", function() {
 	let m = new HandleCompoundablesMission();
 	missionControl.addMission(m);
 });
+add_top_button("M-Upgrade","M-Upgrade", function() {
+	let m = new HandleUpgradeablesMission();
+	missionControl.addMission(m);
+});
 
 
 function main(){
@@ -118,8 +102,12 @@ function main(){
 				&& character.slots["mainhand"].name != "vstaff") {
 				unequip("mainhand"); 	
 			}
+			let vstaff_idx = locate_item("vstaff"); 
+			if (vstaff_idx >= 0) {
+		        equip(vstaff_idx); 
+			}
 			close_booth();
-		}
+		} 
 
 		// Todo
 		 // || is_moving(character)   // Dont stop merchant actions if moving
@@ -196,7 +184,7 @@ function buy_potions() {
 
 	let mpot_count = get_item_count_in_inventory(mpot);
 	let hpot_count = get_item_count_in_inventory(hpot);
-	let target = 1*9999; // # of stacks
+	let target = 1*9998; // # of stacks
 
 	// Buy in halves to avoid latency issues that cause overbuying
 	if (mpot_count < target) { buy(mpot, Math.max(1,(target-mpot_count)/2)); }
@@ -271,29 +259,6 @@ function give_potions(entity) {
 			// game_log(`Sent ${9999-mpot0_count} mpot0's to ${charname}`);
 		}
 	}
-	// // Fill them up to a full stack of 9999 potions
-	// let mpot0_count = get_item_count_in_inventory_array(char_inv_cache.items, "mpot0");
-	// if (mpot0_count < 9999 && locate_item("mpot0") >= -) { 
-	// 	send_item(charname, locate_item("mpot0"), 2*9999-mpot0_count); 
-	// 	// game_log(`Sent ${9999-mpot0_count} mpot0's to ${charname}`);
-	// }
-
-	// let hpot0_count = get_item_count_in_inventory_array(char_inv_cache.items, "hpot0");
-	// if (hpot0_count < 9999) { 
-	// 	send_item(charname, locate_item("hpot0"), 2*9999-hpot0_count); 
-	// 	// game_log(`Sent ${9999-mpot0_count} hpot0's to ${charname}`);
-	// }
-
-	// // Transition logic. Remove after level 0 potions are used up. Todo
-	// if (mpot0_count<1000) {
-	// 	let mpot1_count = get_item_count_in_inventory_array(char_inv_cache.items, "mpot1");
-	// 	send_item(charname, locate_item("mpot1"), 9999-mpot1_count); 
-	// }
-	// if (hpot0_count<1000) {
-	// 	let hpot1_count = get_item_count_in_inventory_array(char_inv_cache.items, "hpot1");
-	// 	send_item(charname, locate_item("hpot1"), 9999-hpot1_count); 
-	// }
-
 }
 
 function bank_store_craftables() {

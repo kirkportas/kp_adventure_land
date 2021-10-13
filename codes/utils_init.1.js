@@ -113,8 +113,14 @@ const UPGRADEABLE_LEVELS = {
 	// Christmas set
 	"merry": 5,
 	"xmassweater": 7,
+	"xmaspants": 5,
+	"xmasshoes": 5,
 	"xmace": 6,
 	"warmscarf": 5,
+	"ornamentstaff": 5,
+
+	"ololipop": 7,
+	"glolipop": 7,
 
 	// Halloween
 	"phelmet": 6,
@@ -153,7 +159,8 @@ COMPOUNDABLE=COMPOUNDABLE.concat([
 	"vitring","dexring","intring","strring", 					// Rings
 	"orbg","jacko","talkingskull",								// Orbs
 	 															// Weapons
-	"lbelt", "hpbelt","strbelt","dexbelt","intbelt"				// Belts
+	"lbelt", "hpbelt","strbelt","dexbelt","intbelt",				// Belts
+	"rednose"
 ]); 
 
 // const COMPOUNDABLE_LEVELS = {
@@ -366,6 +373,7 @@ show_json( Object.keys(filtered))
 // ]);
 
 
+// show_json( get("cache_aldata_engaged_events") )
 var ALDATA_EVENTS_LIVE_KEY = "cache_aldata_live_events";
 var ALDATA_EVENTS_ENGAGED_KEY = "cache_aldata_engaged_events";
 

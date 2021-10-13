@@ -126,7 +126,10 @@ function hack_warr_send_to_mage(inv_idx) {
 }
 
 var trading_last_ts = Date.now();
-var trading_whitelist = ["mpot0","hpot0","mpot1","hpot1", "tracker", "elixirluck"];
+var trading_whitelist = [
+	"mpot0","hpot0","mpot1","hpot1", "tracker", "elixirluck", // Basic items
+	"lantern","xpants","shield","sshield","bataxe","hhelmet" // Warrior/tank items
+]; 
 // Todo add armor sets
 function trading() {
 	var should_run = (Date.now() - trading_last_ts) > 1000;

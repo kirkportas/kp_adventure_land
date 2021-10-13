@@ -486,16 +486,6 @@ function give_all_of_single_item(itemname) {
         send_item(NameMerchant, idx, quantity);
         return true;
     } 
-    
-    // var item_idx = locate_item(item);
-    // if(item_idx >= 0) {
-    //  var item = character.items[item_idx];
-    //  var quantity = item.q ? item.q : 1;
-    //  send_item(NameMerchant, item_idx, quantity);
-    //  return true;
-    // } else {
-    //  return false;
-    // }
 }
 
     // Grade 0 => scroll0
@@ -626,6 +616,9 @@ function pontyPurchase()
             } 
 
             let alwaysBuy = ["cryptkey","frozenkey","stonekey","tombkey","bkey","ukey","dkey","tshirt88","luckyt"];
+            alwaysBuy = alwaysBuy.concat(["rapier","bunnyelixir",
+                "essenceofgreed","essenceoffire","essenceoffrost","pumpkinspice"]);
+
             if (alwaysBuy.includes(pontyItem.name)) {
                 buy = true;
             }

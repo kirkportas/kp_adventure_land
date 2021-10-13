@@ -717,7 +717,8 @@ class FishingMission extends Mission {
     if (this.move_to_location()) { return }
 
     // equip fishing rod
-    if (!character.slots["mainhand"] || !character.slots["mainhand"] == "rod") { 
+    if (!character.slots["mainhand"] || character.slots["mainhand"].name != "rod") { 
+        unequip("mainhand");
         equip(locate_item("rod")); 
     }
 
@@ -768,7 +769,8 @@ class MiningMission extends Mission {
     if (this.move_to_location()) { return }
 
     // equip pick
-    if (!character.slots["mainhand"] || !character.slots["mainhand"] == "pickaxe") { 
+    if (!character.slots["mainhand"] || character.slots["mainhand"].name != "pickaxe") { 
+        unequip("mainhand");
         equip(locate_item("pickaxe")); 
     }
 

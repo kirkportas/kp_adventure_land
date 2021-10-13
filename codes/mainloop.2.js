@@ -8,8 +8,12 @@ function mainloop(){
 
 	run_shared_executions();
 	use_potion(); 
-	loot(); 
 
+	let lootCount = Math.min(5, Object.keys(parent.chests).length);
+	while (lootCount > 0) {
+		loot(); 
+		lootCount--;
+	}
 	// smart_move({"x":-24,"y":32,"map":"level2w"})
 
 	// Todo think through the logic ofhandling !is_moving
@@ -50,6 +54,7 @@ function attackloop() {
 
 // Less frequent execution
 function cache_loop() {
+	Logger.log("cache_loop()")
 	cache_inventory();
 	cache_location();
 	cache_aldata_events();
@@ -59,7 +64,7 @@ function cache_loop() {
   async logic to check server/boss status */
 function cache_aldata_events() {
 	GetServerStatuses(s => { 
-		game_log("GetServerStatuses returned");
+		Logger.log("GetServerStatuses returned");
 
 		let liveEvents = s.filter(e => true == e.live );
 		set(ALDATA_EVENTS_LIVE_KEY, liveEvents);
