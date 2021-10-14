@@ -38,6 +38,10 @@ send_item("Terrogue",0,10000);;
 
 ***
 
+===
+
+smart_move( G.npcs["exchange"].id )
+
 
 ==
 character.map == "jail"
