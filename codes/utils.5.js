@@ -548,10 +548,6 @@ Example of data[0], e.g. a pontyItem
     show_json(get(PONTY_KEY));
 */
 
-function showPontyBuyList() {
-    show_json(get(PONTY_KEY));
-}
-
 function showGiveItems() {
     show_json(get("give_items_"+character.name));
 }

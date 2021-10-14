@@ -600,16 +600,22 @@ function switch_to_event_server(event) {
 		return;
 	}
 
+	// Current swaps for bee<>boss
+	// Terakazam   <> Terrogue
+	// BigBowBigHo <> TERFnSURF  (previously Terazarrior)
 
-	// Switch to Warrior if on lowbie ranger
+
+	// Switch to Warrior/NewbRogue if on lowbie ranger
 	if (character.name == NameRanger2) {
-		let charname = "Terazarrior"; 
+		// let charname = "Terazarrior"; 
+		let charname = "TERFnSURF";
 		parent.window.location.href="/character/"+charname+"/in/"+event.server_region+"/"+event.server_identifier+"/";
 		return;		
 	}
 
 	// Switch to 2nd Ranger if farming bees
-	if (character.name == NameWarrior && event.eventname == "bee_genocide") {
+	if ((character.name == NameWarrior || character.name == NameRogue2)
+		&& event.eventname == "bee_genocide") {
 		let charname = "BigBowBigHo"; 
 		parent.window.location.href="/character/"+charname+"/in/"+event.server_region+"/"+event.server_identifier+"/";
 		return;		

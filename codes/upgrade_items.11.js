@@ -19,6 +19,37 @@ function merchant_handle_upgradeables(scrolltype) {
 	Logger.functionExit("handle UPGRADEABLE_LEVELS", 0);
 }
 
+// manual efforts only
+// function manual_compound_items(){
+// 	if (character.q.compound) { return; }
+// 	let custom_compound = ["test_orb"];
+// 	for (let item of custom_compound) {
+
+// 		let lvl = 0;
+// 		for (; lvl < max_level_compound; lvl++) {
+// 			var item_idxs = locate_items_of_level(item, lvl);
+// 			var count = item_idxs.length;
+// 			if (count >= 3) {
+
+// 				var grade = item_grade(character.items[item_idxs[0]]); 
+// 				if (grade == 0)  scrollname = "cscroll0";
+// 				if (grade ==1)  scrollname = "cscroll1";
+// 				if (grade >= 2) scrollname = "cscroll2";
+
+// 				var scroll_idx = locate_item(scrollname);
+// 				if (scroll_idx < 0) {
+// 					buy(scrollname, 5);
+// 				}
+
+// 				game_log(item);
+// 				game_log(item_idxs);
+// 				use_skill("massproduction");
+// 				compound(item_idxs[0],item_idxs[1],item_idxs[2],scroll_idx);
+// 			}
+// 		}
+// 	}
+// }
+
 // Will compound all whitelisted items to their maxlvl - defined in utils_init 
 function compound_items(){
 	if (character.q.compound) { return; }

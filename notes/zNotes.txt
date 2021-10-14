@@ -1175,6 +1175,35 @@ for(var i=0;i<100;i++)
 output=mssince(start);
 show_json(output)
 
+
+==
+let humanoidRestorability = 0
+for (const slotName in bot.slots) {
+    const slot = bot.slots[slotName as SlotType | TradeSlotType]
+    if (!slot || (slot as TradeItemInfo).price != undefined) continue
+    const gItem = bot.G.items[slot.name]
+    if (gItem.ability == "restore_mp") {
+        humanoidRestorability += gItem.attr0 * 5
+    }
+}
+if (humanoidRestorability > 100 / 3) {
+    for (const entity of bot.getEntities({
+        couldGiveCredit: true,
+        typeList: types,
+        willDieToProjectiles: false,
+        withinRange: bot.range
+    })) {
+        if (entity.immune) continue // Entity won't take damage from cburst
+        if (!entity.humanoid) continue // Entity isn't a humanoid
+        if (targets.has(entity.id)) continue // It's low HP (from previous for loop), we're already going to kill it
+
+        const extraMP = 100
+        if (mpNeeded + extraMP > bot.mp) break // We can't cburst anything more
+        targets.set(entity.id, extraMP)
+    }
+}
+
+
 == REQUEST ITEM MANUALLS 
 
 function request_item_from_all(itemname) {

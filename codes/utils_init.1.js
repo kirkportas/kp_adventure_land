@@ -31,19 +31,20 @@ var start_ts = Date.now();
 
 // Kirk's characters
 const NameRanger = "Terranger";
+const NameRanger2 = "BigBowBigHo";
 const NamePriest = "NoHeals4U";
 const NameWarrior = "Terazarrior";
 const NameMage = "Terakazam";
 const NameRogue = "Terrogue";
-const NameRanger2 = "BigBowBigHo";
+const NameRogue2 = "TERFnSURF";
 const NamePally = "DeusestVult";
 // For console pasting: ["Terazarrior","NoHeals4U","Terranger"]
 
 var NameMerchant = "CurvyMoney";
 var LEADER = NameWarrior;
 var SLAVES = [NameRanger, NameMage, NamePriest, NameRogue];
-const KIRKS_TOONS = [NameMerchant, NameRanger, NamePriest, NameWarrior, 
-					 NameMage, NameRogue, NameRanger2, NamePally];
+const KIRKS_TOONS = [NameMerchant, NameRanger, NameRanger2, NamePriest, NameWarrior, 
+					 NameMage, NameRogue, NameRogue2, NamePally];
 
 // var SLAVES = [NameRanger, NamePriest];    // **********************
 const ACTIVE_PARTY = [NameRanger, NamePriest];
@@ -76,9 +77,9 @@ const UPGRADEABLE_LEVELS = {
 	// Wanderers
 	"wcap": 7,
 	"wgloves": 7,
-	"wbreeches": 7,
+	"wbreeches": 5,
 	"wshoes": 7,
-	"wattire": 3,
+	"wattire": 5,
 	"wshield": 7,
 
 	"cape": 7,
@@ -152,7 +153,7 @@ const UPGRADEABLE_LEVELS = {
 
 const max_level_compound = 3;
 game_log("max_level_compound: "+max_level_compound);
-var COMPOUNDABLE = ["wbook0"]; // = ["hpamulet","ringsj","hpbelt","wbook0"];
+var COMPOUNDABLE = ["wbook0","ringsj"]; // = ["hpamulet","hpbelt","wbook0"];
 COMPOUNDABLE=COMPOUNDABLE.concat([
 	"vitamulet","stramulet","intamulet","dexamulet",			// Amulets
 	"vitearring","strearring","intearring","dexearring", 		// Earrings
@@ -194,7 +195,7 @@ FARMABLE = FARMABLE.concat(["gemfragment"]);
 
 
 // This won't sell at item.level >=2  (check method sell_all_trash)
-var TRASH = ["stinger","hpamulet","ringsj", "hpbelt"];
+var TRASH = ["stinger","hpamulet", "hpbelt"]; // ringsj
 TRASH = TRASH.concat(["gloves1","coat1","helmet1","shoes1","pants1"]);
 TRASH = TRASH.concat(["throwingstars"]);
 TRASH = TRASH.concat(["phelmet","gphelmet"]);   // expensive
@@ -261,7 +262,7 @@ if (character.name == NameValWarrior) {
 }
 
 if (character.ctype == "merchant") {
-	load_code("gui_command_center");
+	// load_code("gui_command_center");
 } else {
 	add_top_button("showGive","showGive", showGiveItems);
 }

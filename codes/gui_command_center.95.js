@@ -127,7 +127,7 @@ function init_cmd_center() {
 	render_grey_btn($btn_cmd_three);
 
 	var $btn_cmd_four = $('#cmd_four');
-	$btn_cmd_four.click(give_items_wip);
+	$btn_cmd_four.click(gui_give_items);
 	render_grey_btn($btn_cmd_four);
 
 	var $btn_cmd_five = $('#cmd_five');
@@ -152,9 +152,9 @@ function init_cmd_center() {
 // Each key is specific to fighter character names.
 // The fighter will attempt to give those items if the Merchant is in range.
 // When a fighter has no more, the key will be removed from their "give queue"
-function give_items_wip() {
+function gui_give_items() {
 	// NOTE: sometimes this breaks and the loop does not execute.
-	game_log("give_items_wip()");
+	game_log("gui_give_items()");
 	var all_to_get = COMPOUNDABLE.concat(TRASH, FARMABLE, UPGRADEABLE);
 	game_log(all_to_get);
 

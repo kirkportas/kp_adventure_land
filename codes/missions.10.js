@@ -295,7 +295,9 @@ class CollectItemsMission extends Mission {
 
     // Demand items from everyone. Dont spam it
     if (this.runCount >= 7) {
-        give_items_wip();
+        let all_to_get = COMPOUNDABLE.concat(TRASH, FARMABLE, UPGRADEABLE);
+        game_log("CollectItemsMission requesting TRASH, FARMABLE, UPGRADEABLE");
+        request_items_from_all(all_to_get);
     }
 
     // Run for ~10 seconds
