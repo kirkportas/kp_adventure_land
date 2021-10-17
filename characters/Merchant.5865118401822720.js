@@ -11,6 +11,7 @@ pontyPurchase();
 joinGiveAways();
 setInterval(pontyPurchase, 15000);
 setInterval(joinGiveAways, 29000);
+setInterval(getOutOfJail, 15000);
 
 // Time-costly actions/missions
 setInterval(serverLoop, 5*60*1000); // 5 minutes
@@ -18,6 +19,12 @@ setInterval(serverLoop, 5*60*1000); // 5 minutes
 // Stores event names only 
 track_events();
 
+// const CACHE_JAIL_KEY = "cache_jail_history";
+function getOutOfJail() {
+    if (character.in == "jail") {
+        parent.socket.emit("leave");
+    }
+}
 
 // Use this to do any custom or one-off stuff.
 function custom_town_behavior() {

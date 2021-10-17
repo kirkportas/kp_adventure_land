@@ -77,9 +77,9 @@ const UPGRADEABLE_LEVELS = {
 	// Wanderers
 	"wcap": 7,
 	"wgloves": 7,
-	"wbreeches": 5,
+	"wbreeches": 6,
 	"wshoes": 7,
-	"wattire": 5,
+	"wattire": 6,
 	"wshield": 7,
 
 	"cape": 7,
@@ -151,34 +151,43 @@ const UPGRADEABLE_LEVELS = {
 
 };
 
-const max_level_compound = 3;
-game_log("max_level_compound: "+max_level_compound);
-var COMPOUNDABLE = ["wbook0","ringsj"]; // = ["hpamulet","hpbelt","wbook0"];
-COMPOUNDABLE=COMPOUNDABLE.concat([
-	"vitamulet","stramulet","intamulet","dexamulet",			// Amulets
-	"vitearring","strearring","intearring","dexearring", 		// Earrings
-	"vitring","dexring","intring","strring", 					// Rings
-	"orbg","jacko","talkingskull",								// Orbs
-	 															// Weapons
-	"lbelt", "hpbelt","strbelt","dexbelt","intbelt",				// Belts
-	"rednose"
-]); 
-
-// const COMPOUNDABLE_LEVELS = {
-// 	"wbook0": 3,
-// 	"strearring": 3,
-// 	"vitearring"
-// };
-
-// Default all shop items to lvl 6 (to help clear out inventory)
+// Default all shop items to lvl 8 (to help clear out inventory)
 const shop_items = ["helmet","shoes","gloves","pants","coat", "bow","blade","staff","wshield"];
 for (itemname of shop_items) {
-	UPGRADEABLE_LEVELS[itemname] = 7;
-} 
+	UPGRADEABLE_LEVELS[itemname] = 8;
+}
+const UPGRADEABLE = Object.keys(UPGRADEABLE_LEVELS);
+
+
+var COMPOUNDABLE_3s = [
+	"wbook0","ringsj",
+	"vitearring","strearring","intearring","dexearring", 		// Earrings
+	"vitring","dexring","intring","strring", 					// Rings
+	"orbg","jacko", 											// Orbs
+	"lbelt", "hpbelt","strbelt","dexbelt","intbelt",			// Belts
+	"rednose"
+];
+
+const COMPOUNDABLE_LEVELS = {
+	// Amulets
+	"intamulet": 4,
+	"dexamulet": 4,
+	"stramulet": 4,
+	"hpamulet": 4,
+	// Earrings
+	"strearring": 3,
+	"vitearring": 3,
+	// Orbs
+	"talkingskull": 2,
+};
+for (let itemname of COMPOUNDABLE_3s) {
+	COMPOUNDABLE_LEVELS[itemname] = 3;
+}
+const COMPOUNDABLE = Object.keys(COMPOUNDABLE_LEVELS);
+
 
 const DISMANTLE_ITEMS = ["staffofthedead","maceofthedead","swordofthedead","bowofthedead"];
     
-const UPGRADEABLE = Object.keys(UPGRADEABLE_LEVELS);
 
 var LOW_CRAFT_ITEMS = ["gslime","crabclaw","beewings","seashell","bwing","snakeoil","snakefang","spores","whiteegg"];
 var FARMABLE = ["gem0", "leather", "bfur", "cscale", "feather0", "ascale", "spidersilk"];
@@ -195,11 +204,11 @@ FARMABLE = FARMABLE.concat(["gemfragment"]);
 
 
 // This won't sell at item.level >=2  (check method sell_all_trash)
-var TRASH = ["stinger","hpamulet", "hpbelt"]; // ringsj
+var TRASH = ["stinger", "hpbelt"]; // ringsj // hpamulet
 TRASH = TRASH.concat(["gloves1","coat1","helmet1","shoes1","pants1"]);
 TRASH = TRASH.concat(["throwingstars"]);
 TRASH = TRASH.concat(["phelmet","gphelmet"]);   // expensive
-TRASH = TRASH.concat(["stramulet","vitamulet"]); 
+TRASH = TRASH.concat(["stramulet"]);
 // TRASH = TRASH.concat(["maceofthedead","staffofthedead","swordofthedead"]); 
 
 // These localstorage vars are used for passing items to the Merchant

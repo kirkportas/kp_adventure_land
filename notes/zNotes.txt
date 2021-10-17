@@ -38,6 +38,51 @@ send_item("Terrogue",0,10000);;
 
 ***
 
+
+==
+Franky move
+// smart_move({"x":-24,"y":32,"map":"level2w"})
+
+===
+
+function Sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function lootChests() {
+    let maxRunCount = 5;
+    let count = Object.keys(parent.chests).length;
+    while (maxRunCount >0 && count > 20) {
+        let keys = Object.keys(parent.chests);
+        for (let i=0; i<=20; i++) {
+            loot(keys[i]);
+        }
+
+        Sleep(1000);
+        count = Object.keys(parent.chests).length;
+        maxRunCount--;
+    }
+}
+lootChests();
+
+function Sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+function lootChests() {
+    //let maxRunCount = 5;
+    let count = Object.keys(parent.chests).length;
+
+    if (count <10) return;
+
+    let keys = Object.keys(parent.chests);
+    for (let i=0; i<=10; i++) {
+        loot(keys[i]);
+        console.log("Looting id: "+keys[i]);
+        game_log("Looting id: "+keys[i]);
+    }
+    return Sleep(500).then(x=>lootChests());
+}
+lootChests();
 ===
 
 smart_move( G.npcs["exchange"].id )
@@ -93,6 +138,11 @@ parent.window.dispatchEvent(new KeyboardEvent('keydown', {
 == BANK SORT EXAMPLE
 Source: "number_e"
 https://discord.com/channels/238332476743745536/243707345887166465/742928485294800956
+
+function Sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+al_items = {}
 
 const order = {}
 al_items.order = order;
@@ -193,6 +243,7 @@ function sort_all_bank(inv_indices, sorted_bank, i_running)
     i_running = (i_running + 1) % inv_indices.length;
   const inv_pointer = inv_indices[i_running];
   const inv_itm = character.items[inv_pointer];
+
   //check every 
   if(!inv_itm)
   {

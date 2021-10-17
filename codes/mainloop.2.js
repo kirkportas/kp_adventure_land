@@ -1,7 +1,6 @@
 const logFnName = "Main ("+character.name+")";
 
 var loopCount = 0;
-
 function mainloop(){
 	Logger.functionEnter(logFnName);
 	start_ts = Date.now();
@@ -9,28 +8,20 @@ function mainloop(){
 	run_shared_executions();
 	use_potion(); 
 
-	let lootCount = Math.min(5, Object.keys(parent.chests).length);
-	while (lootCount > 0) {
-		loot(); 
-		lootCount--;
-	}
-	// smart_move({"x":-24,"y":32,"map":"level2w"})
+	lootChests(10);
 
-	// Todo think through the logic ofhandling !is_moving
-	// Stopping for ismoving here paused all farm logic, and thus blocked magiport requests
-	// if (attack_mode && !is_moving(character)) {
 	if (attack_mode) {
 		try {
 			party_farm();
 		} catch(err) {
 			game_log("Error in mainloop for: "+character.name);
 			game_log(err);
-			console.log("Error in mainloop for: "+character.name);
-			console.log(err);
+			Logger.log("Error in mainloop for: "+character.name);
+			Logger.log(err);
 		}
 	}
 
-	// Track executions. Maybe use this as a proxy for "ticks"
+	// Track executions. Use this as a proxy for "ticks"
 	loopCount++;
 
 	// End main loop

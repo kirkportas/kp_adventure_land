@@ -252,6 +252,20 @@ function inv_has_compoundable_trio() {
     }
     return false;
 }
+
+function lootChests(maxCount) {
+    let chestCount = Object.keys(parent.chests).length;
+    maxCount = Math.min(maxCount, chestCount);
+    if (maxCount > 10) maxCount = 10;
+
+    for (let i=0; i<=maxCount; i++) {
+      let keys = Object.keys(parent.chests);
+      for (let i=0; i<=maxCount; i++) {
+          loot(keys[i]);
+      }
+    }
+    loot(); // Safety call
+}
 /*
 Bank layout
 items6  |  items4  |  items5  |  items7
@@ -273,19 +287,22 @@ var bank_org = {
     "items1": [], // Materials
     "items3": [] 
 }
+
 function organized_bank_store(i) {
-    // Only accepts the item index in character.items 
+    // This method is deprecated in favor of "bank sorting" logic
+
+    // Only accepts the item index in character.items
     let item = character.items[i];
     if (!item) return;
 
     // Will insert "stramulet" into pack "items4"
     // Note that expensive items go into hardcoded pack if hardcoded
-    for (let [packname, itemnames] of Object.entries(bank_org)) {
-        if (bank_org[packname] && bank_org[packname].includes(item.name)) {
-            bank_store(i, packname);
-            return;
-        }
-    }
+    // for (let [packname, itemnames] of Object.entries(bank_org)) {
+    //     if (bank_org[packname] && bank_org[packname].includes(item.name)) {
+    //         bank_store(i, packname);
+    //         return;
+    //     }
+    // }
 
     // TOP ROW
     // Disable 
@@ -301,17 +318,17 @@ function organized_bank_store(i) {
 
     // BOTTOM ROW
     // Materials
-    if (item.type == "material") {
-        bank_store(i, "items1");
-        return;
-    }
-    if (item.type == "elixir") {
-        bank_store(i, "items5");
-        return;
-    }
+    // if (item.type == "material") {
+    //     bank_store(i, "items1");
+    //     return;
+    // }
+    // if (item.type == "elixir") {
+    //     bank_store(i, "items5");
+    //     return;
+    // }
 
-    bank_store(i, "items2");
-    bank_store(i, "items0");
+    // bank_store(i, "items2");
+    // bank_store(i, "items0");
     
     // Safety catch, deposit to any open pack
     bank_store(i);
@@ -330,8 +347,10 @@ function bank_get_compoundables_count() {
             let item = pack[i];
 
             // todo
-            if(item && COMPOUNDABLE.includes(item.name)) {
             // if(item && ALL_COMPOUNDABLE_ITEMS.has(item.name)) {
+            if(item && COMPOUNDABLE.includes(item.name)) {
+                let max_level_compound = COMPOUNDABLE_LEVELS[item.name];
+
                 if (this.verbose) Logger.log(`Adding bank item ${item.name} lvl ${item.level}`);
                 if (!(item.name in raw)) { raw[item.name] = {} };
                 if (!(item.level in raw[item.name])) { raw[item.name][item.level] = [] };

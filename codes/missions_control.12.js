@@ -28,9 +28,10 @@
 const MISSION_PRIORITY = {
     "ClearPVPItems": 3,       // If holding a PVP flagged item, deposit it to clear PVP flag.
     "Dismantle": 4,
-    "DepositEverything": 5,   // On boot or to reset. deposit all but a whitelist
-    "HandleCompoundables": 6, // Get compoundable items from the bank and compound
-    "HandleUpgradeables": 6,  // Get upgradeable items from the bank and upgrade
+    "SortBank": 6,
+    "DepositEverything": 8,   // On boot or to reset. deposit all but a whitelist
+    "HandleCompoundables": 10, // Get compoundable items from the bank and compound
+    "HandleUpgradeables": 10,  // Get upgradeable items from the bank and upgrade
     "Mining": 15,
     "Fishing": 15,
     "Exchange": 16,           // Visit Xyn and exchange
@@ -51,7 +52,7 @@ class Location {
 /*****************************************************************************/
 
 var LOCATION_TOWN = new Location(-207, -108, "main");
-var LOCATION_BANK = new Location(0, -176, "bank");
+var LOCATION_BANK = new Location(0, -275, "bank");
 var LOCATION_DISMANTLE = new Location(0, 540, "main");
 var STATE_ACTIVE = "active";
 var STATE_DONE = "done";
@@ -200,7 +201,7 @@ MissionControl.prototype._scan_for_missions = function() {
         // }
 
         let char_esize = char_inv_cache.esize;
-        let empty_space_threshold = 28; // High for testing. Lower to ~10/15
+        let empty_space_threshold = 15; // High for testing. Lower to ~10/15
         if (char_esize < empty_space_threshold) { 
             game_log("Adding collectItems mission for "+charObj.name);
             Logger.log("Adding collectItems mission for "+charObj.name);

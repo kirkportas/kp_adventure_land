@@ -422,6 +422,59 @@ class HandleCompoundablesMission extends Mission {
     }
 }
 
+
+/*****************************************************************************/
+
+class SortBankMission extends Mission {
+    /*
+    Go to bank, sort it.
+    */
+    constructor() {
+        let name = "SortBank";
+        let prio = MISSION_PRIORITY[name];
+        super(name, prio);
+
+        // Todo Consider logic for multi-location missions
+        this.location = LOCATION_BANK;
+
+        this.verbose = true;
+        this.startTimeMs = undefined;
+
+        this._started = false;
+    }
+
+    can_run() {
+        return true;
+    }
+
+    run() {
+        if (!this.startTimeMs) { this.startTimeMs = Date.now(); }
+
+        if (this.verbose) Logger.log(`${this.name} Run()`);
+        if (!this.can_run()) {
+            Logger.log("Unable to run mission "+this.name);
+            return;
+        }
+
+        // Move if needed
+        if (this.move_to_location()) { return; }
+
+        if (!this._started) {
+            sort_all_bank();
+            this._started = true;
+        }
+        // Wait 1 minute
+        let maxRunTimeMs = 60*1000;
+        let timeSoFar = Date.now() - this.startTimeMs;
+        if (timeSoFar > maxRunTimeMs) {
+            this.cancel();
+        } else {
+            Logger.log("SortBank seconds remaining: "+ (60 - timeSoFar/1000) )
+        }
+    }
+}
+
+
 /*****************************************************************************/
 
 class HandleUpgradeablesMission extends Mission {

@@ -54,8 +54,9 @@ function merchant_handle_upgradeables(scrolltype) {
 function compound_items(){
 	if (character.q.compound) { return; }
 	// for (var [item, maxlvl] of Object.entries(COMPOUNDABLE_LEVELS)) {
-	for (item of COMPOUNDABLE) {
+	for (let item of COMPOUNDABLE) {
 
+		let max_level_compound = COMPOUNDABLE_LEVELS[item];
 		let lvl = 0;
 		for (; lvl < max_level_compound; lvl++) {
 			var item_idxs = locate_items_of_level(item, lvl);
@@ -136,38 +137,42 @@ function level_x_shop_upgrades(lvl) {
 	Logger.functionExit(`Level ${lvl} upgrades`, 0)
 }
 
-var allowed_past_7 = ["bow","blade","staff","helmet","shoes","gloves","pants","coat"];
+// Do not allow >7 upgrades except on Primary merchant account
+var allowed_past_7 = shop_items;
+if (character.name != "CurvyMoney") {
+	allowed_past_7 = [];
+}
+
 function upgrade_item(item_idx){
 	if (character.q.upgrade) { return; }
-
-	var item = character.items[item_idx];
-
-	var scrollname = "";
-	var grade = get_item_grade(item); 
-	if (grade == 0) {
-		scrollname = "scroll0";
-	} else if(grade ==1) {
-		scrollname = "scroll1";
-	} else if(grade >= 2){
-		Logger.log("upgrade_item called for grade 2+. NOT SUPPORTED");
-		Logger.log(`idx: ${item_idx}, name: ${item.name}`);
-		return;
-	} else {
-		Logger.log("unknown grade value: "+grade.toString());
-		Logger.log(`idx: ${item_idx}, name: ${item.name}`);
-		return;
-	}
-
-	var scroll_idx = locate_item(scrollname);
-	if (scroll_idx < 0) {
-		Logger.log("Buying a: "+scrollname);
-		buy(scrollname, 5);
-	}
-	// Only upgrade shop items 
-	if (item.level >=7 && !allowed_past_7.includes(item.name)) {
-		Logger.log("WILL NOT UPGRADE A LVL 7 ITEM.");
+	let item = character.items[item_idx];
+	if (!item) {
+		Logger.log(`upgrade_item called with invalid item idx ${item_idx}`);
 		return false;
 	}
+
+	// Don't auto-upgrade Rare items
+	let grade = get_item_grade(item);
+	if (grade >= 2) {
+		Logger.log("upgrade_item called for grade 2+. NOT SUPPORTED");
+		Logger.log(`idx: ${item_idx}, name: ${item.name}`);
+		return false;
+	}
+
+	// Only upgrade shop items 
+	if (item.level >=7 && !allowed_past_7.includes(item.name)) {
+		Logger.log("upgrade_item WILL NOT UPGRADE A LVL 7 ITEM.");
+		return false;
+	}
+
+	// Buy scrolls if necessary
+	let scrollname = "scroll"+grade;
+	let scroll_idx = locate_item(scrollname);
+	if (scroll_idx < 0) {
+		Logger.log("Buying: "+scrollname);
+		buy(scrollname, 5);
+	}
+
 	Logger.log("Upgrading a: "+character.items[item_idx].name);
 	use_skill("massproduction");
 	upgrade(item_idx,scroll_idx);
