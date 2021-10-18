@@ -107,7 +107,7 @@ const UPGRADEABLE_LEVELS = {
 	// "staffofthedead": 6,
 	"daggerofthedead": 6,
 	// "swordofthedead": 5,
-	"rapier": 5,
+	"rapier": 6,
 	"firebow": 5,
 	"harbringer": 5,
 
@@ -160,7 +160,7 @@ const UPGRADEABLE = Object.keys(UPGRADEABLE_LEVELS);
 
 
 var COMPOUNDABLE_3s = [
-	"wbook0","ringsj",
+	"wbook0",
 	"vitearring","strearring","intearring","dexearring", 		// Earrings
 	"vitring","dexring","intring","strring", 					// Rings
 	"orbg","jacko", 											// Orbs
@@ -179,6 +179,8 @@ const COMPOUNDABLE_LEVELS = {
 	"vitearring": 3,
 	// Orbs
 	"talkingskull": 2,
+	// Rings
+	"ringsj": 4,
 };
 for (let itemname of COMPOUNDABLE_3s) {
 	COMPOUNDABLE_LEVELS[itemname] = 3;
@@ -208,7 +210,7 @@ var TRASH = ["stinger", "hpbelt"]; // ringsj // hpamulet
 TRASH = TRASH.concat(["gloves1","coat1","helmet1","shoes1","pants1"]);
 TRASH = TRASH.concat(["throwingstars"]);
 TRASH = TRASH.concat(["phelmet","gphelmet"]);   // expensive
-TRASH = TRASH.concat(["stramulet"]);
+// TRASH = TRASH.concat(["stramulet"]);
 // TRASH = TRASH.concat(["maceofthedead","staffofthedead","swordofthedead"]); 
 
 // These localstorage vars are used for passing items to the Merchant

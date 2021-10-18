@@ -35,6 +35,7 @@ if (character.ctype == "merchant") {
         ["M-C-Terranger", CollectItemsMission, "Terranger", add_bottom_button],
         ["M-Deposit", DepositEverythingMission, null, add_bottom_button],
         ["M-SortBank", SortBankMission, null, add_bottom_button],
+        ["M-TrashCompound", TrashCompoundMission, null, add_bottom_button],
     ];
 
     for (let btn of mission_buttons) {

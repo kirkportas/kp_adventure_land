@@ -399,15 +399,15 @@ function bank_get_trash() {
         for (var i=0;i<42;i++) {
             let item = pack[i];
             if (!item) continue;
-            if (!(item.name in TRASH)) continue;
+            if (!TRASH.includes(item.name)) continue;
             if (item_grade(item) >= 1) continue;
 
             items_to_retrieve.push({'packname':packname, 'idx': i});
         }
     }
     return items_to_retrieve;
-}
 
+}s
 function bank_get_upgradeables() {
     if (!is_in_bank()) { return [] }
     this.verbose = true;
@@ -632,7 +632,8 @@ function pontyPurchase()
 
             let alwaysBuy = ["cryptkey","frozenkey","stonekey","tombkey","bkey","ukey","dkey","tshirt88","luckyt"];
             alwaysBuy = alwaysBuy.concat(["rapier","bunnyelixir",
-                "essenceofgreed","essenceoffire","essenceoffrost","pumpkinspice"]);
+                "essenceofgreed","essenceoffire","essenceoffrost","pumpkinspice",
+                "rapier"]);
 
             if (alwaysBuy.includes(pontyItem.name)) {
                 buy = true;

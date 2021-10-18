@@ -48,6 +48,8 @@ class TrashCompoundMission extends Mission {
         this.location = this.locations[this.location_idx];
         this.verbose = true;
 
+        this._retrieve_done = false;
+
         this.runCount = 15;
     }
 
@@ -79,25 +81,29 @@ class TrashCompoundMission extends Mission {
 
     retrieve() {
         Logger.log("this._retrieve_done: "+this._retrieve_done);
-        if (this._retrieve_done == false) {
+        if (this._retrieve_done === true) {
             Logger.log("this._retrieve_done is set: "+this._retrieve_done);
             return this._retrieve_done;
         }
         if (!is_in_bank()) { game_log("retrieve() called out of bank - BAD"); }
+
         let items_to_retrieve = bank_get_trash();
         if (items_to_retrieve.length == 0) {
             this.cancel();
             return;
         }
         /*  [{ "packname": "items0",  "idx": 22 },..] */
+
+        // limit code calls to 20
         let i = 20;
         for (let packinfo of items_to_retrieve) {
-            // limit code calls
             if (i>0) {
                 bank_retrieve(packinfo.packname, packinfo.idx);
                 i--;
             }
         }
+
+        // Todo this is probably buggy.
         if (i==0 || character.esize == 0 || items_to_retrieve) {
             this._retrieve_done = false;
         } else {
