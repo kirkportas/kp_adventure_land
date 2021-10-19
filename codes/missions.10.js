@@ -662,6 +662,9 @@ class DepositEverythingMission extends Mission {
         return;
     }
 
+    if (character.in == "bank") {
+        this.location_idx = 1;
+    }
     // Move if needed
     if (this.move_to_location()) { return } // Town
     
@@ -685,11 +688,17 @@ class DepositEverythingMission extends Mission {
             if (!this.whitelist.has(name) 
                 && !name.includes("scroll")
                 && !name.includes("candy")) {
-              organized_bank_store(i);
+
+                // Sleep(100);
+                organized_bank_store(i);
             }
         }
     }
-    this.cancel();
+    this.runCount--;
+
+    if (this.runCount <= 0) {
+        this.cancel();
+    }
   }
 }
 

@@ -85,6 +85,36 @@ function lootChests() {
 lootChests();
 ===
 
+function onlineChars() {
+    return get_characters().filter(
+       x => x.online != 0 // && x.name != character.name
+    );
+}
+
+// Cast Mluck if not cast, or <58 minutes remaining
+for (let charObj of onlineChars()) {
+    let charName = charObj.name;
+    var entity = parent.entities[charName];
+    if (charName == character.name) continue;
+    if (!entity) continue;
+    game_log(charName);
+
+    game_log(is_in_range(entity, "mluck"));
+    game_log(entity.s);
+    if (is_in_range(entity, "mluck") && entity.s) {
+        if (!("mluck" in entity.s) || entity.s.mluck.ms < 58*60*1000) {
+            game_log("use_skill mluck: "+charName)
+            use_skill("mluck",entity);
+        }
+    }
+    // todo find distance for sending items
+    if (distance(character, entity) < 300) {
+        give_potions(entity);
+    }
+}
+
+
+==
 smart_move( G.npcs["exchange"].id )
 
 

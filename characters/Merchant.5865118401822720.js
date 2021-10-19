@@ -45,56 +45,77 @@ function main(){
     Logger.functionEnter(logFnName);
 
     try {
-        run_shared_executions();
-        loot();
-        use_potion();
+        try {
+            run_shared_executions();
+            loot();
+            use_potion();
 
-        // Unequip to walk faster
-        gear_check();
+            // Unequip to walk faster
+            gear_check();
 
-        if(character.rip) {
-            Logger.functionExit(logFnName, 0);
-            return;
+            if(character.rip) {
+                Logger.functionExit(logFnName, 0);
+                return;
+            }
+        } catch(err) {
+            Logger.log("Error in merchant main loop - Basic executions");
+            Logger.log(err);
         }
 
-        if (is_in_town()) { 
-            sell_all_trash();
-            compound_items();
-            buy_potions();
-            buy_scrolls();
 
-            // Upgrade "common" items to a specified level (e.g. 7)
-            merchant_handle_upgradeables("dexscroll");
+        try {
+            if (is_in_town()) {
+                sell_all_trash();
+                compound_items();
+                buy_potions();
+                buy_scrolls();
 
-            // For one-off actions
-            custom_town_behavior();
+                // Upgrade "common" items to a specified level (e.g. 7)
+                merchant_handle_upgradeables("dexscroll");
+
+                // For one-off actions
+                custom_town_behavior();
+            }
+        } catch(err) {
+            Logger.log("Error in merchant main loop - is_in_town executions");
+            Logger.log(err);
         }
 
-        // Store items in "items1", the 2nd from right in southern row. (Gabriella)
-        if (is_in_bank()) {
-            bank_store_craftables()
+        try {
+            // Store items in "items1", the 2nd from right in southern row. (Gabriella)
+            if (is_in_bank()) {
+                bank_store_craftables()
+            }
+        } catch(err) {
+            Logger.log("Error in merchant main loop - is_in_bank executions");
+            Logger.log(err);
         }
 
-        // Cast Mluck if not cast, or <58 minutes remaining
-        for (let charObj of onlineChars()) {
-            let charName = charObj.name;
-            var entity = parent.entities[charName];
-            if (!entity) return;
+        try {
+            // Cast Mluck if not cast, or <58 minutes remaining
+            for (let charObj of onlineChars()) {
+                let charName = charObj.name;
+                var entity = parent.entities[charName];
+                if (!entity) continue;
 
-            if (is_in_range(entity, "mluck") && entity.s) {
-                if (!("mluck" in entity.s) || entity.s.mluck.ms < 58*60*1000) {
-                    game_log("use_skill mluck: "+charName)
-                    use_skill("mluck",entity);
+                if (is_in_range(entity, "mluck") && entity.s) {
+                    if (!("mluck" in entity.s) || entity.s.mluck.ms < 58*60*1000) {
+                        game_log("use_skill mluck: "+charName)
+                        use_skill("mluck",entity);
+                    }
+                }
+                // todo find distance for sending items
+                if (distance(character, entity) < 300) {
+                    give_potions(entity);
                 }
             }
-            // todo find distance for sending items
-            if (distance(character, entity) < 300) {
-                give_potions(entity);
-            }
+        } catch(err) {
+            Logger.log("Error in merchant main loop - CharacterLoop executions");
+            Logger.log(err);
         }
 
     } catch(err) {
-        Logger.log("Error in merchant main loop");
+        Logger.log("Unhandled Error in merchant main loop");
         Logger.log(err);
 
     } finally {

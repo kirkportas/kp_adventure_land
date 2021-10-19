@@ -3,7 +3,7 @@ var DEBUGLOG=false;
 
 const reset=false;
 const safeCoefficient = 2; // recommended value: 1-2.5 - should be higher for low std, and lower for high std. low std= <15, high std >15
-const limits = {attack:5}; //recommended value: 5-10 - Sends Y attacks within a interval. Should be safe up to 15, but should revise if you have a high attack speed. 
+const limits = {attack:3}; //recommended value: 5-10 - Sends Y attacks within a interval. Should be safe up to 15, but should revise if you have a high attack speed.
 const samples = 50; // recommended value: 50-100 - the higher the value, the more rigid to lag spikes. Should be safe with both 15-500.
 const PATTACK_ACTIVE = true;
 

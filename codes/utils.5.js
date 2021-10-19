@@ -589,11 +589,30 @@ function pontyPurchase()
     // Load from localStorage
     if (!get(PONTY_KEY) || get(PONTY_KEY) == {}) {
         // Name and quantity
+        // let PONTY_KEY = "ponty_items_to_buy";
         let desired = {
-            "strearring": 6,
-            "intearring": 6,
-            "dexearring": 6,
-            "cape": 4,
+            "strearring": 9,
+            "intearring": 9,
+            "dexearring": 5,
+            "intring": 8,
+            "strring": 9,
+            "dexring": 9,
+            "orbg": 20,
+            "ascale": 20,
+            "pleather": 20,
+            "cscale": 20,
+            "cape": 20,
+            "bfur": 20,
+            "dexamulet": 20,
+            "intamulet": 20,
+            "tshirt4": 20,
+            "gslime": 20,
+            "swirlipop": 20,
+            "greenbomb": 20,
+            "intbelt": 20,
+            "strbelt": 20,
+            "dexbelt": 20,
+            "wattire": 20
         }
         set(PONTY_KEY, desired);
     }
