@@ -210,7 +210,7 @@ var Logger = class Logger {
     static logMessage (msg) {
         if (!Logger.ACTIVE) { return; }
         if (Logger.indentation[Logger.level] === undefined) {
-            console.log('Logger error line 161');
+            console.log('Logger error line 213');
             console.log(`Logger.level: ${Logger.level}`);
             if (Logger.level <0) {
                 Logger.level+=5;

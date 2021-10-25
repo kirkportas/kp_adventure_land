@@ -53,6 +53,7 @@ class Location {
 
 var LOCATION_TOWN = new Location(-207, -108, "main");
 var LOCATION_BANK = new Location(0, -275, "bank");
+var LOCATION_EXCHANGE = new Location(-25, -400, "main");
 var LOCATION_DISMANTLE = new Location(0, 540, "main");
 var STATE_ACTIVE = "active";
 var STATE_DONE = "done";

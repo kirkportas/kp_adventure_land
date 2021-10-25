@@ -407,7 +407,8 @@ function bank_get_trash() {
     }
     return items_to_retrieve;
 
-}s
+}
+
 function bank_get_upgradeables() {
     if (!is_in_bank()) { return [] }
     this.verbose = true;
@@ -515,7 +516,7 @@ function get_item_grade(item) {
 
     Logger.log("get_item_grade(). grades="+gitemgrades.toString());
     // in not of 
-    for (i in gitemgrades) {
+    for (let i in gitemgrades) {
         if (item.level < gitemgrades[i]) {
             return i;
         }
@@ -758,40 +759,48 @@ function buy_scrolls() {
 
 var give_potion_ts = {}; 
 function give_potions(entity) {
-    if (!give_potion_ts[entity]) give_potion_ts[entity] = 0;
-    if (Date.now() - give_potion_ts[entity] < 3000) { return; }
-    give_potion_ts[entity] = Date.now();
+    const verbose = true;
+    let charName = entity.name;
+    if (!give_potion_ts[charName]) give_potion_ts[charName] = 0;
+    if (verbose) Logger.log("give_potion_ts[charName]: "+give_potion_ts[charName]);
+    if (Date.now() - give_potion_ts[charName] < 3000) {
+        Logger.log("give_potion_ts too soon");
+        return;
+    }
+    give_potion_ts[charName] = Date.now();
+    if (verbose) Logger.log("give_potion_ts check passed");
 
     // let hpot = "hpot0";
     // let mpot = "mpot1";
 
-    let charObj = entity;
-    let charname = entity.name;
-    let inv_cache_key = "cache_inventory_"+charname;
+    let inv_cache_key = "cache_inventory_"+charName;
     let char_inv_cache = get(inv_cache_key);
+
     if (!char_inv_cache) { 
-        game_log("Error reading inventorycache for "+charname); 
+        if (verbose) Logger.log("Error reading inventorycache for "+charName);
         return;
     }
     let cache_age_ms = Date.now() - char_inv_cache.ts;
     if (cache_age_ms > 15000) { 
-        game_log("Error: inventorycache out of date for "+entity.name+" by "+(cache_age_ms/1000)+"s"); 
+        if (verbose) Logger.log("Error: inventorycache out of date for "+charName+" by "+(cache_age_ms/1000)+"s");
         return;
     }
     if (distance(character, entity) > 300) {
-        game_log("Give potions out of range: " +charObj.name);
+        if (verbose) Logger.log("Give potions out of range: " +charName);
         return;
     }
     // Todo Check if merchant has potions in inventory.
     // Todo this will oversend. because it does not update the cached inv count
 
+    if (verbose) Logger.log("Looping Potion names");
     let potions = ["mpot0","hpot0","mpot1","hpot1"];
     for (let potionname of potions) {
-        // send_item(name, -1) will treat the -1 as index 0
+        // send_item(name, \-1) will treat the -1 as index 0
         let count = get_item_count_in_inventory_array(char_inv_cache.items, potionname);
+        if (verbose) Logger.log(`Potionname and count: ${potionname}, ${count}`);
         if (count < 9999 && locate_item(potionname) >= 0) { 
-            send_item(charname, locate_item(potionname), 2*9999-count); 
-            // game_log(`Sent ${9999-mpot0_count} mpot0's to ${charname}`);
+            send_item(charName, locate_item(potionname), 2*9999-count);
+            // game_log(`Sent ${9999-mpot0_count} mpot0's to ${charName}`);
         }
     }
 }

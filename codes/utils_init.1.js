@@ -174,11 +174,15 @@ const COMPOUNDABLE_LEVELS = {
 	"dexamulet": 4,
 	"stramulet": 4,
 	"hpamulet": 4,
+	"skullamulet": 3,
+
 	// Earrings
 	"strearring": 3,
 	"vitearring": 3,
+
 	// Orbs
 	"talkingskull": 2,
+
 	// Rings
 	"ringsj": 4,
 };

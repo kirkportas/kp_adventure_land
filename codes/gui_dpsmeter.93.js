@@ -38,6 +38,10 @@ function init_ccmeter() {
 
 function update_ccmeter()
 {
+	if (parent==null) {
+		Logger.log("update_ccmeter() called with no `parent` element. (code disengaged)");
+		return;
+	}
 	let $ = parent.$;
 	var fillAmount = ((character.cc/180)*100).toFixed(0);
 	

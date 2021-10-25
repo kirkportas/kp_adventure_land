@@ -14,10 +14,11 @@
 
         "set": false,
         "get": false,
-        "get_characters": false,
         "character": false,
+        "distance": false,
+        "get_characters": false,
         "get_party": false,
-
+        "locate_item": false,
 
         "accept_party_invite": false,
         "accept_party_request": false,

@@ -98,15 +98,26 @@ function main(){
                 var entity = parent.entities[charName];
                 if (!entity) continue;
 
+                Logger.log("Char online and in range: "+charName);
+                Logger.log("Attempting to cast mluck");
                 if (is_in_range(entity, "mluck") && entity.s) {
                     if (!("mluck" in entity.s) || entity.s.mluck.ms < 58*60*1000) {
                         game_log("use_skill mluck: "+charName)
                         use_skill("mluck",entity);
                     }
                 }
+
+                Logger.log("Checking distance for give potions");
                 // todo find distance for sending items
                 if (distance(character, entity) < 300) {
-                    give_potions(entity);
+                    Logger.functionEnter("give_potions");
+                    try {
+                        give_potions(entity);
+                    } catch(err) {
+                        Logger.log("Error in merchant main loop - give_potions()");
+                        Logger.log(err);
+                    }
+                    Logger.functionExit("give_potions", 0);
                 }
             }
         } catch(err) {
