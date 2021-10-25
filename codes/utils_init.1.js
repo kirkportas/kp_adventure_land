@@ -74,6 +74,8 @@ const EXCHANGEABLES = ["candy1","candy0","gem0","mysterybox","armorbox"];
 // Configure upgrade/compound actions
 const max_level_upgrade = 3; // Only used for a GUI function (intended for lowlevel)
 const UPGRADEABLE_LEVELS = {
+	"broom": 4,
+
 	// Wanderers
 	"wcap": 7,
 	"wgloves": 7,
@@ -109,6 +111,7 @@ const UPGRADEABLE_LEVELS = {
 	// "swordofthedead": 5,
 	"rapier": 6,
 	"firebow": 5,
+	"firestaff": 6,
 	"harbringer": 5,
 
 	// Christmas set
@@ -205,17 +208,17 @@ FARMABLE = FARMABLE.concat(["wbook0"]);
 FARMABLE = FARMABLE.concat(["vitscroll","scroll0","scroll1"]);
 FARMABLE = FARMABLE.concat(["lostearring","rattail"]);
 FARMABLE = FARMABLE.concat(["gemfragment"]);
-// Previously in Farmable:
-// stramulet
+// Previously in Farmable: stramulet
 
 
-// This won't sell at item.level >=2  (check method sell_all_trash)
-var TRASH = ["stinger", "hpbelt"]; // ringsj // hpamulet
+// This won't sell at item.level >=2  (via method sell_all_trash)
+var TRASH = ["stinger", "hpbelt", "smoke"]; // ringsj // hpamulet
 TRASH = TRASH.concat(["gloves1","coat1","helmet1","shoes1","pants1"]);
-TRASH = TRASH.concat(["throwingstars"]);
 TRASH = TRASH.concat(["phelmet","gphelmet"]);   // expensive
+TRASH = TRASH.concat(["pmaceofthedead"]);  // NPC sale for ~480k
+// TRASH = TRASH.concat(["throwingstars"]); // Needed for fiery throwing stars
+// TRASH = TRASH.concat(["maceofthedead","staffofthedead","swordofthedead"]);
 // TRASH = TRASH.concat(["stramulet"]);
-// TRASH = TRASH.concat(["maceofthedead","staffofthedead","swordofthedead"]); 
 
 // These localstorage vars are used for passing items to the Merchant
 set("give_items_"+NameWarrior, []);

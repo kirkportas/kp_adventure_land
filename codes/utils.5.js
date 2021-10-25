@@ -395,6 +395,8 @@ function bank_get_trash() {
     // Detailed count with bankpack locations for Bank items
     let items_to_retrieve = [];
     for (let [packname,pack] of Object.entries(character.bank)) {
+        // Ignore "manual" pack at top right
+        if (packname == "items7") continue;
         if (this.verbose) Logger.log(`Checking pack: ${packname}`);
         for (var i=0;i<42;i++) {
             let item = pack[i];
@@ -653,7 +655,8 @@ function pontyPurchase()
             let alwaysBuy = ["cryptkey","frozenkey","stonekey","tombkey","bkey","ukey","dkey","tshirt88","luckyt"];
             alwaysBuy = alwaysBuy.concat(["rapier","bunnyelixir",
                 "essenceofgreed","essenceoffire","essenceoffrost","pumpkinspice",
-                "rapier"]);
+                "rapier",
+                "candy0","candy1","gem0","gemfragment"]);
 
             if (alwaysBuy.includes(pontyItem.name)) {
                 buy = true;
@@ -759,7 +762,7 @@ function buy_scrolls() {
 
 var give_potion_ts = {}; 
 function give_potions(entity) {
-    const verbose = true;
+    const verbose = false;
     let charName = entity.name;
     if (!give_potion_ts[charName]) give_potion_ts[charName] = 0;
     if (verbose) Logger.log("give_potion_ts[charName]: "+give_potion_ts[charName]);

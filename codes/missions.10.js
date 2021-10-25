@@ -470,12 +470,13 @@ class SortBankMission extends Mission {
             this._started = true;
         }
         // Wait 1 minute
-        let maxRunTimeMs = 60*1000;
+        let secondsToRun = 90;
+        let maxRunTimeMs = secondsToRun*1000;
         let timeSoFar = Date.now() - this.startTimeMs;
         if (timeSoFar > maxRunTimeMs) {
             this.cancel();
         } else {
-            Logger.log("SortBank seconds remaining: "+ (60 - timeSoFar/1000) )
+            Logger.log("SortBank seconds remaining: "+ (secondsToRun - timeSoFar/1000) )
         }
     }
 }
@@ -648,6 +649,9 @@ class DepositEverythingMission extends Mission {
         "stand0","rod","pickaxe"]);
 
     this.runCount = 3;
+
+    // Attempt the deposit step more than once
+    this.depositCount = 3;
   }
 
   // Check if fishing rod in mainhand or inventory.
@@ -689,14 +693,16 @@ class DepositEverythingMission extends Mission {
                 && !name.includes("scroll")
                 && !name.includes("candy")) {
 
-                // Sleep(100);
+                // Tiny delay massively improves this method
+                Sleep(20);
                 organized_bank_store(i);
             }
         }
     }
-    this.runCount--;
+    this.depositCount--;
+    Logger.log(`depositCount: ${this.depositCount}`);
 
-    if (this.runCount <= 0) {
+    if (this.depositCount <= 0) {
         this.cancel();
     }
   }

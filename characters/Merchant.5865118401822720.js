@@ -14,7 +14,10 @@ setInterval(joinGiveAways, 29000);
 setInterval(getOutOfJail, 15000);
 
 // Time-costly actions/missions
-setInterval(serverLoop, 5*60*1000); // 5 minutes
+// Serverloop has some conflict with missionControl->lastCycle.
+// The "cycle" will check for upgrade/compound, but this serverloop
+// Will interrupt that. Serverloop time should be > cycle time.
+setInterval(serverLoop, 7*60*1000); // 7 minutes
 
 // Stores event names only 
 track_events();

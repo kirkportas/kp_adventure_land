@@ -1,5 +1,10 @@
 Logger.functionEnter("Loading shared_executions");
 
+character.on('stacked', data => {
+  move(parent.character.real_x + (Math.floor(Math.random() * 30) - 15),
+       parent.character.real_y + (Math.floor(Math.random() * 30) - 15))
+});
+
 var deathCount = 0;
 var deathCheckMs = 0;
 function run_shared_executions() {

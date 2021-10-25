@@ -27,8 +27,8 @@
  * i.e. 1 is higher priority than 20   */
 const MISSION_PRIORITY = {
     "ClearPVPItems": 3,       // If holding a PVP flagged item, deposit it to clear PVP flag.
-    "Dismantle": 4,
-    "SortBank": 6,
+    "SortBank": 4,
+    "Dismantle": 6,
     "DepositEverything": 8,   // On boot or to reset. deposit all but a whitelist
     "HandleCompoundables": 10, // Get compoundable items from the bank and compound
     "HandleUpgradeables": 10,  // Get upgradeable items from the bank and upgrade
@@ -243,7 +243,7 @@ MissionControl.prototype._scan_for_missions = function() {
     if (holding_dismantle_item) this.addMission(new DismantleMission());
 
     /* Cleanup/Robustness ****************************************************/
-    let cycle_time = 10*60*1000; // 10 minutes
+    let cycle_time = 5*60*1000; // 5 minutes
     if ((Date.now() - this.last_cycle) > cycle_time) {
         this.addMission(new DepositEverythingMission());
         this.addMission(new HandleCompoundablesMission());
