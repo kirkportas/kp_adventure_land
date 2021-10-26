@@ -424,7 +424,7 @@ function bank_get_upgradeables() {
             let item = pack[i];
             if (!item) continue;
             if (!(item.name in UPGRADEABLE_LEVELS)) continue;
-            if (item_grade(item) >= 2) continue;
+            if (item_grade(item) >= 2 && !ALLOWED_RARE_UPGRADES.includes(item.name)) continue;
 
             let target_lvl = UPGRADEABLE_LEVELS[item.name];
             if (item.level < target_lvl) {
@@ -715,10 +715,10 @@ function buy_potions() {
 
     // Use higher level potions for Kirk's characters
     let mpot = "mpot0"; // 20g,  300 mana
-    let hpot = "mpot0"; // 20g,  200 hp
+    let hpot = "hpot0"; // 20g,  200 hp
     if (KIRKS_TOONS.includes(character.name)) {
         mpot = "mpot1"; // 100g, 500 mana
-        hpot = "mpot1"; // 100g, 300 hp
+        hpot = "hpot1"; // 100g, 300 hp
     }
 
     let mpot_count = get_item_count_in_inventory(mpot);

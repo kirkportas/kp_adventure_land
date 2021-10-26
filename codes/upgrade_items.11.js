@@ -4,17 +4,21 @@ function merchant_handle_upgradeables(scrolltype) {
 	if (character.q.upgrade) return;  // Skip if already upgrading
 
 	Logger.functionEnter("handle UPGRADEABLE_LEVELS");
-	let did_upgrade = false;
-	for (var [itemname, maxlvl] of Object.entries(UPGRADEABLE_LEVELS)) {
-		// no dex for ranger items
-		// if (["wgloves","wcap"].includes(item)) {
-		// 	scrolltype = "intscroll";
-		// }
-		did_upgrade = upgrade_all_item(itemname, maxlvl, scrolltype); // "dexscroll" intscroll strscroll
-		if (did_upgrade) {
-			Logger.log("did_upgrade = true");
-			break;
+	try {
+		let did_upgrade = false;
+		for (var [itemname, maxlvl] of Object.entries(UPGRADEABLE_LEVELS)) {
+			// no dex for ranger items
+			// if (["wgloves","wcap"].includes(item)) {
+			// 	scrolltype = "intscroll";
+			// }
+			did_upgrade = upgrade_all_item(itemname, maxlvl, scrolltype); // "dexscroll" intscroll strscroll
+			if (did_upgrade) {
+				Logger.log("did_upgrade = true");
+				break;
+			}
 		}
+	} catch(err){
+		Logger.logError(err);
 	}
 	Logger.functionExit("handle UPGRADEABLE_LEVELS", 0);
 }
@@ -137,11 +141,10 @@ function level_x_shop_upgrades(lvl) {
 	Logger.functionExit(`Level ${lvl} upgrades`, 0)
 }
 
-// Do not allow >7 upgrades except on Primary merchant account
-var allowed_past_7 = shop_items;
-if (character.name != "CurvyMoney") {
-	allowed_past_7 = [];
-}
+// function upgrade_allowed(item) {
+// 	// Item is an item object not an index.
+// 	if
+// }
 
 function upgrade_item(item_idx){
 	if (character.q.upgrade) { return; }
@@ -153,14 +156,14 @@ function upgrade_item(item_idx){
 
 	// Don't auto-upgrade Rare items
 	let grade = get_item_grade(item);
-	if (grade >= 2) {
+	if (grade >= 2 && !ALLOWED_RARE_UPGRADES.includes(item.name)) {
 		Logger.log("upgrade_item called for grade 2+. NOT SUPPORTED");
 		Logger.log(`idx: ${item_idx}, name: ${item.name}`);
 		return false;
 	}
 
 	// Only upgrade shop items 
-	if (item.level >=7 && !allowed_past_7.includes(item.name)) {
+	if (item.level >=7 && !ALLOWED_PAST_7.includes(item.name)) {
 		Logger.log("upgrade_item WILL NOT UPGRADE A LVL 7 ITEM.");
 		return false;
 	}
@@ -285,7 +288,7 @@ function upgrade_all_item(itemname, target_lvl, stat_type) {
 	} else {
 		var item = character.items[upgradeable_item_idx];
 		if (item.level >= target_lvl) return false;
-		if (item_grade(item) >=2) return false;
+		if (item_grade(item) >=2 && !ALLOWED_RARE_UPGRADES.includes(itemname)) return false;
 		
 		Logger.log(`Item (${itemname}) level (${item.level})`);
 

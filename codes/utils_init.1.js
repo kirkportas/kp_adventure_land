@@ -112,6 +112,7 @@ const UPGRADEABLE_LEVELS = {
 	"rapier": 6,
 	"firebow": 5,
 	"firestaff": 6,
+	"firestars": 6,
 	"harbringer": 5,
 
 	// Christmas set
@@ -154,12 +155,25 @@ const UPGRADEABLE_LEVELS = {
 
 };
 
+
 // Default all shop items to lvl 8 (to help clear out inventory)
 const shop_items = ["helmet","shoes","gloves","pants","coat", "bow","blade","staff","wshield"];
-for (itemname of shop_items) {
+for (let itemname of shop_items) {
 	UPGRADEABLE_LEVELS[itemname] = 8;
 }
 const UPGRADEABLE = Object.keys(UPGRADEABLE_LEVELS);
+
+// Default code will block rare upgrades.
+// Do not allow >7 upgrades except on Primary merchant account
+var ALLOWED_PAST_7 = [];
+var ALLOWED_RARE_UPGRADES = [];
+if (character.name == "CurvyMoney") {
+	ALLOWED_PAST_7 = shop_items;
+
+	ALLOWED_RARE_UPGRADES = [
+		"firestars"
+	];
+}
 
 
 var COMPOUNDABLE_3s = [
