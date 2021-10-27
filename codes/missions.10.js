@@ -122,7 +122,7 @@ class ExchangeMission extends Mission {
     let prio = MISSION_PRIORITY[name];
     super(name, prio);
 
-    this.location = new Location(-25, -400, "main");
+    this.location = LOCATION_EXCHANGE;
     this.verbose = true;
   }
 

@@ -462,16 +462,18 @@ function sell_all_trash(){
     character.items.forEach((item, index) => {
         if (item == null || item==undefined) { return; }
         if (!TRASH.includes(item.name)) return;
-        if (item_grade(item) < 2
-            && item.level < 2) {
-            log(`Merchant is unloading trash ${item.name}`);
-            item.q ? sell(index, item.q) : sell(index, item);
-        } 
+        if (item_grade(item) && item_grade(item) >= 2) return;
+        if (item.level && item.level >= 2) return;
+
+        // if (item_grade(item) < 2
+        //     && item.level < 2) {
+        Logger.log(`Merchant is unloading trash ${item.name}`);
+        item.q ? sell(index, item.q) : sell(index, item);
 
         let rare_sells = ["gphelmet"];
         if (rare_sells.includes(item.name)
             && item.level == 0) {
-                log(`Merchant is selling RARE trash ${item.name}`);
+                Logger.log(`Merchant is selling RARE trash ${item.name}`);
                 sell(index, item);
         }
     });
@@ -593,6 +595,8 @@ function pontyPurchase()
     if (!get(PONTY_KEY) || get(PONTY_KEY) == {}) {
         // Name and quantity
         // let PONTY_KEY = "ponty_items_to_buy";
+
+        // TODO refactor this and fix the "decrement"
         let desired = {
             "strearring": 9,
             "intearring": 9,
@@ -615,7 +619,9 @@ function pontyPurchase()
             "intbelt": 20,
             "strbelt": 20,
             "dexbelt": 20,
-            "wattire": 20
+            "wattire": 20,
+            "skullamulet": 20,
+            "broom": 20
         }
         set(PONTY_KEY, desired);
     }
@@ -670,7 +676,7 @@ function pontyPurchase()
         }
         // Save after any purchases.
         if (should_save) {
-            set(ponty_key, itemsToBuy);
+            set(PONTY_KEY, itemsToBuy);
         } else {
             game_log("No desired items at Ponty");
         }

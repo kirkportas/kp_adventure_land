@@ -112,7 +112,7 @@ const UPGRADEABLE_LEVELS = {
 	"rapier": 6,
 	"firebow": 5,
 	"firestaff": 6,
-	"firestars": 6,
+	"firestars": 7,
 	"harbringer": 5,
 
 	// Christmas set

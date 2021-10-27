@@ -39,6 +39,32 @@ send_item("Terrogue",0,10000);;
 ***
 
 
+===
+
+@wovenhead Those functions are part of runner_functions.js which is run when you start your code. From the console you can access those functions (or any functions you have defined) by using get_code_function(function_name)
+
+Here's its definition
+function get_code_function(a) {
+    return code_active && document.getElementById("maincode") && document.getElementById("maincode").contentWindow && document.getElementById("maincode").contentWindow[a] || function() {}
+}
+
+a = document.getElementById("maincode").contentWindow;
+
+then type a. and look through the list.
+==
+Kiting / combat
+
+if you wanna avoid getting hit i simply code in force vectors, add them up (net force) and calculate a direction to walk to based on that. one force to the center of the spawn area so that i stay close and some forces to avoid entities. creates decently dynamic movements. works fine for me
+
+chracter range > enemy range
+char speed > enemy speed
+
+
+
+For pathfinding; has anyone taken a look at stuff like BWTA2 (Brood War Terrain Analysis)?
+I think @SpadarFaar  uses Delaunay
+
+
 === SLENDERMAN
 Goto "halloween", same with "spooky"
 
@@ -62,6 +88,18 @@ game.all(function(name, data) {
 });
 
 ===
+
+
+// Add log to chat window
+function chat_log(message, color) {
+    let chat_function = parent.add_chat;
+    if (character.bot) {
+        chat_function = parent.parent.add_chat;
+    }
+    chat_function("", message, color, new Date());
+}
+
+====
 let buyOrderParams = {
     "q": "1",
     "slot":"trade5",
@@ -126,6 +164,78 @@ function lootChests() {
     return Sleep(500).then(x=>lootChests());
 }
 lootChests();
+===
+
+Anybody have code for buying from Daisy (using Monster Tokens)?
+I'm struggling to find the right socket.emit command in the source
+
+egehanhk — 08/25/2021
+From memory: something like parent.exchange_buy("monstertoken", "mpgloves")
+
+
+i had this somewhere if that can help ["exchange_buy",{"num":9,"name":"troll","q":765}]
+
+
+==
+
+GUI for bot settings:
+https://discord.com/channels/238332476743745536/238366540091621377/820755210447749142
+
+
+ // locate menu
+  const topRightCorner = parent.document.getElementById("toprightcorner");
+  if (!topRightCorner) {
+    game_log("Cannot find top right corner menu");
+    return;
+  }
+
+  // Find code button
+  const gameButtons = topRightCorner.getElementsByClassName("gamebutton");
+  let codeButton;
+
+  for (const gameButton of gameButtons) {
+    if (gameButton.innerText === "CODE") {
+      codeButton = gameButton;
+      break;
+    }
+  }
+
+  // Create new button
+  const aiButton = parent.document.createElement("div");
+  aiButton.className = "gamebutton";
+  aiButton.appendChild(parent.document.createTextNode("AI \uD83E\uDD16"));
+  aiButton.id = "aiuibutton";
+  aiButton.setAttribute("onclick", "");
+
+  // Add button
+  topRightCorner.insertBefore(aiButton, codeButton);
+  topRightCorner.insertBefore(
+    parent.document.createTextNode("\n\t\t\t"),
+    codeButton
+  );
+
+  // Create event
+  aiButton.onclick = showAiDialog;
+that onclick attribute that is added is just for css rule :p
+function showAiDialog() {
+  parent.show_modal(
+    `<div id="modal-ai-settings"><h1>Ai settings<h1>${getAiDialogContent()}</div>`
+  );
+}
+forget that manual code editing to update the bot 😄
+checkbox:
+        optionsContent += `
+            <li>
+                <label>
+                    <input type="checkbox"${
+                      settings[settingType] && " checked"
+                    } onchange="code_eval(\`set('${settingType}', \${this.checked})\`)" />
+                    ${settingType}
+                </label>
+            </li>
+            `;
+
+
 ===
 
 function onlineChars() {
