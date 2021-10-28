@@ -401,10 +401,9 @@ function bank_get_trash() {
         for (var i=0;i<42;i++) {
             let item = pack[i];
             if (!item) continue;
-            if (!TRASH.includes(item.name)) continue;
-            if (item_grade(item) >= 1) continue;
-
-            items_to_retrieve.push({'packname':packname, 'idx': i});
+            if (is_trash_item(item)){
+                items_to_retrieve.push({'packname':packname, 'idx': i});
+            }
         }
     }
     return items_to_retrieve;
@@ -450,31 +449,25 @@ function locate_bank_items(name) {
     }
     return itemlocs;
 }
-/*
-var itemlocs = locate_bank_items("stinger");
-for (pack of Object.keys(itemlocs)) {
-    for (idx of itemlocs[pack]) {
-        bank_retrieve(pack, idx);
-    }
+
+function is_trash_item(item) {
+    var rare_trash = ["gphelmet", "pmaceofthedead"];
+    if (!TRASH.includes(item.name)) return false;
+
+    // Handle rares
+    if (item_grade(item) >= 2 && !rare_trash.includes(item.name)) return false;
+    // Handle upgraded items
+    if (item.level && item.level >= 2) return false;
+
+    return true;
 }
-*/
+
 function sell_all_trash(){
     character.items.forEach((item, index) => {
         if (item == null || item==undefined) { return; }
-        if (!TRASH.includes(item.name)) return;
-        if (item_grade(item) && item_grade(item) >= 2) return;
-        if (item.level && item.level >= 2) return;
-
-        // if (item_grade(item) < 2
-        //     && item.level < 2) {
-        Logger.log(`Merchant is unloading trash ${item.name}`);
-        item.q ? sell(index, item.q) : sell(index, item);
-
-        let rare_sells = ["gphelmet"];
-        if (rare_sells.includes(item.name)
-            && item.level == 0) {
-                Logger.log(`Merchant is selling RARE trash ${item.name}`);
-                sell(index, item);
+        if (is_trash_item(item)) {
+            Logger.log(`Merchant is unloading trash ${item.name}`);
+            item.q ? sell(index, item.q) : sell(index, item);
         }
     });
 }
@@ -526,14 +519,10 @@ function get_item_grade(item) {
         }
     }
 }
-// game_log(get_item_grade(locate_item(2)))
-// game_log(locate_item(2))
 
-
-// const SCROLLS_BY_ITEM_GRADE = ["scroll0", "scroll1", "scroll2"];
-// const grade = item_grade(item);
-// const scroll_name = SCROLLS_BY_ITEM_GRADE[grade];
-// const slot_scroll = locate_item(scroll_name);
+function showGiveItems() {
+    show_json(get("give_items_"+character.name));
+}
 
 
 // https://github.com/farettig/adventure-land/blob/b810b96f58eef462b2dd493073499acee0a79d48/merchantSkills.js
@@ -572,9 +561,6 @@ Example of data[0], e.g. a pontyItem
     show_json(get(PONTY_KEY));
 */
 
-function showGiveItems() {
-    show_json(get("give_items_"+character.name));
-}
 /* Debugcode 
     if (debug && pontyItem.name.includes("earring")) {
         game_log(pontyItem.name);
@@ -658,10 +644,10 @@ function pontyPurchase()
                 }
             } 
 
-            let alwaysBuy = ["cryptkey","frozenkey","stonekey","tombkey","bkey","ukey","dkey","tshirt88","luckyt"];
+            let alwaysBuy = ["cryptkey","frozenkey","stonekey","tombkey","bkey","ukey","dkey"];
             alwaysBuy = alwaysBuy.concat(["rapier","bunnyelixir",
                 "essenceofgreed","essenceoffire","essenceoffrost","pumpkinspice",
-                "rapier",
+                "rapier","tshirt88","luckyt",
                 "candy0","candy1","gem0","gemfragment"]);
 
             if (alwaysBuy.includes(pontyItem.name)) {

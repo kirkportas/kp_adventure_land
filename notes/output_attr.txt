@@ -1,0 +1,121 @@
+
+Max damage theorycrafting.
+
+Sources: G.conditions, G.items. (for "output" attr)
+
+Halloween buffs: +2% and +3%
+MPGloves:        +5% dmg output
+Dark Blessing:   +25% dmg output
+Oxhelmet:        +1% dmg output
+OutputScroll:    +3%  (Tshirt +9 has 18stat, 18*.175=3.15)
+
+Crit => 2x damage
+
+Debuffs:
+Curse:           +20% damage (priest)
+HuntersMark:     +10% damage (ranger)
+
+--------------------------------------------------------------
+Rogue Base damage => 2500
+--------
+Base * DarkBless * Crit4 * invis  * OutputScroll * hween buff
+2500 * 1.25      * (2^4) * 1.25   * 1.05         * 1.03
+67593
+--------------------------------------------------------------
+--------------------------------------------------------------
+Mage Burst with 12k Mana
+Base dmg: 12000 * 0.555 => 6600
+--------------------------------------------------------------
+Base * DarkBless * Crit3 * OutputScroll * hween buff
+6600 * 1.25      * (2^3) * 1.05         * 1.03
+71379
+--------------------------------------------------------------
+
+
+
+Base * Crit *  DarkBless * OutputScroll
+6600 * 2    *  1.25      * 1.05
+21656
+
+
+109 > 997 for 2 +51 daggers    ~9ATK per 1 DMG
+80+69 *
+
+
+
+AssasinsSmoke: 1.25x damage when sneaking
+"outputscroll": {
+    "stat": "output",
+    "name": "Output Increase Scroll",
+    "g": 8000,
+    "skin": "outputscroll",
+    "explanation": "Adds Output Increase to an armor with a Stat attribute.",
+    "multiplier": 0.175,
+    "type": "pscroll",
+    "s": 9999,
+    "id": "outputscroll"
+},
+
+"darkblessing": {
+    "name": "Dark Blessing",
+    "ui": true,
+    "skin": "skill_dbuff",
+    "duration": 8000,
+    "output": 25,
+    "buff": true
+},
+
+"oxhelmet": {
+    "a": 2,
+    "int": 10,
+    "resistance": 12,
+    "grades": [
+        0,
+        0,
+        10,
+        12
+    ],
+    "vit": 2,
+    "skin": "oxhelmet",
+    "dex": 10,
+    "name": "OX Helmet",
+    "g": 8900000,
+    "armor": 55,
+    "firesistance": 3,
+    "str": 10,
+    "output": 1,
+    "type": "helmet",
+    "id": "oxhelmet"
+},
+
+
+"mpgloves": {
+    "stat": 2,
+    "set": "mpriest",
+    "explanation": "You served our realm well",
+    "resistance": 11,
+    "grades": [
+        0,
+        7,
+        10,
+        12
+    ],
+    "skin": "mpgloves",
+    "tier": 2.125,
+    "class": [
+        "priest"
+    ],
+    "extra_stat": 1,
+    "upgrade": {
+        "armor": 4,
+        "stat": 1,
+        "resistance": 4
+    },
+    "name": "Gloves of the Hunter Priest",
+    "g": 68000,
+    "armor": 22,
+    "output": 5,
+    "type": "gloves",
+    "scroll": true,
+    "id": "mpgloves"
+},

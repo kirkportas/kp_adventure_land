@@ -166,6 +166,22 @@ function lootChests() {
 lootChests();
 ===
 
+
+Slender spawns:
+1) Spawns randomly in a spot on `cave`, `spookytown`, and `halloween`.
+2) Doesn't necessarily spawn with other monsters, could be hiding in corners (yes, even above mummies on spookyton)
+3) Disappears if there are no players around him, and someone moves within 600 pixels of him
+
+Slender tactics:
+1) Move in with an invisible rogue, then attack
+2) Blink on top of him and attack really quick (burst/cburst are good choices for dumping a lot of damage at once)
+3) Attack if he somehow spawns randomly on one of your characters
+
+Advanced tactics:
+1) When you get his `id`, you can call `attack(slenderID)` and use the `too_far` game response's distance to triangulate his position
+
+===
+
 Anybody have code for buying from Daisy (using Monster Tokens)?
 I'm struggling to find the right socket.emit command in the source
 

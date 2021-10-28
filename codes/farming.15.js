@@ -821,7 +821,7 @@ function _party_farm() {
 
 	// Stop and kill any rare mobs that spawn nearby
 	let rare_target = undefined;
-	for (rare_type of RARE_MOB_TYPES) {
+	for (let rare_type of RARE_MOB_TYPES) {
 		rare_target = get_nearest_monster({"type":rare_type});
 		if (rare_target) {
 			break;

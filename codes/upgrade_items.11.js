@@ -57,6 +57,8 @@ function merchant_handle_upgradeables(scrolltype) {
 // Will compound all whitelisted items to their maxlvl - defined in utils_init 
 function compound_items(){
 	if (character.q.compound) { return; }
+
+	let ALLOWED_RARE_COMPOUNDS = ["lantern"];
 	// for (var [item, maxlvl] of Object.entries(COMPOUNDABLE_LEVELS)) {
 	for (let item of COMPOUNDABLE) {
 
@@ -68,14 +70,18 @@ function compound_items(){
 			if (count >= 3) {
 
 				var grade = item_grade(character.items[item_idxs[0]]); 
+				if (grade >= 2 && !ALLOWED_RARE_COMPOUNDS.includes(item)) {
+					Logger.log("compound_item called for grade 2+. NOT SUPPORTED");
+					Logger.log(`name: ${item}`);
+					return;
+				}
+
 				if (grade == 0) {
 					scrollname = "cscroll0";
 				} else if(grade ==1) {
 					scrollname = "cscroll1";
 				} else if(grade >= 2){
-					Logger.log("compound_item called for grade 2+. NOT SUPPORTED");
-					Logger.log(`name: ${item}`);
-					return;
+					scrollname = "cscroll2";
 				} else {
 					Logger.log("unknown grade value: "+grade.toString());
 					Logger.log(`name: ${item}`);

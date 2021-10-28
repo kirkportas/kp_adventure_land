@@ -74,14 +74,14 @@ const EXCHANGEABLES = ["candy1","candy0","gem0","mysterybox","armorbox"];
 // Configure upgrade/compound actions
 const max_level_upgrade = 3; // Only used for a GUI function (intended for lowlevel)
 const UPGRADEABLE_LEVELS = {
-	"broom": 4,
+	"broom": 6,
 
 	// Wanderers
 	"wcap": 7,
 	"wgloves": 7,
-	"wbreeches": 6,
+	"wbreeches": 7,
 	"wshoes": 7,
-	"wattire": 6,
+	"wattire": 7,
 	"wshield": 7,
 
 	"cape": 7,
@@ -110,10 +110,11 @@ const UPGRADEABLE_LEVELS = {
 	"daggerofthedead": 6,
 	// "swordofthedead": 5,
 	"rapier": 6,
+	"fireblade": 6,
 	"firebow": 5,
 	"firestaff": 6,
 	"firestars": 7,
-	"harbringer": 5,
+	"harbringer": 6,
 
 	// Christmas set
 	"merry": 5,
@@ -129,7 +130,7 @@ const UPGRADEABLE_LEVELS = {
 
 	// Halloween
 	"phelmet": 6,
-	"gphelmet": 1,
+	// "gphelmet": 1,
 
 	// shirts
 	"tshirt1": 5,
@@ -199,6 +200,7 @@ const COMPOUNDABLE_LEVELS = {
 
 	// Orbs
 	"talkingskull": 2,
+	"lantern": 2,
 
 	// Rings
 	"ringsj": 4,
@@ -226,11 +228,12 @@ FARMABLE = FARMABLE.concat(["gemfragment"]);
 
 
 // This won't sell at item.level >=2  (via method sell_all_trash)
-var TRASH = ["stinger", "hpbelt", "smoke"]; // ringsj // hpamulet
+var TRASH = ["stinger", "hpbelt"]; //, "smoke"]; // ringsj // hpamulet
 TRASH = TRASH.concat(["gloves1","coat1","helmet1","shoes1","pants1"]);
+TRASH = TRASH.concat(["wbasher","claw","sword"]);
 TRASH = TRASH.concat(["phelmet","gphelmet"]);   // expensive
 TRASH = TRASH.concat(["pmaceofthedead"]);  // NPC sale for ~480k
-// TRASH = TRASH.concat(["throwingstars"]); // Needed for fiery throwing stars
+TRASH = TRASH.concat(["throwingstars"]); // Needed for fiery throwing stars
 // TRASH = TRASH.concat(["maceofthedead","staffofthedead","swordofthedead"]);
 // TRASH = TRASH.concat(["stramulet"]);
 

@@ -30,6 +30,7 @@ const MISSION_PRIORITY = {
     "SortBank": 4,
     "Dismantle": 6,
     "DepositEverything": 8,   // On boot or to reset. deposit all but a whitelist
+    "collect_items_": 9,       // Visit a fighter and get items from them
     "HandleCompoundables": 10, // Get compoundable items from the bank and compound
     "HandleUpgradeables": 10,  // Get upgradeable items from the bank and upgrade
     "Mining": 15,
@@ -37,7 +38,6 @@ const MISSION_PRIORITY = {
     "Exchange": 16,           // Visit Xyn and exchange
     "TrashCompound": 20,
     "DepositFarmable": 22,    // Deposit items marked as "Farmable"
-    "collect_items_": 25,     // Visit a fighter and get items from them
     "GoHome": 900,            // Default behavior
 }
 
