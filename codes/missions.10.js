@@ -51,6 +51,10 @@ class TrashCompoundMission extends Mission {
         this._retrieve_done = false;
 
         this.runCount = 15;
+
+        // List item names to sell for "smart" cases
+        // Example: Sell the 3rd stack of 9999 beewings
+        this.smart_sell_items = [];
     }
 
     can_run() { 
@@ -93,6 +97,9 @@ class TrashCompoundMission extends Mission {
             return;
         }
         /*  [{ "packname": "items0",  "idx": 22 },..] */
+
+        // Todo smart handling
+        // let smart_items_to_retrieve = bank_get_trash_smart();
 
         // limit code calls to 20
         let i = 20;

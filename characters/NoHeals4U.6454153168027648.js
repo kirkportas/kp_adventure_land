@@ -1,4 +1,7 @@
 // Line 1
+game_log("====== START ============");
+game_log("====== START ============");
+game_log("====== START ============");
 game_log("Loading Priest char file");
 load_code("utils_init");
 var attack_mode=true;

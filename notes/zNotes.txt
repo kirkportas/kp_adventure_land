@@ -29,6 +29,14 @@ TODO: Investigate GAME APIs
 - http://adventure.land/docs/code/functions/command_character
 - http://adventure.land/docs/code/functions/get_active_characters
 
+***
+CaracAL:         https://github.com/numbereself/caracAL
+ALClientCS:      https://github.com/Sichii/ALClientCS/
+Earthi-ALCLient: https://github.com/earthiverse/ALClient
+NexusNull:       https://github.com/NexusNull/bot-web-interface
+https://almap.zinals.tech/
+
+
 ****
 send_item("Terranger",0,10000);
 send_item("Terazarrior",0,10000);
@@ -106,6 +114,13 @@ let buyOrderParams = {
     "price": "250000000",
     "level": "7",
     "name": "vboots"
+};
+let buyOrderParams = {
+    "q": "30",
+    "slot":"trade5",
+    "price": "1000000",
+    "level": "0",
+    "name": "talkingskull"
 };
 parent.socket.emit("trade_wishlist", buyOrderParams)
 

@@ -74,7 +74,7 @@ function check_franky_bow() {
 		}
 
 		if (engagedEvents.length == 0) {
-			// Keep farming on this character (BigBowBigHo)
+			// Keep farming on this character
 		}	
 	});
 }

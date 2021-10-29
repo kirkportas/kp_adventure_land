@@ -407,8 +407,13 @@ function bank_get_trash() {
         }
     }
     return items_to_retrieve;
-
 }
+
+/* Handle custom trash removals */
+// function bank_get_trash_smart() {
+  //
+// }
+
 
 function bank_get_upgradeables() {
     if (!is_in_bank()) { return [] }
@@ -796,21 +801,6 @@ function give_potions(entity) {
         if (count < 9999 && locate_item(potionname) >= 0) { 
             send_item(charName, locate_item(potionname), 2*9999-count);
             // game_log(`Sent ${9999-mpot0_count} mpot0's to ${charName}`);
-        }
-    }
-}
-
-function bank_store_craftables() {
-    for (let itemname of ["spidersilk","rattail","bfur","gemfragment"]) {
-        let itemidx = locate_item(itemname);
-        if (itemidx >= 0) {
-            organized_bank_store(itemidx);
-        }
-    }   
-    for (let itemname of LOW_CRAFT_ITEMS) {
-        let itemidx = locate_item(itemname);
-        if (itemidx >= 0) {
-            organized_bank_store(itemidx);
         }
     }
 }

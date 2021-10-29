@@ -602,21 +602,25 @@ function switch_to_event_server(event) {
 
 	// Current swaps for bee<>boss
 	// Terakazam   <> Terrogue
-	// BigBowBigHo <> TERFnSURF  (previously Terazarrior)
-
+	// NoHeals4U <> TERFnSURF  (previously BigBowBigHo)
+	// let switchConfig = {
+	// 	NameRanger2: "TERFnSURF",
+	// 	NamePriest:
+	// }
 
 	// Switch to Warrior/NewbRogue if on lowbie ranger
-	if (character.name == NameRanger2) {
+	if (character.name == NameRanger2 || character.name == NamePriest) {
 		// let charname = "Terazarrior"; 
 		let charname = "TERFnSURF";
 		parent.window.location.href="/character/"+charname+"/in/"+event.server_region+"/"+event.server_identifier+"/";
 		return;		
 	}
 
-	// Switch to 2nd Ranger if farming bees
+	// Switch to Priest of 2nd Ranger if farming bees
 	if ((character.name == NameWarrior || character.name == NameRogue2)
-		&& event.eventname == "bee_genocide") {
-		let charname = "BigBowBigHo"; 
+		 && event.eventname == "bee_genocide") {
+		let charname = "NoHeals4U";
+		// let charname = "BigBowBigHo";
 		parent.window.location.href="/character/"+charname+"/in/"+event.server_region+"/"+event.server_identifier+"/";
 		return;		
 	}

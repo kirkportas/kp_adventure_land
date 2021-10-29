@@ -85,16 +85,6 @@ function main(){
         }
 
         try {
-            // Store items in "items1", the 2nd from right in southern row. (Gabriella)
-            if (is_in_bank()) {
-                bank_store_craftables()
-            }
-        } catch(err) {
-            Logger.log("Error in merchant main loop - is_in_bank executions");
-            Logger.log(err);
-        }
-
-        try {
             // Cast Mluck if not cast, or <58 minutes remaining
             for (let charObj of onlineChars()) {
                 let charName = charObj.name;
