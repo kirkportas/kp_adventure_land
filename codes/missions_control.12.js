@@ -203,7 +203,7 @@ MissionControl.prototype._scan_for_missions = function() {
         // }
 
         let char_esize = char_inv_cache.esize;
-        let empty_space_threshold = 15; // High for testing. Lower to ~10/15
+        let empty_space_threshold = 18; // High for testing. Lower to ~10/15
         if (char_esize < empty_space_threshold) { 
             game_log("Adding collectItems mission for "+charObj.name);
             Logger.log("Adding collectItems mission for "+charObj.name);

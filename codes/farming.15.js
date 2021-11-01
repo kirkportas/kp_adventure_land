@@ -804,8 +804,29 @@ var RARE_MOB_TYPES = ["greenjr","goldenbat","phoenix","squigtoad",
 
 // Called by all fighter characters
 function party_farm() {
+	// Disable hween boss, no one is engaging and tanking
+	_party_farm();
+	// halloween_party_farm();
+}
+
+// Used for halloween boss farming and custom logic within that event
+function halloween_party_farm() {
 	if (character.name == NameRanger) {
-		_party_farm()
+		let buff_time_ms = 0;
+		buff_time_ms += (character.s?.halloween0 || 0);
+		buff_time_ms += (character.s?.halloween1 || 0);
+		buff_time_ms += (character.s?.halloween2 || 0);
+		if (character.s?.halloween1) buff_time_ms += character.s?.halloween1
+
+		let time_remaining_target_ms = 1000 * 60 * 60 * 12; // 12 hours
+		let needs_buff = buff_time_ms < time_remaining_target_ms;
+		game_log("needs_buff: "+needs_buff);
+
+		if (needs_buff) {
+			halloween_farm();
+		} else {
+			_party_farm()
+		}
 	} else {
 		halloween_farm();
 	}

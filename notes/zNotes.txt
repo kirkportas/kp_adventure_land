@@ -108,6 +108,7 @@ function chat_log(message, color) {
 }
 
 ====
+wishlist / merchant buy order / sell order
 let buyOrderParams = {
     "q": "1",
     "slot":"trade5",
@@ -116,7 +117,7 @@ let buyOrderParams = {
     "name": "vboots"
 };
 let buyOrderParams = {
-    "q": "30",
+    "q": "8",
     "slot":"trade5",
     "price": "1000000",
     "level": "0",
