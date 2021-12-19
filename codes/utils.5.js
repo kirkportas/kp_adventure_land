@@ -692,15 +692,15 @@ function joinGiveAways(){
                     {
                         parent.join_giveaway(slot_name,entity.id,slot.rid);
                         joined = true;
+                        game_log("Joined a giveaway!");
+                        return Sleep(150).then(x=>joinGiveAways())
                     }
                 }
             }
         }
     }
-    if (joined) {
-        game_log("Joined a giveaway!");
-    } else {
-        game_log("No giveaways active.");
+    if (!joined) {
+        game_log("No unregistered giveaways or no giveaways active.");
     }
 }
 

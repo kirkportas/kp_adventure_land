@@ -805,8 +805,8 @@ var RARE_MOB_TYPES = ["greenjr","goldenbat","phoenix","squigtoad",
 // Called by all fighter characters
 function party_farm() {
 	// Disable hween boss, no one is engaging and tanking
-	_party_farm();
-	// halloween_party_farm();
+	// _party_farm();
+	halloween_party_farm();
 }
 
 // Used for halloween boss farming and custom logic within that event

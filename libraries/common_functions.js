@@ -1947,13 +1947,13 @@ function he(html){return html_escape(html);}
 function future_ms(ms)
 {
 	var c=new Date();
-	c.setMilliseconds(c.getMilliseconds()+ms);
+	c.setUTCMilliseconds(c.getUTCMilliseconds()+ms);
 	return c;
 }
 function future_s(s)
 {
 	var c=new Date();
-	c.setSeconds(c.getSeconds()+s);
+	c.setUTCSeconds(c.getUTCSeconds()+s);
 	return c;
 }
 function future_m(m)
