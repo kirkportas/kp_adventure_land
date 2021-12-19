@@ -804,9 +804,13 @@ var RARE_MOB_TYPES = ["greenjr","goldenbat","phoenix","squigtoad",
 
 // Called by all fighter characters
 function party_farm() {
-	// Disable hween boss, no one is engaging and tanking
 	// _party_farm();
-	halloween_party_farm();
+
+	// October
+	// halloween_party_farm();
+
+	// ~Late November to ??
+	christmas_party_farm();
 }
 
 // Used for halloween boss farming and custom logic within that event
@@ -830,6 +834,30 @@ function halloween_party_farm() {
 	} else {
 		halloween_farm();
 	}
+}
+
+
+// Used for Christmas farming and custom logic within that event
+function christmas_party_farm() {
+
+	needs_buff = false;
+	if (character.s?.holidayspirit == undefined) {
+		needs_buff = true;
+	}
+	game_log("needs_buff: "+needs_buff);
+
+	if (needs_buff) {
+		get_christmas_buff();
+	} else {
+		_party_farm()
+	}
+}
+
+function get_christmas_buff() {
+	let zone = new Zone({"x":5, "y":-100, "map":"main", "maxRadius":10, "name":"christmas_tree"});
+	if (move_to_zone(zone)) return;
+	// Todo extract to a socket_api utility file
+	parent.socket.emit("interaction", {"type": "newyear_tree"});
 }
 
 var party_event = {"server_region":'US',"server_identifier":'PVP', "eventname": "bee_genocide"};

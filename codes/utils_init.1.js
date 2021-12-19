@@ -132,6 +132,9 @@ const UPGRADEABLE_LEVELS = {
 	"phelmet": 6,
 	// "gphelmet": 1,
 
+	// Christmas
+	"gcape": 4,
+
 	// shirts
 	"tshirt1": 5,
 	"tshirt2": 5,
