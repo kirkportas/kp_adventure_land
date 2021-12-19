@@ -33,6 +33,8 @@ const MISSION_PRIORITY = {
     "collect_items_": 9,       // Visit a fighter and get items from them
     "HandleCompoundables": 10, // Get compoundable items from the bank and compound
     "HandleUpgradeables": 10,  // Get upgradeable items from the bank and upgrade
+    "GetChristmasBuff": 13,  // Holiday buff + fun token
+    "Mining": 15,
     "Mining": 15,
     "Fishing": 15,
     "Exchange": 16,           // Visit Xyn and exchange
@@ -53,6 +55,7 @@ class Location {
 
 var LOCATION_TOWN = new Location(-207, -108, "main");
 var LOCATION_BANK = new Location(0, -275, "bank");
+var LOCATION_CHRISTMAS_TREE = new Location(5, -100, "main");
 var LOCATION_EXCHANGE = new Location(-91, -327, "main"); // Can also exchange
 // var LOCATION_EXCHANGE = new Location(-25, -400, "main"); // normal spot
 var LOCATION_DISMANTLE = new Location(0, 540, "main");
@@ -171,6 +174,10 @@ MissionControl.prototype._scan_for_missions = function() {
     }
     if (!("mining" in parent.next_skill)) {
         this.addMission(new MiningMission());
+    }
+
+    if (!("holidayspirit" in character.s)) {
+        this.addMission(new GetChristmasBuffMission());
     }
 
     /* Item Collection    ****************************************************/

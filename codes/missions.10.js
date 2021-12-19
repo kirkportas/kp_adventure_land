@@ -36,6 +36,42 @@ class GoHomeMission extends Mission {
 
 /*****************************************************************************/
 
+class GetChristmasBuffMission extends Mission {
+  constructor() {
+    let name = "GetChristmasBuff";
+    let prio = MISSION_PRIORITY[name];
+    super(name, prio);
+
+    this.location = LOCATION_CHRISTMAS_TREE;
+    this.verbose = true;
+  }
+
+  can_run() {
+    return true;
+  }
+
+  run() {
+    if (this.verbose) Logger.log(`${this.name} Run()`);
+    if (!this.can_run()) {
+        Logger.log("Unable to run mission "+this.name);
+        return;
+    }
+
+    // Move if needed
+    if (this.move_to_location()) { return }
+
+    parent.socket.emit("interaction", {"type": "newyear_tree"});
+    this.cancel();
+  }
+
+  // After Runtime or abort
+  cancel() {
+    this.status = STATE_DONE;
+  }
+}
+
+/*****************************************************************************/
+
 // Go to town location, clear trash from bank
 class TrashCompoundMission extends Mission {
     constructor() {
