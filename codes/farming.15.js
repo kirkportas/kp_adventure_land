@@ -804,13 +804,13 @@ var RARE_MOB_TYPES = ["greenjr","goldenbat","phoenix","squigtoad",
 
 // Called by all fighter characters
 function party_farm() {
-	// _party_farm();
+	_party_farm();
 
 	// October
 	// halloween_party_farm();
 
 	// ~Late November to ??
-	christmas_party_farm();
+	// christmas_party_farm();
 }
 
 // Used for halloween boss farming and custom logic within that event

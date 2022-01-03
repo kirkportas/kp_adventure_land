@@ -176,9 +176,10 @@ MissionControl.prototype._scan_for_missions = function() {
         this.addMission(new MiningMission());
     }
 
-    if (!("holidayspirit" in character.s)) {
-        this.addMission(new GetChristmasBuffMission());
-    }
+    // Enable during Christmas Event time
+    // if (!("holidayspirit" in character.s)) {
+    //     this.addMission(new GetChristmasBuffMission());
+    // }
 
     /* Item Collection    ****************************************************/
     // todo Perform Gon a timer to ensure mluck uptime
